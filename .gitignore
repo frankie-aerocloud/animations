@@ -1,0 +1,26 @@
+node_modules/
+dist/
+out/
+playwright-report/
+test-results/
+.env.local
+.DS_Store
+*.tsbuildinfo
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+output/**
+!output/.gitkeep
+*.blend1
+# large local binaries kept out of history (see README: assets and references)
+references/*.mp4
+reference-short.mp4
+earth-textures/
+assets/characters/quaternius-universal-base-characters/**/*.png
+assets/characters/quaternius-universal-base-characters/**/*.bin
+assets/characters/quaternius-universal-base-characters/**/*.gltf
+*.blend
+*.wav
+*.aiff
