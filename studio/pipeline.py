@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -279,9 +280,14 @@ class Pipeline:
                 windows.append((end - 0.1, end + float(transition.get("duration", 0.0)) + 0.1))
         return windows
 
-    def validate_output(self, path: Path) -> list[str]:
+    def expected_size(self) -> tuple[int, int]:
+        """Output size for this profile: the project resolution scaled, kept even for yuv420p."""
         render = self.project.render
-        problems = validate.validate_output(path, int(render["width"]), int(render["height"]), self.project.fps, self.project.duration)
+        return tuple(max(2, int(round(int(render[key]) * self.profile.scale)) // 2 * 2) for key in ("width", "height"))  # type: ignore[return-value]
+
+    def validate_output(self, path: Path) -> list[str]:
+        width, height = self.expected_size()
+        problems = validate.validate_output(path, width, height, self.project.fps, self.project.duration)
         if not problems:
             black = validate.unexpected_black(path, self.allowed_black())
             problems += [f"unexpected black frames at {start:.2f}-{end:.2f}s" for start, end in black]
@@ -294,7 +300,7 @@ class Pipeline:
             "project": {"id": self.project.id, "title": self.project.title, "language": self.project.language},
             "output": {"path": str(final), "size_bytes": final.stat().st_size, "duration_seconds": float(info.get("format", {}).get("duration", 0.0)), "width": video.get("width"), "height": video.get("height"), "frame_rate": video.get("r_frame_rate"), "video_codec": video.get("codec_name"), "pixel_format": video.get("pix_fmt")},
             "validation": {"passed": not problems, "problems": problems},
-            "tools": {"blender": manifest.tool_version("blender", "--version"), "ffmpeg": manifest.tool_version("ffmpeg"), "piper": manifest.tool_version("python", "--version")},
+            "tools": {"blender": manifest.tool_version("blender", "--version"), "ffmpeg": manifest.tool_version("ffmpeg"), "piper-tts": manifest.package_version("piper-tts"), "python": sys.version.split()[0]},
             "render": {"profile": self.profile.as_dict(), "engine": self.project.render.get("engine"), "encode": self.project.render.get("encode")},
             "scenes": [{"id": s["id"], "start": s["start"], "duration": s["duration"], "frames": s["frames"], "environment": s["environment"].get("type"), "shot": s["camera"].get("shot"), "lighting": s.get("lighting", "soft_daylight"), "transition": (s.get("transition") or {}).get("type", "cut"), "rendered": not next(r.skipped for r in results if r.id == s["id"])} for s in self.project.scenes],
             "assets": [{"id": a.get("id"), "type": a.get("type"), "path": a.get("path"), "source": a.get("source"), "licence": a.get("licence") or a.get("license")} for a in self.project.assets],

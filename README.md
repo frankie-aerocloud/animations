@@ -7,7 +7,7 @@ Everything is free and open-source software and runs on one machine: no cloud re
 no accounts.
 
 The first production is **"What Happens If The World Runs Out Of Water In 24 Hours?"**
-(`projects/water-crisis`), a hypothetical scenario told in twelve shots over 80 seconds.
+(`projects/water-crisis`), a hypothetical scenario told in twelve shots over 82 seconds.
 
 ## Toolchain
 

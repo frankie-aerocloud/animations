@@ -108,7 +108,7 @@ def main(argv: list[str] | None = None) -> int:
                 shutil.rmtree(target)
             print(f"removed {target}")
             return 0
-        pipeline = Pipeline(project, "preview" if args.command == "preview" else args.profile, force=args.force)
+        pipeline = Pipeline(project, "preview" if args.command == "preview" else args.profile, force=args.force, log=lambda message: print(message, flush=True))
         if args.command == "storyboard":
             return storyboard(pipeline, args.stills)
         pipeline.require_valid()

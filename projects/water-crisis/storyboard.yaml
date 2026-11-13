@@ -62,7 +62,7 @@ scenes:
     lighting: interior_day
     camera: {shot: side_follow, from: [-2.0, -16, 1.5], to: [-1.9, 5, 1.45], look: [1.2, -6, 1.1], look_to: [1.4, 14, 1.2], lens: 26, fstop: 4}
     actors:
-      - {id: shoppers, count: 14, area: [1.2, 13, 1.6, 4], roles: [shopper, shopper, civilian, child], action: run, to: [1.3, -19], jitter: 0.7, stagger: 4.0, props: [bottle, box], prop_chance: 0.5}
+      - {id: shoppers, count: 18, area: [1.2, 13, 1.6, 4], roles: [shopper, shopper, civilian, child], action: run, to: [1.3, -19], jitter: 0.7, stagger: 3.2, props: [bottle, box], prop_chance: 0.5}
       - {id: grabber, role: shopper, at: [1.9, 2.0], face: 90, action: react, start: 2.2}
       - {id: grabber2, role: civilian, at: [1.7, 6.5], face: 90, action: carry, prop: box}
     events:

@@ -22,6 +22,15 @@ def tool_version(name: str, flag: str = "-version") -> str:
     return first[0] if first else "unknown"
 
 
+def package_version(name: str) -> str:
+    from importlib import metadata
+
+    try:
+        return metadata.version(name)
+    except metadata.PackageNotFoundError:
+        return "not installed"
+
+
 def write_manifest(path: Path, data: dict[str, Any]) -> Path:
     payload = {"generated_at": datetime.now(UTC).isoformat(timespec="seconds"), **data}
     path.parent.mkdir(parents=True, exist_ok=True)
