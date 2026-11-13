@@ -1,1 +1,1 @@
-"""Offline narration, subtitles and mix helpers."""
+"""Narration, subtitles, procedural music and effects, and the FFmpeg mixer."""

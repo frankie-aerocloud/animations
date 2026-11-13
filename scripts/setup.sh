@@ -1,15 +1,12 @@
 #!/bin/sh
+# Local setup: Python venv, Piper voice and a check for the system tools.
 set -eu
 cd "$(dirname "$0")/.."
-PYTHON_BIN="${PYTHON:-python3.14}"
-if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
-  echo "Python 3.14 was not found. Install Python 3.14, then rerun this script." >&2
-  exit 1
-fi
+PYTHON_BIN="${PYTHON:-python3}"
 "$PYTHON_BIN" -m venv .venv
-".venv/bin/python" -m pip install -r requirements-dev.txt
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m piper.download_voices en_GB-cori-high --download-dir assets/voices
 for required_tool in blender ffmpeg ffprobe; do
-  if ! command -v "$required_tool" >/dev/null 2>&1; then echo "Missing system tool: $required_tool"; fi
+  command -v "$required_tool" >/dev/null 2>&1 || echo "Missing system tool: $required_tool (macOS: brew install --cask blender; brew install ffmpeg)"
 done
-echo "Activate with: source .venv/bin/activate"
-echo "Install missing macOS tools with Homebrew: brew install --cask blender && brew install ffmpeg"
+.venv/bin/python -m studio.cli doctor

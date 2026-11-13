@@ -1,0 +1,13 @@
+# Output defaults for every project. A project's project.yaml may override any key under `render:`.
+engine: eevee            # eevee (default) or cycles
+width: 1080
+height: 1920
+fps: 30
+profiles:
+  preview:  {scale: 0.5, samples: 8,  motion_blur: false, volumetrics: false, raytracing: false, denoise: false}
+  standard: {scale: 1.0, samples: 32, motion_blur: true,  volumetrics: true,  raytracing: true,  denoise: true}
+  high:     {scale: 1.0, samples: 64, motion_blur: true,  volumetrics: true,  raytracing: true,  denoise: true}
+encode:
+  crf: 18
+  preset: medium
+  audio_bitrate: 192k

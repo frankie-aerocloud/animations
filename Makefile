@@ -1,19 +1,25 @@
 PYTHON ?= .venv/bin/python
-PROJECT ?= world-runs-out-of-water
+PROJECT ?= projects/water-crisis
 PROFILE ?= preview
 
-.PHONY: doctor validate quality-test render-film test lint typecheck
+.PHONY: doctor validate storyboard preview render assemble build test lint typecheck
 doctor:
-	$(PYTHON) studio.py doctor
+	$(PYTHON) -m studio.cli doctor
 validate:
-	$(PYTHON) studio.py validate $(PROJECT)
-quality-test:
-	$(PYTHON) studio.py quality-test --profile $(PROFILE)
-render-film:
-	$(PYTHON) studio.py render-film $(PROJECT) --profile $(PROFILE)
+	$(PYTHON) -m studio.cli validate $(PROJECT)
+storyboard:
+	$(PYTHON) -m studio.cli storyboard $(PROJECT)
+preview:
+	$(PYTHON) -m studio.cli preview $(PROJECT)
+render:
+	$(PYTHON) -m studio.cli render $(PROJECT) --profile $(PROFILE)
+assemble:
+	$(PYTHON) -m studio.cli assemble $(PROJECT) --profile $(PROFILE)
+build:
+	$(PYTHON) -m studio.cli build $(PROJECT) --profile $(PROFILE)
 test:
-	$(PYTHON) -m pytest
+	$(PYTHON) -m pytest -q
 lint:
-	$(PYTHON) -m ruff check studio.py studio tests
+	$(PYTHON) -m ruff check studio tests
 typecheck:
-	$(PYTHON) -m mypy studio
+	$(PYTHON) -m mypy

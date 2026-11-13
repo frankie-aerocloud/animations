@@ -1,0 +1,34 @@
+# Narration. `at` is seconds after the start of the named scene. A line may run on into later scenes.
+lines:
+  - id: n01
+    scene: s01_hook
+    at: 0.3
+    text: "What if, in a single day, every tap, river and reservoir on Earth simply stopped giving us water?"
+  - id: n02
+    scene: s02_tap
+    at: 0.2
+    text: "This is a hypothetical scenario. But within the first hour, taps would run dry, and people would rush to fill bottles, pans and bathtubs with whatever was left in the pipes."
+  - id: n03
+    scene: s04_supermarket
+    at: 0.2
+    text: "Six hours in, supermarket shelves would be stripped of bottled water, and emergency distribution points would open."
+  - id: n04
+    scene: s06_hospital
+    at: 0.1
+    text: "Hospitals, which rely on water for hygiene, sterilisation and dialysis, would be among the first places to struggle."
+  - id: n05
+    scene: s07_farm
+    at: 1.2
+    text: "By twelve hours, irrigation would stop and livestock would need water urgently. Power stations and factories that depend on water for cooling would begin shutting down."
+  - id: n06
+    scene: s09_reservoir
+    at: 0.2
+    text: "At eighteen hours, reservoirs and rivers would sit at record lows. Ports, transport and supply chains would slow, and the pressure on cities would keep rising."
+  - id: n07
+    scene: s11_city_crisis
+    at: 0.3
+    text: "After twenty-four hours, no city would have collapsed. But everything we rely on, from food and medicine to electricity, would already be running on borrowed time."
+  - id: n08
+    scene: s12_close
+    at: 0.4
+    text: "Modern civilisation runs on a reliable supply of freshwater. Water is not optional."

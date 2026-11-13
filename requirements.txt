@@ -1,1 +1,2 @@
 PyYAML==6.0.3
+piper-tts==1.8.0

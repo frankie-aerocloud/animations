@@ -1,0 +1,19 @@
+# Audio defaults. A project's project.yaml may override any key under `audio:`.
+narration:
+  engine: piper            # piper (offline, FOSS) | none (use recorded WAVs only)
+  voice: en_GB-cori-high   # see assets/voices/README.md for provenance and licence
+  voices_dir: assets/voices
+  length_scale: 1.0        # >1 slows the voice down
+  sentence_silence: 0.25
+  gain_db: 0
+music:
+  gain_db: -16
+  duck: {threshold: 0.03, ratio: 8, attack_ms: 40, release_ms: 650}
+  fade_in: 1.5
+  fade_out: 3.0
+sfx:
+  gain_db: -10
+master:
+  loudnorm: true
+  target_lufs: -14
+  true_peak: -1.5
