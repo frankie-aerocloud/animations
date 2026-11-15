@@ -1,14 +1,16 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = ["slow: runs Blender or FFmpeg; skipped automatically when the tool is missing"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py314"
+target-version = "py313"
+exclude = ["studio.py", "studio/characters", "studio/environments", "studio/blender/story_scenes.py", "scripts/blender"]
 
 [tool.mypy]
-python_version = "3.14"
+python_version = "3.13"
 strict = true
 files = ["studio"]
-exclude = ["studio/(blender|characters|environments)/"]
+exclude = ["studio/(blender|assets|characters|environments)/"]
 ignore_missing_imports = true

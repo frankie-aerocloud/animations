@@ -1,0 +1,13 @@
+id: water-crisis
+title: "What Happens If The World Runs Out Of Water In 24 Hours?"
+language: en-GB
+hud_label: "TIME WITHOUT WATER"
+premise: >
+  Hypothetical scenario: usable freshwater stops reaching people through taps, rivers and reservoirs
+  for twenty-four hours. The film describes plausible consequences, not established events.
+render: {}                 # inherits config/render.yaml; override width/height/fps/engine here
+assets: assets/manifest.yaml
+audio:
+  narration_dir: audio/narration   # optional recorded WAVs named <line id>.wav take priority over Piper
+  music_file: null                 # null = procedural score; or a path to a licensed track (add it to the manifest)
+  sfx_dir: audio/sfx               # optional recorded effects named <sound>.wav override the procedural ones

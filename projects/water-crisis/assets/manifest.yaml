@@ -1,0 +1,28 @@
+# Every asset the production depends on, with provenance and licence. Procedural geometry is listed so the
+# manifest in the output is complete; third-party files must name their exact licence.
+assets:
+  - id: procedural_asset_library
+    type: geometry
+    path: studio/assets
+    source: "Project-original procedural builders in studio/assets (buildings, characters, vehicles, vegetation, water, props, terrain)"
+    licence: "Project original"
+  - id: environments
+    type: geometry
+    path: studio/blender/environments.py
+    source: "Project-original environment compositions"
+    licence: "Project original"
+  - id: inter_font
+    type: font
+    path: assets/voices/README.md
+    source: "Inter (variable), bundled with Blender at <Blender>/datafiles/fonts/Inter.woff2; https://github.com/rsms/inter"
+    licence: "SIL Open Font Licence 1.1"
+  - id: piper_voice_en_gb_cori_high
+    type: voice
+    path: assets/voices/README.md
+    source: "Piper voice en_GB-cori-high; https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_GB/cori/high (model card records the LibriVox dataset)"
+    licence: "Dataset: public domain (LibriVox); model files retrieved 2026-11-12, SHA-256 in assets/voices/README.md"
+  - id: procedural_audio
+    type: audio
+    path: studio/audio
+    source: "Project-original procedural score and sound effects (studio/audio/music.py, studio/audio/sfx.py)"
+    licence: "Project original"

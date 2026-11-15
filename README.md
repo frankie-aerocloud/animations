@@ -1,105 +1,141 @@
-# Local Blender Animation Studio
+# Low-Poly Animation Studio
 
-Code-first production tooling for documentary-style vertical animations. Blender generates the 3D scenes and image sequences; FFmpeg encodes the final MP4. The pipeline is designed to work locally and keeps scene timings deterministic.
+A code-first, fully local production system for polished vertical (9:16) short-form 3D animations.
+Blender builds and renders stylised low-poly scenes from YAML storyboards through its Python API;
+FFmpeg assembles the film with transitions, captions, narration, music, effects and subtitles.
+Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
+no accounts.
 
-## Current production stage
+The first production is **"What Happens If The World Runs Out Of Water In 24 Hours?"**
+(`projects/water-crisis`), a hypothetical scenario told in twelve shots over 82 seconds.
 
-The first production is **What If The World Ran Out Of Water? — The First 24 Hours**. The seven scene builders and 90-second script are implemented. The opening Earth uses the local equirectangular diffuse, glossiness, normal, illumination and cloud maps in `earth-textures/`; the maps are packed into the opening Blender file so that render can reopen without external texture paths. The project also uses the local star and blue-haze maps for its space background. Earth texture provenance and licensing were not included with those files, so their original terms need checking before publication. The updated Blender render still needs to be run and reviewed locally before calling the film final.
+## Toolchain
 
-The kitchen QC shot is 300 frames at 30 fps. The full scene timeline is frame-based (90 seconds = 2,700 frames). Rendered frames are kept as PNGs so an interrupted run can skip frames that already completed.
+| Tool | Role | Licence |
+|---|---|---|
+| Blender 5.2 LTS (Eevee; Cycles optional) | scene construction and rendering via `bpy` | GPL |
+| FFmpeg 9 | clip encoding, transitions, overlay composite, audio mix, muxing, validation | LGPL/GPL |
+| Python 3.13+ with PyYAML | configuration, pipeline, CLI | PSF / MIT |
+| Piper TTS 1.8 (optional) | offline narration | GPL-3 |
+| Inter font (bundled with Blender) | captions, HUD and subtitles | SIL OFL 1.1 |
 
-## Local setup
+Verified on macOS (Apple Silicon). Blender renders with Metal; Piper runs on CPU.
 
-This repository uses Python 3.14 in `.venv` for the CLI and development utilities:
-
-```sh
-python3.14 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
-```
-
-Install the non-Python production tools separately. On macOS with Homebrew:
-
-```sh
-brew install --cask blender
-brew install ffmpeg
-```
-
-`ffmpeg` installs `ffprobe` as well. Check the local toolchain with `python studio.py doctor`.
-
-The project `.venv` uses Python 3.14.8. The required Python dependencies and the Blender/FFmpeg system tools have since been installed. They are setup dependencies, not runtime web-service dependencies.
-
-## Run the quality-control animation
+## Setup
 
 ```sh
-source .venv/bin/activate
-python studio.py doctor
-python studio.py quality-test --profile preview
+brew install --cask blender && brew install ffmpeg      # macOS; any platform with these on PATH works
+python3 -m venv .venv && .venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m piper.download_voices en_GB-cori-high --download-dir assets/voices   # optional, ~115 MB
+.venv/bin/python -m studio.cli doctor
 ```
 
-This builds `output/world-runs-out-of-water/quality-test/kitchen-qc.blend`, renders PNGs into `frames/`, and encodes `kitchen-qc.mp4`. `preview` renders 540×960 frames; `standard` and `high` use 1080×1920. Each quality-test rebuild starts a fresh frame sequence. To resume an interrupted render without rebuilding, run `python studio.py render world-runs-out-of-water --profile preview`.
+`scripts/setup.sh` runs the same steps. Without Piper, put a recorded WAV per narration line in
+`projects/<project>/audio/narration/<line id>.wav`.
 
-Render the complete seven-scene short with:
+## Workflow
 
 ```sh
-python studio.py render-film world-runs-out-of-water --profile preview
+python -m studio.cli validate projects/water-crisis                 # project, storyboard, script, assets
+python -m studio.cli storyboard projects/water-crisis --stills      # shot list + one still per scene (contact sheet)
+python -m studio.cli render-scene projects/water-crisis --scene s01_hook --still 3.5   # look-dev: one frame
+python -m studio.cli preview projects/water-crisis                  # complete film at 540x960, 8 samples
+python -m studio.cli render-scene projects/water-crisis --scene s02_tap --profile standard
+python -m studio.cli render projects/water-crisis --profile standard   # only scenes whose inputs changed
+python -m studio.cli assemble projects/water-crisis --profile standard # narration, subtitles, overlay, mix, MP4
+python -m studio.cli build projects/water-crisis --profile standard    # everything, then validate + manifest
 ```
 
-Use `--force` to rebuild all seven scenes after changing their builders. The production render writes per-scene Blender files and resumable PNG sequences under `output/world-runs-out-of-water/scenes/`, then uses FFmpeg to join them with short dissolves, create the local sound bed, add available macOS `say` narration, mux subtitles, and validate the final MP4 with FFprobe. If system speech returns no audio, the export still contains subtitles and the generated ambience bed; a user-supplied WAV can be added under the configured narration assets path.
+`build` runs: validate configuration → validate assets and audio → build Blender scenes → render
+scenes → generate subtitles → render the caption overlay → mix audio → assemble with FFmpeg →
+validate the MP4 → write `output/<project>/manifest-<profile>.json`.
 
-Useful commands:
+Every scene is fingerprinted (storyboard entry, style, render profile and the Blender-side source
+files). Re-running `render` or `build` only re-renders scenes whose fingerprint changed; `--force`
+rebuilds everything. Interrupted renders resume from the last complete frame.
+
+Outputs live under `output/<project>/`: `scenes/<scene>/<profile>/` (frames, `.blend`, `clip.mp4`),
+`overlay/<profile>/frames/`, `audio/` (narration per line, procedural score, effects, final mix),
+`subtitles.srt`, the final `<project>-<profile>.mp4`, the manifest, `storyboard.md` and logs.
+
+## Render profiles (`config/render.yaml`)
+
+| Profile | Scale | Samples | Motion blur | Volumetric haze | Ray tracing |
+|---|---|---|---|---|---|
+| preview | 50 % | 8 | no | no | no |
+| standard | 100 % | 32 | yes | yes | yes |
+| high | 100 % | 64 | yes | yes | yes |
+
+Output is always 1080x1920 at 30 fps (preview renders at half size), H.264 high profile, yuv420p,
+AAC audio, soft `mov_text` subtitles plus a sidecar `.srt`: YouTube Shorts ready.
+Set `engine: cycles` in a project's `render:` block to render with Cycles (Metal GPU when available).
+
+## Repository layout
+
+```
+config/            render.yaml (profiles, encoding), style.yaml (palette, surfaces, typography), audio.yaml
+projects/<id>/     project.yaml, storyboard.yaml, script.yaml, assets/manifest.yaml, audio/{narration,music,sfx}
+studio/cli.py      command line interface
+studio/pipeline.py orchestration, change detection, Blender invocation, assembly, manifest
+studio/core/       project loading + validation, timeline, motion maths, catalogue of names, hashing
+studio/blender/    runs inside Blender: scene_builder (entry), environments, camera, lighting, animation
+                   events, materials, primitives, rendering, overlay (captions/HUD/subtitles pass)
+studio/assets/     procedural library: buildings, characters, vehicles, vegetation, water, terrain, props
+studio/audio/      narration (Piper / recorded), subtitles, procedural music and effects, FFmpeg mixer
+studio/video/      FFmpeg assembly, technical validation, manifest writer
+assets/voices/     Piper voices (downloaded, documented provenance)
+references/        reference-short.mp4 (visual reference, not committed)
+tests/             pytest suite (fast) plus a Blender smoke test marked `slow`
+```
+
+The legacy modules from the first attempt (`studio.py`, `scripts/blender/`,
+`studio/blender/story_scenes.py`, `studio/characters/`, `studio/environments/`) are superseded by this
+pipeline and are not used by it.
+
+## Authoring a production
+
+A project is three YAML files plus optional audio:
+
+- `project.yaml`: id, title, HUD label, overrides for `render:`, `style:` and `audio:`.
+- `storyboard.yaml`: one entry per shot with `environment` (type + parameters), `lighting` preset
+  (and `lighting_overrides`), `camera` (shot behaviour and coordinates), `actors` (single or crowds
+  with `count`/`area`), `events` (water levels, visibility, movement, spin, flicker, flash, scale,
+  depletion, sun), `captions`, `hud` (elapsed-time clock keys), `sfx` cues, `music.intensity` and
+  the outgoing `transition`.
+- `script.yaml`: narration lines anchored to a scene and an offset; subtitles are generated from them
+  and timed against the rendered narration.
+
+Camera behaviours: `aerial_establish`, `push_in`, `tracking`, `orbit`, `side_follow`,
+`first_person`, `close_up`, `wide`, `reveal`, `static`, with depth of field (`fstop`, `focus`),
+`shake`, `lens_to`, and `whip_in`/`whip_out` for fast location changes that pair with the `whip`
+transition. Environments: `coastal_city`, `residential_street`, `kitchen_interior`,
+`supermarket_interior`, `distribution_point`, `hospital_exterior`, `farm`, `industrial`,
+`reservoir`, `port`, `desert`. Character roles: civilian, shopper, child, nurse, doctor, paramedic,
+worker, farmer, police; actions: idle, walk, run, look_around, point, fall, carry, gather, react,
+queue, crouch, stand. The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
+anything outside it.
+
+Coordinates are metres in each environment's world space; every builder in
+`studio/blender/environments.py` documents its layout and registers named anchors (`anchor:plaza`)
+usable from camera and event specs.
+
+## Assets and licences
+
+Geometry, characters, music and effects are procedural and project-original. External assets
+(the Piper voice and the Inter font) are listed in `projects/water-crisis/assets/manifest.yaml`
+with source and licence; `assets/voices/README.md` records the voice download and its SHA-256.
+Add any third-party asset to the manifest with its exact licence; `validate` fails on entries
+without a licence or with a missing file. `earth-textures/` (unverified licence) is unused and
+ignored by Git.
+
+## Tests and checks
 
 ```sh
-python studio.py validate world-runs-out-of-water
-python studio.py build world-runs-out-of-water
-python studio.py render world-runs-out-of-water --profile standard
-python studio.py export output/world-runs-out-of-water/quality-test --fps 30
-python studio.py init my-new-video
-python studio.py clean world-runs-out-of-water
+.venv/bin/python -m pytest -q -m "not slow"   # configuration, timing, subtitles, audio synthesis, video validation
+.venv/bin/python -m pytest -q                 # also the Blender smoke test (renders one small still)
+.venv/bin/python -m ruff check studio tests
+.venv/bin/python -m mypy
 ```
 
-`build` and `render` currently apply to the kitchen QC shot. The seven-scene YAML is the approved timing/script input for subsequent scene development, not a claim that all seven animations are already built.
-
-## Architecture
-
-- `studio/core/project.py` loads and validates project YAML.
-- `studio/core/timeline.py` maps durations to contiguous, inclusive frame ranges.
-- `studio/characters/` imports the CC0 Quaternius humanoid bases, creates fitted role clothing and accessories, adapts the full humanoid skeleton, and authors reusable motions and facial cues.
-- `studio/environments/kitchen.py` builds the QC environment and props from Blender geometry.
-- `studio/blender/scene_builder.py` assembles camera, lighting, character, animation and version-aware Eevee settings.
-- `studio/blender/story_scenes.py` contains reusable builders for Earth, kitchen, supermarket, hospital, city infrastructure, farm and final city shots.
-- `scripts/blender/` contains standalone Blender background entry points.
-- `studio.py` orchestrates environment checks, resumable scene rendering, crossfades, audio, subtitles, and FFmpeg/FFprobe export.
-- `projects/*/assets.yaml` records asset provenance and licences. Current QC assets are original generated geometry; nothing is downloaded.
-
-Scene animation is authored in Blender keyframes. Rendering evaluates explicit frame numbers, not wall-clock timers. Frame files are the resumability boundary. Blender uses the Eevee engine identifier exposed by its installed version, and falls back to CPU Cycles if Eevee is unavailable.
-
-The character system uses local CC0 Quaternius male and female humanoid bases with finished facial topology, eyes, hairstyles and full fingered skeletons. The generator adds project-original fitted clothing for each role, subtle skin and hair variation, blink and brow controls, and reusable idle, walk, reach, point and carry actions. Source and licence details are recorded beside the extracted asset and in the project asset manifest.
-
-## Add scenes
-
-1. Add a scene module under `projects/world-runs-out-of-water/scenes/` or a reusable environment under `studio/environments/`.
-2. Expose a builder that creates the props, camera, lighting and keyframes in a supplied Blender scene.
-3. Keep action timings in frames derived from project FPS; do not use independent timers.
-4. Add the scene id, duration, narration and environment to `project.yaml`. Scene starts derive from preceding durations.
-5. Register external assets in `assets.yaml` with source, local path, exact licence and attribution requirements. Never use assets with unclear terms.
-6. Add tests for frame ranges and asset paths, then render the scene preview before the full sequence.
-
-## Characters and asset licensing
-
-Add reusable character styles to `studio/characters/registry.py`; build or import them through a stable function in `generator.py`. Animate bones/actions using named rig controls. For a third-party model, retain its source, licence text, attribution, and required modifications in the asset manifest. No third-party assets are bundled.
-
-## Audio and export
-
-The pipeline can use a local WAV narration or macOS's built-in Daniel voice through `say`; no hosted TTS endpoint is called. It creates a small deterministic ambient underscore using the Python standard library and FFmpeg encodes audio as AAC. SRT subtitles are also muxed into the MP4. A Piper voice model can be added by extending the local narration adapter and recording its licence in the assets manifest.
-
-## Tests and quality checks
-
-```sh
-python -m unittest discover -s tests -v
-python -m pytest
-python -m ruff check studio.py studio tests
-python -m mypy studio
-```
-
-Automated timeline/config tests are included. Blender render tests cannot run until Blender is installed. Inspect rendered frames for composition, proportions, lighting and interaction before advancing beyond the QC gate.
+Final-video validation checks resolution, frame rate, codecs, pixel format, audio presence,
+duration and unexpected black frames; missing scene frames stop the pipeline before assembly.

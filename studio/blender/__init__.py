@@ -1,1 +1,1 @@
-"""Blender-only operations; imported inside Blender Python."""
+"""Blender-side scene construction. Only importable inside Blender's Python (needs bpy)."""
