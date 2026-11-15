@@ -7,7 +7,7 @@ import math
 
 from mathutils import Vector
 
-from studio.blender.primitives import add_noise, box, cone, empty, key, mesh_from_pydata, multi_box, parent, set_interp
+from studio.blender.primitives import add_noise, box, empty, key, mesh_from_pydata, multi_box, parent, set_interp
 from studio.core.motion import heading, polyline_length, unwrap
 
 
@@ -20,11 +20,8 @@ def gull(ctx, name, loc, scale=1.0, facing=0.0, flap=True, period=0.36, amplitud
     white, grey, orange = _materials(ctx)
     root = empty(ctx, name, loc, (0.0, 0.0, facing))
     root.scale = (scale, scale, scale)
-    body = multi_box(ctx, f"{name}.body", [((0, 0, 0), (0.16, 0.5, 0.14), 0), ((0, 0.31, 0.06), (0.12, 0.15, 0.12), 0), ((0, -0.32, 0.03), (0.14, 0.18, 0.03), 1)], [white, grey], bevel=0.03)
+    body = multi_box(ctx, f"{name}.body", [((0, 0, 0), (0.16, 0.5, 0.14), 0), ((0, 0.31, 0.06), (0.12, 0.15, 0.12), 0), ((0, -0.32, 0.03), (0.14, 0.18, 0.03), 1), ((0, 0.43, 0.05), (0.04, 0.12, 0.04), 2)], [white, grey, orange], bevel=0.03)
     parent(body, root)
-    beak = cone(ctx, f"{name}.beak", 0.025, 0.13, (0, 0.38, 0.05), orange, segments=5, anchor="base", tip=0.004)
-    beak.rotation_euler = (math.radians(-90), 0, 0)
-    parent(beak, root)
     wings = []
     for side, sign in (("l", 1), ("r", -1)):
         wing = multi_box(ctx, f"{name}.wing_{side}", [((sign * 0.3, 0.0, 0.0), (0.6, 0.22, 0.02), 0), ((sign * 0.58, -0.03, 0.0), (0.16, 0.14, 0.02), 1)], [white, grey])

@@ -9,16 +9,15 @@ from mathutils import Vector
 from studio.assets.props import cross
 import bpy
 
-from studio.blender.primitives import box, cylinder, empty, key, mesh_from_pydata, multi_box, parent, set_interp
+from studio.blender.primitives import box, cylinder, empty, key, mesh_from_pydata, multi_box, multi_shape, parent, set_interp
 from studio.core.motion import heading, polyline_length, unwrap
 
 CAR_COLOURS = ("white", "red", "navy", "teal", "stone", "yellow", "orange", "cream")
 
 
 def _wheels(ctx, name, root, positions, radius=0.34, width=0.24):
-    for i, (x, y) in enumerate(positions):
-        wheel = cylinder(ctx, f"{name}.wheel{i}", radius, width, (x, y, radius), ctx.mat("black", roughness=0.7), segments=12, rot=(0, math.pi / 2, 0))
-        parent(wheel, root)
+    wheels = multi_shape(ctx, f"{name}.wheels", [], [((x, y, radius), radius, width, "x", 0) for x, y in positions], [ctx.mat("black", roughness=0.7)])
+    parent(wheels, root)
 
 
 def _lights(ctx, name, root, front_y, back_y, z, half_width):

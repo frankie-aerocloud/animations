@@ -5,9 +5,10 @@ scenes:
     environment: {type: harbour_dawn, swarms: 3, swarm_count: 2400}
     lighting: golden_hour
     lighting_overrides: {elevation: 5, azimuth: 92, colour: [1.0, 0.68, 0.42], horizon: [0.95, 0.62, 0.40], zenith: [0.22, 0.30, 0.56], ambient: 0.4, fog: 0.0012}
-    camera: {shot: push_in, from: [-26, -40, 9], to: [-6, 20, 5], look: [6, 160, 20], look_to: [4, 420, 50], lens: 32, fstop: 5.6}
+    camera: {shot: push_in, from: [-6, 44, 4.2], to: [1, 58, 3.0], look: [6, 70, 1.6], look_to: [8, 300, 40], lens: 30, fstop: 4}
     actors:
       - {id: fisherman, role: fisherman, at: [6, 66, 0.9], face: 0, action: point, side: r, start: 3.0, end: 9.0}
+      - {id: mate, role: fisherman, at: [3.5, 63, 0.9], face: 20, action: look_around, start: 1.0}
     captions:
       - {kind: title, text: "WHAT IF ONE MILLION SEAGULLS ATTACKED NEW YORK?", at: 0.5, until: 5.0}
       - {kind: chapter, text: "06:00 AM", sub: "The first sighting", at: 5.4, until: 8.6}
@@ -18,10 +19,10 @@ scenes:
 
   - id: s02_dots
     duration: 11.0
-    environment: {type: harbour_dawn, swarms: 4, swarm_count: 3200, flocks: 3, flock_start: 1.5}
+    environment: {type: harbour_dawn, swarms: 4, swarm_count: 3200, flocks: 4, flock_start: 0.8, swarm_near: true}
     lighting: golden_hour
     lighting_overrides: {elevation: 7, azimuth: 92, colour: [1.0, 0.7, 0.45], horizon: [0.94, 0.64, 0.42], zenith: [0.24, 0.32, 0.58], ambient: 0.42, fog: 0.0012}
-    camera: {shot: static, from: [2, 58, 2.6], look: [0, 300, 60], look_to: [-4, 140, 40], lens: 26, fstop: 4, shake: {strength: 0.6, start: 5.0, end: 11.0, scale: 5}}
+    camera: {shot: static, from: [2, 56, 2.4], look: [0, 240, 40], look_to: [-4, 90, 26], lens: 24, fstop: 4, shake: {strength: 0.6, start: 5.0, end: 11.0, scale: 5}}
     actors:
       - {id: fisherman, role: fisherman, at: [6, 66, 0.9], face: 0, action: react, start: 6.5}
     captions:
@@ -107,11 +108,11 @@ scenes:
     duration: 5.0
     environment: {type: metropolis, focus: times_square, birds: 1, jam: true, guard: false, traffic: 0, rubbish: true}
     lighting: soft_daylight
-    camera: {shot: close_up, from: [30, 20, 2.2], to: [22, 30, 2.0], look: [-4, 44, 1.5], look_to: [-6, 50, 1.6], lens: 40, fstop: 3.5}
+    camera: {shot: close_up, from: [26, 40, 2.2], to: [18, 44, 2.0], look: [-6, 58, 1.5], look_to: [-8, 62, 1.6], lens: 40, fstop: 3.5}
     actors:
-      - {id: officers, count: 4, area: [-4, 42, 6, 2], roles: [police], action: look_around, to: [0, 70], start: 0.2, stagger: 1.5}
-      - {id: caller, role: civilian, at: [6, 38], face: 20, action: point, side: l, start: 0.6, end: 4.6}
-      - {id: panicked, count: 6, area: [-10, 36, 10, 6], roles: [civilian, shopper, child], action: scatter, radius: 10, stagger: 2.0}
+      - {id: officers, count: 4, area: [-6, 56, 6, 2], roles: [police], action: look_around, to: [0, 80], start: 0.2, stagger: 1.5}
+      - {id: caller, role: civilian, at: [4, 52], face: 20, action: point, side: l, start: 0.6, end: 4.6}
+      - {id: panicked, count: 6, area: [-10, 62, 12, 6], roles: [civilian, shopper, child], action: scatter, radius: 10, stagger: 2.0}
     captions:
       - {text: "THOUSANDS OF EMERGENCY CALLS. NOBODY KNOWS WHY.", at: 0.5, until: 4.6}
     hud: {hours: 10.5, hours_end: 12, sub: "10:00 TO 12:00"}
@@ -123,7 +124,7 @@ scenes:
     duration: 8.0
     environment: {type: airport, birds: 2}
     lighting: harsh_noon
-    camera: {shot: aerial_establish, from: [-900, -700, 220], to: [-500, -400, 160], look: [0, 100, 10], look_to: [0, 300, 10], lens: 30, fstop: 8}
+    camera: {shot: aerial_establish, from: [-620, -520, 150], to: [-330, -280, 95], look: [-100, -100, 5], look_to: [0, 250, 10], lens: 30, fstop: 8}
     captions:
       - {kind: chapter, text: "12:00 PM", sub: "New York goes into chaos", at: 0.1, until: 2.8}
       - {text: "FLIGHTS GROUNDED AT JFK, LAGUARDIA AND NEWARK", at: 3.2, until: 7.4}
@@ -155,7 +156,7 @@ scenes:
     duration: 9.0
     environment: {type: metropolis, focus: times_square, birds: 2, jam: true, closed: true, rubbish: true, splats: 1.0, traffic: 0}
     lighting: harsh_noon
-    camera: {shot: push_in, from: [-120, -60, 140], to: [-40, 20, 60], look: [0, 80, 20], look_to: [0, 72, 10], lens: 32, fstop: 8}
+    camera: {shot: push_in, from: [-170, -120, 160], to: [-90, -30, 90], look: [0, 70, 40], look_to: [0, 70, 12], lens: 32, fstop: 8}
     captions:
       - {kind: title, text: "ONE MILLION BIRDS. AN ENORMOUS AMOUNT OF WASTE.", at: 1.4, until: 6.0}
       - {text: "STREETS, CARS AND ROOFTOPS ARE COVERED", at: 6.2, until: 8.6}
@@ -188,7 +189,7 @@ scenes:
     environment: {type: metropolis, focus: times_square, birds: 2, jam: true, guard: true, closed: true, splats: 0.6, traffic: 0}
     lighting: golden_hour
     lighting_overrides: {elevation: 11, azimuth: -112}
-    camera: {shot: reveal, from: [-120, -40, 6], to: [-70, 20, 30], look: [-40, 60, 4], look_to: [-20, 80, 10], lens: 32, fstop: 6, whip_in: {duration: 0.3}}
+    camera: {shot: reveal, from: [-120, -70, 5], to: [-118, 36, 26], look: [-52, 20, 3], look_to: [-16, 74, 10], lens: 32, fstop: 6, whip_in: {duration: 0.3}}
     actors:
       - {id: troops, count: 16, area: [-40, 40, 10, 24], roles: [soldier], action: walk, to: [-10, 70], jitter: 4.0, stagger: 2.0}
       - {id: sheltering, count: 10, area: [20, 50, 16, 10], roles: [civilian, child, civilian], action: walk, to: [40, 96], jitter: 3.0, stagger: 2.5, props: [box, bucket], prop_chance: 0.5}
@@ -209,7 +210,7 @@ scenes:
     environment: {type: metropolis, focus: times_square, birds: 3, jam: true, guard: true, closed: true, splats: 0.6, traffic: 0}
     lighting: golden_hour
     lighting_overrides: {elevation: 8, azimuth: -115}
-    camera: {shot: orbit, centre: [0, 70, 20], radius: 70, height: 26, angle_from: 230, angle_to: 290, look: [0, 70, 24], lens: 32, fstop: 6}
+    camera: {shot: orbit, centre: [0, 70, 16], radius: 44, height: 24, angle_from: 236, angle_to: 284, look: [0, 70, 22], lens: 30, fstop: 6}
     actors:
       - {id: line, count: 8, area: [0, 46, 24, 1], roles: [soldier], action: stand, to: [0, 70]}
     events:
@@ -224,11 +225,12 @@ scenes:
 
   - id: s15_helicopter
     duration: 6.0
-    environment: {type: coastal_city, seed: 11, variant: crisis, helicopters: 1, fires: 0, people: 4, traffic: 2, quiet_plaza: true}
+    environment: {type: metropolis, focus: midtown, birds: 2, helicopters: 1, jam: true, traffic: 0}
     lighting: dusk_urgent
-    camera: {shot: tracking, from: [-40, -120, 86], to: [10, -40, 84], look: [-70, -30, 70], look_to: [10, 50, 66], lens: 40, fstop: 5.6, whip_in: {duration: 0.3}, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
+    camera: {shot: tracking, from: [-220, -40, 96], to: [-150, 60, 90], look: [-160, 30, 70], look_to: [40, 210, 66], lens: 40, fstop: 5.6, whip_in: {duration: 0.3}, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
     events:
-      - {type: move, target: object:flock_h, path: [[-120, -80, 60], [-40, 0, 72], [60, 60, 70]], start: 0.0, end: 6.0, ease: linear}
+      - {type: move, target: object:flock0, path: [[-240, -40, 60], [-120, 40, 72], [40, 210, 70]], start: 0.0, end: 6.0, ease: linear}
+      - {type: move, target: object:flock1, path: [[-60, 200, 90], [-120, 60, 74], [-240, -60, 60]], start: 0.5, end: 6.0, ease: linear}
     captions:
       - {text: "HELICOPTERS STRUGGLE TO OPERATE SAFELY", at: 0.6, until: 5.4}
     hud: {hours: 19, hours_end: 20, sub: "07:00 TO 08:00 PM"}
@@ -290,7 +292,7 @@ scenes:
     transition: {type: fade_black, duration: 0.6}
 
   - id: s20_aftermath
-    duration: 12.0
+    duration: 15.6
     environment: {type: metropolis, focus: times_square, birds: 3, jam: true, closed: true, rubbish: true, splats: 1.0, guard: true, traffic: 0}
     lighting: golden_hour
     lighting_overrides: {elevation: 6, azimuth: 95, colour: [1.0, 0.7, 0.46], horizon: [0.9, 0.66, 0.5], zenith: [0.26, 0.34, 0.6], ambient: 0.4}
@@ -299,6 +301,7 @@ scenes:
       - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 3.0}
       - {text: "ONE MILLION SEAGULLS. ONE CITY AT A STANDSTILL.", at: 3.4, until: 7.4}
       - {text: "DAMAGED VEHICLES. GROUNDED FLIGHTS. A CITY COVERED.", at: 7.8, until: 11.6}
+      - {text: "NEW YORK SURVIVED THE FIRST 24 HOURS", at: 12.0, until: 15.2}
     hud: {hours: 29, hours_end: 30, sub: "COUNTING TO 06:00 AM"}
     sfx: [{sound: tick, at: 1.0, gain_db: 2}, {sound: tick, at: 2.0, gain_db: 2}, {sound: impact, at: 3.0, gain_db: -2}, {sound: gulls, at: 0.0, gain_db: -8}]
     music: {intensity: 0.7}

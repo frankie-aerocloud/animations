@@ -8,7 +8,7 @@ from mathutils import Vector
 
 import bpy
 
-from studio.blender.primitives import add_noise, box, cone, cylinder, ico, key, multi_box, parent, set_interp, text
+from studio.blender.primitives import add_noise, box, cone, cylinder, ico, key, multi_box, multi_shape, parent, set_interp, text
 
 
 def tap(ctx, name, loc, rot=0.0, scale=1.0):
@@ -164,12 +164,8 @@ def barrier(ctx, name, loc, rot=0.0, length=2.4):
 def lamp_post(ctx, name, loc, height=7.0, rot=0.0, lit=False):
     x, y, z = loc
     steel = ctx.mat("dark_steel")
-    pole = cylinder(ctx, name, 0.12, height, (x, y, z), steel, segments=8, anchor="base")
-    arm = box(ctx, f"{name}.arm", (0.12, 1.6, 0.12), (0, 0.7, height - 0.1), steel, anchor="base")
-    parent(arm, pole)
     lamp_mat = ctx.mat("lamp", emission=5.0 if lit else 0.0)
-    head = box(ctx, f"{name}.lamp", (0.3, 0.6, 0.18), (0, 1.3, height - 0.2), lamp_mat, bevel=0.02)
-    parent(head, pole)
+    pole = multi_shape(ctx, name, [((0, 0.7, height - 0.04), (0.12, 1.6, 0.12), 0), ((0, 1.3, height - 0.2), (0.3, 0.6, 0.18), 1)], [((0, 0, height / 2), 0.12, height, "z", 0)], [steel, lamp_mat], (x, y, z))
     if lit:
         if lamp_mat not in ctx.tags.get("street_lights", []):
             ctx.tag("street_lights", lamp_mat)

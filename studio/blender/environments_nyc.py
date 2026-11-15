@@ -59,8 +59,11 @@ def harbour_dawn(ctx, spec):
         box(ctx, f"skyline{i}", (rng.uniform(30, 60), rng.uniform(30, 60), h), (-900.0 + i * 55.0 + rng.uniform(-10, 10), -220.0 - abs(i - 7) * 20.0, -0.3), ctx.mat("stone"), bevel=0.3, anchor="base")
     landmarks.spire_tower(ctx, "empire_far", (-560.0, -260.0, -0.3), 300.0)
     swarms = int(spec.get("swarms", 0))
+    near = bool(spec.get("swarm_near", False))
     for i in range(swarms):
-        birds.swarm(ctx, f"swarm{i}", int(spec.get("swarm_count", 2400)), (rng.uniform(-200, 200), 900.0 + i * 180.0, 90.0 + i * 25.0), (260.0, 220.0, 70.0), path=[(rng.uniform(-200, 200), 900.0 + i * 180.0, 90.0 + i * 25.0), (rng.uniform(-80, 80), 120.0 + i * 60.0, 55.0 + i * 15.0)], start=0.0, end=ctx.duration + 1.0, size=1.3)
+        far = (rng.uniform(-150, 150), (520.0 if near else 900.0) + i * 140.0, (70.0 if near else 90.0) + i * 20.0)
+        close = (rng.uniform(-60, 60), (-40.0 if near else 120.0) + i * 50.0, (26.0 if near else 55.0) + i * 12.0)
+        birds.swarm(ctx, f"swarm{i}", int(spec.get("swarm_count", 2400)), far, (220.0, 200.0, 60.0), path=[far, close], start=0.0, end=ctx.duration + 1.0, size=1.6 if near else 1.3)
     for i in range(int(spec.get("flocks", 0))):
         birds.flock(ctx, f"flock{i}", 28, (rng.uniform(-60, 60), 420.0 + i * 80.0, 30.0 + i * 8.0), (26.0, 26.0, 10.0), path=[(rng.uniform(-60, 60), 420.0 + i * 80.0, 30.0 + i * 8.0), (rng.uniform(-30, 30), -60.0, 22.0 + i * 6.0)], start=float(spec.get("flock_start", 0.0)) + i * 0.8, speed=20.0, scale=1.1)
     ctx.anchor("boat", (6.0, 70.0, 1.2))
@@ -114,7 +117,7 @@ def _manhattan_grid(ctx, spec, night, lit, focus):
                     buildings.building(ctx, f"b{count}.{i}", (xc + dx, yc + dy, 0.0), (brng.uniform(22, 30), brng.uniform(18, 24), brng.uniform(70, 230)), brng.choice(("steel", "concrete", "stone")), "flat", 0.0, block_seed + i, window=(1.8, 2.2), floor_height=3.8, lit=glow_pick(), trim="dark_steel")
             else:
                 for i, (dx, dy) in enumerate(((-16, -12), (16, -12), (-16, 12), (16, 12))):
-                    buildings.building(ctx, f"b{count}.{i}", (xc + dx, yc + dy, 0.0), (brng.uniform(22, 28), brng.uniform(16, 20), brng.uniform(18, 48)), brng.choice(("cream", "terracotta", "stone", "plaster")), "flat", 0.0, block_seed + i, window=(1.3, 1.6), lit=glow_pick(), tank=brng.random() < 0.5)
+                    buildings.building(ctx, f"b{count}.{i}", (xc + dx, yc + dy, 0.0), (brng.uniform(22, 28), brng.uniform(16, 20), brng.uniform(18, 48)), brng.choice(("cream", "terracotta", "stone", "plaster")), "flat", 0.0, block_seed + i, window=(1.3, 1.6), lit=glow_pick(), tank=False)
     # Times Square plaza and dressing
     props.pavement(ctx, "ts_plaza", (0.0, 70.0), (64.0, 48.0), 0.0)
     closed = bool(spec.get("closed", False))
@@ -178,11 +181,11 @@ def metropolis(ctx, spec):
         start_y = rng.uniform(fy - 300, fy + 300)
         taxi = vehicles.car(ctx, f"taxi{i}", (x, start_y, 0.05), rot=0.0 if direction > 0 else math.pi, colour="taxi" if rng.random() < 0.7 else None, lit=night)
         vehicles.drive(ctx, taxi, [(x, start_y), (x, start_y + direction * 260.0)], 0.0, speed=11.0, z=0.05)
-    if spec.get("jam", False):
-        for x in (-40.0, 40.0, 120.0):
-            if abs(fy) < 600:
-                vehicles.traffic_jam(ctx, f"jam{x}", (x + 4.0, fy - 220.0), (x + 4.0, fy + 220.0), lanes=1, gap=7.5, lit=night, lane_width=3.2, lorries=0.1)
-                vehicles.traffic_jam(ctx, f"jam{x}b", (x - 4.0, fy + 220.0), (x - 4.0, fy - 220.0), lanes=1, gap=9.0, lit=night, lane_width=3.2, lorries=0.1)
+    if spec.get("jam", False) and abs(fy) < 600:
+        reach = float(spec.get("jam_reach", 130.0))
+        for x in (-40.0, 40.0):
+            vehicles.traffic_jam(ctx, f"jam{x}", (x + 4.0, fy - reach), (x + 4.0, fy + reach), lanes=1, gap=7.5, lit=night, lane_width=3.2, lorries=0.1)
+            vehicles.traffic_jam(ctx, f"jam{x}b", (x - 4.0, fy + reach), (x - 4.0, fy - reach), lanes=1, gap=10.0, lit=night, lane_width=3.2, lorries=0.1)
     if spec.get("guard", False):
         for i in range(5):
             landmarks.army_truck(ctx, f"army{i}", (-52.0, fy - 60.0 + i * 11.0, 0.05), 0.0, lit=night)
@@ -204,7 +207,7 @@ def metropolis(ctx, spec):
             radius = 45.0 + 25.0 * i
             z = 40.0 + 30.0 * i
             loop = [(fx + radius * math.cos(a), fy + radius * math.sin(a), z + 8.0 * math.sin(2 * a)) for a in [math.tau * k / 8 + i for k in range(9)]]
-            birds.flock(ctx, f"flock{i}", 34 if level >= 2 else 22, loop[0], (24.0, 24.0, 10.0), path=loop, start=0.0, end=ctx.duration + 2.0, scale=1.1)
+            birds.flock(ctx, f"flock{i}", 26 if level >= 2 else 18, loop[0], (24.0, 24.0, 10.0), path=loop, start=0.0, end=ctx.duration + 2.0, scale=1.1)
     if level >= 2:
         for i in range(3):
             birds.swarm(ctx, f"swarm{i}", 2200, (fx + rng.uniform(-150, 150), fy + rng.uniform(-150, 150), 150.0 + i * 50.0), (260.0, 260.0, 60.0), path=[(fx - 300.0 + i * 80.0, fy + 200.0 - i * 150.0, 150.0 + i * 50.0), (fx + 300.0 - i * 80.0, fy - 200.0 + i * 150.0, 140.0 + i * 50.0)], start=0.0, end=ctx.duration + 2.0, size=1.4)
@@ -236,6 +239,9 @@ def metropolis(ctx, spec):
         for i in range(60):
             birds.nest(ctx, f"nest{i}", (rng.uniform(-100, 100), 650.0 + rng.uniform(-200, 200), 0.42), rng.randint(2, 4), bird=i % 3 != 0)
         birds.roost_area(ctx, "roost.park", (0.0, 650.0), (200.0, 420.0), 260, 0.45, 1.1)
+    for i in range(int(spec.get("helicopters", 0))):
+        heli = vehicles.helicopter(ctx, f"heli{i}", (fx - 160.0 + i * 120.0, fy - 120.0 + i * 60.0, 70.0 + i * 10.0), 0.0, searchlight=night, lit=True)
+        vehicles.drive(ctx, heli, [(fx - 160.0 + i * 120.0, fy - 120.0 + i * 60.0, 70.0 + i * 10.0), (fx + 40.0 + i * 60.0, fy + 60.0 + i * 30.0, 66.0 + i * 10.0)], 0.0, ctx.duration, z=70.0)
     for i in range(int(spec.get("people", 0))):
         px, py = fx + rng.uniform(-28, 28), fy + rng.uniform(-20, 20)
         qx, qy = fx + rng.uniform(-28, 28), fy + rng.uniform(-20, 20)
