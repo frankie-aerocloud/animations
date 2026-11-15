@@ -6,10 +6,18 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-The first production is **"What Happens If The World Runs Out Of Water In 24 Hours?"**
-(`projects/water-crisis`): a hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in
-eighteen shots over 118 seconds, from the first dry tap to a city-wide blackout, night fires and a dawn
-aerial that ends on "What would you do?".
+Two productions ship with the repository:
+
+- **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
+  hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
+  118 seconds, from the first dry tap to a city-wide blackout, night fires and a dawn aerial that
+  ends on "What would you do?".
+- **"What If One Million Seagulls Attacked New York?"** (`projects/seagulls-nyc`): a dark-comedy
+  disaster mockumentary in twenty-one shots over 168 seconds, from a dawn sighting off Brooklyn to
+  the Statue of Liberty under birds, a Times Square stampede, grounded airliners, the National Guard,
+  a night roost on the bridge and a dawn ending on "What happens when they start breeding?".
+
+Both are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -54,7 +62,11 @@ validate the MP4 → write `output/<project>/manifest-<profile>.json`.
 
 Every scene is fingerprinted (storyboard entry, style, render profile and the Blender-side source
 files). Re-running `render` or `build` only re-renders scenes whose fingerprint changed; `--force`
-rebuilds everything. Interrupted renders resume from the last complete frame.
+rebuilds everything. Interrupted renders resume from the last complete frame, so a long film can be
+rendered in several sittings: run `render` as often as needed, then `assemble`.
+
+`project.yaml` also accepts `hud_label` (clock caption), `hud_wrap: 24` (a time-of-day clock that
+rolls over at midnight; omit it for an elapsed-time clock) and `music_style` (`tense` or `quirky`).
 
 Outputs live under `output/<project>/`: `scenes/<scene>/<profile>/` (frames, `.blend`, `clip.mp4`),
 `overlay/<profile>/frames/`, `audio/` (narration per line, procedural score, effects, final mix),
@@ -114,9 +126,16 @@ transition. Environments: `coastal_city` (variants `normal`, `crisis`, `fire`, `
 `night_fires`, `dawn`, plus flags `dry`, `night`, `emergency`, `fires`, `smoke`, `helicopters`,
 `jam`), `residential_street`, `kitchen_interior`, `supermarket_interior`, `distribution_point`,
 `hospital_exterior` (`crisis`), `farm` (`health`, `dry`), `industrial`, `reservoir`, `port`
-(`night`), `desert`, `highway` (`jam`, `night`). Character roles: civilian, shopper, child, nurse,
-doctor, paramedic, worker, farmer, police; actions: idle, walk, run, look_around, point, fall,
-carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
+(`night`), `desert`, `highway` (`jam`, `night`), and the New York set in
+`studio/blender/environments_nyc.py`: `harbour_dawn` (`swarms`, `flocks`, `swarm_near`),
+`metropolis` (`focus`, `night`, `birds` 0-3, `splats` 0-1, `jam`, `guard`, `closed`, `rubbish`,
+`nests`, `roost`, `helicopters`) and `airport` (`birds`, `splats`). The bird library
+(`studio/assets/birds.py`) provides rigged flapping flocks, merged distant swarms, perched roosts,
+nests, droppings and dives; `studio/assets/landmarks.py` provides the statue, spire and tapered
+towers, the suspension bridge, billboards, food carts, cafe tables, bins, rubbish, airliners,
+drones, army trucks, loudspeaker vans and police cars. Character roles: civilian, shopper, child,
+nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
+look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
 movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit
 windows and lamps). Caption kinds: `title`, `caption` and `chapter` (large hour card with an
 optional `sub` line). The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
