@@ -166,11 +166,11 @@ class Pipeline:
         if configured:
             return self.project.resolve_path(str(configured))
         path = self.audio_dir / "music.wav"
-        digest = fingerprint([{"duration": s.get("duration"), "music": s.get("music")} for s in self.project.scenes], [REPO_ROOT / "studio" / "audio" / "music.py"])
+        digest = fingerprint([{"duration": s.get("duration"), "music": s.get("music")} for s in self.project.scenes] + [{"style": self.project.meta.get("music_style", "tense")}], [REPO_ROOT / "studio" / "audio" / "music.py"])
         stamp = self.audio_dir / "music.hash"
         if not (path.exists() and stamp.exists() and stamp.read_text(encoding="utf-8") == digest):
             self.log("[music] rendering procedural score")
-            music.render_score(self.project.scenes, path)
+            music.render_score(self.project.scenes, path, style=str(self.project.meta.get("music_style", "tense")))
             stamp.write_text(digest, encoding="utf-8")
         return path
 
@@ -226,7 +226,7 @@ class Pipeline:
             "fps": self.project.fps,
             "total_frames": self.project.total_frames,
             "cards": cards,
-            "hud": {"label": str(self.project.meta.get("hud_label", "ELAPSED")), "keys": keys, "visible": visible, "subs": subs},
+            "hud": {"label": str(self.project.meta.get("hud_label", "ELAPSED")), "keys": keys, "visible": visible, "subs": subs, "wrap": int(self.project.meta.get("hud_wrap") or 0)},
             "subtitles": [{"start": cue.start, "end": cue.end, "text": cue.text} for cue in cues],
             "output": {"dir": str(self.overlay_dir), "frames_dir": str(self.overlay_dir / "frames")},
         }

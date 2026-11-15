@@ -14,8 +14,8 @@ RATE = 24000
 ROOTS = (55.0, 87.31, 98.0, 82.41, 73.42, 87.31, 82.41, 65.41, 55.0, 98.0, 82.41, 55.0)
 
 
-def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RATE, seed: int = 1) -> Path:
-    """Write a mono WAV covering the whole timeline."""
+def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RATE, seed: int = 1, style: str = "tense") -> Path:
+    """Write a mono WAV covering the whole timeline. style 'quirky' adds a staccato plucked arpeggio."""
     plan = []
     cursor = 0.0
     for index, scene in enumerate(scenes):
@@ -61,6 +61,16 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
             if 0.0 <= tk < 0.3:
                 pulse_phase += math.tau * (52.0 + 40.0 * math.exp(-tk * 30.0)) / sample_rate
                 pulse = math.sin(pulse_phase) * math.exp(-tk * 16.0) * 0.5 * intensity
+        # quirky: plucked minor arpeggio on every half beat
+        pluck = 0.0
+        if style == "quirky" and intensity >= 0.2:
+            bpm = 96.0 + 50.0 * intensity
+            half = 30.0 / bpm
+            since_pluck = (t - start) % half
+            step_index = int((t - start) / half)
+            if since_pluck < 0.16:
+                ratio = (2.0, 2.4, 3.0, 4.0, 3.0, 2.4)[step_index % 6]
+                pluck = math.sin(math.tau * root * ratio * since_pluck) * math.exp(-since_pluck * 26.0) * 0.16 * (0.5 + 0.5 * intensity)
         # tension shimmer
         shimmer = math.sin(math.tau * 440.0 * t) * (0.5 + 0.5 * math.sin(math.tau * 6.5 * t)) * max(0.0, intensity - 0.55) * 0.07
         # riser into the next scene when the intensity rises
@@ -70,7 +80,7 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
             ramp = 1.0 - remaining / 1.8
             noise_state += (rng.uniform(-1.0, 1.0) - noise_state) * (0.02 + 0.3 * ramp)
             riser = noise_state * ramp * ramp * 0.5 * next_intensity
-        value = pad + pulse + shimmer + riser
+        value = pad + pulse + shimmer + riser + pluck
         fade = min(1.0, t / 1.5, max(0.0, (total - t) / 3.0))
         samples.append(int(max(-1.0, min(1.0, value * fade)) * 32767))
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -25,6 +25,8 @@ ROLES = {
     "worker": dict(top=("hi_vis",), bottom=("trousers_2",), hat="hard_hat", hat_colour="yellow"),
     "farmer": dict(top=("shirt_4", "shirt_3"), bottom=("trousers_3",), hat="brim", hat_colour="sand"),
     "police": dict(top=("navy",), bottom=("navy",), hat="cap", hat_colour="navy", vest="hi_vis"),
+    "soldier": dict(top=("olive",), bottom=("olive",), hat="hard_hat", hat_colour="olive"),
+    "fisherman": dict(top=("yellow",), bottom=("navy",), hat="brim", hat_colour="trousers_2"),
 }
 SKINS = ("skin_1", "skin_2", "skin_3", "skin_4")
 HAIR = ("hair_1", "hair_2", "hair_3", "hair_4")

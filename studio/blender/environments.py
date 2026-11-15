@@ -638,6 +638,10 @@ BUILDERS = {
     "desert": desert,
     "highway": highway,
 }
+from studio.blender import environments_nyc  # noqa: E402
+
+BUILDERS.update(environments_nyc.BUILDERS)
+FOG_EXTENT.update(environments_nyc.FOG_EXTENT)
 assert set(BUILDERS) == set(catalogue.ENVIRONMENTS), "environment catalogue and builders differ"
 
 

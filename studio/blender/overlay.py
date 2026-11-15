@@ -153,11 +153,14 @@ class Overlay:
         keys = sorted((float(t), float(h)) for t, h in hud.get("keys", []))
         clock_curves = [obj.data for obj in clock_objs]
         fps = self.fps
+        wrap = int(hud.get("wrap") or 0)
 
         def update_clock(scene):
             t = (scene.frame_current - 1) / fps
             hours = _interpolate(keys, t)
             total_minutes = int(round(hours * 60.0))
+            if wrap:
+                total_minutes %= wrap * 60
             body = f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
             for curve in clock_curves:
                 curve.body = body

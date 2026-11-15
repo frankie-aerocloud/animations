@@ -70,6 +70,10 @@ palette:                 # linear RGB
   beacon_blue: [0.20, 0.45, 1.00]
   beacon_red: [1.00, 0.12, 0.08]
   lamp: [1.00, 0.85, 0.55]
+  patina: [0.34, 0.60, 0.54]
+  olive: [0.30, 0.34, 0.18]
+  gull_grey: [0.62, 0.64, 0.66]
+  taxi: [0.95, 0.72, 0.08]
 overlay:                 # ortho overlay space: x in [-0.5, 0.5], y in [-0.889, 0.889]
   safe_width: 0.82
   fade: 0.25
