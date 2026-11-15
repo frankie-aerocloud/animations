@@ -202,9 +202,9 @@ def fire(ctx, name, loc, size=3.0, flames=True, smoke=True, light=True):
             add_noise(flame, "scale", 0.28, 1, ctx.frames, scale=2.0, phase=i * 3.1)
             ctx.tag("flame", flame)
     if smoke:
-        smoke_mat = ctx.mat("dark_steel" if flames else "stone", roughness=1.0, alpha=0.7)
+        smoke_mat = ctx.mat("rock" if flames else "stone", roughness=1.0, alpha=0.72)
         for i in range(7):
-            puff = ico(ctx, f"{name}.smoke{i}", size * (1.1 + 0.45 * i), (x + i * size * 0.45, y + i * size * 0.3, z + size * 2.0 + i * size * 2.1), smoke_mat, subdiv=2, scale=(1.3, 1.2, 0.9), smooth=True)
+            puff = ico(ctx, f"{name}.smoke{i}", size * (0.8 + 0.3 * i), (x + i * size * 0.5, y + i * size * 0.35, z + size * 1.8 + i * size * 1.7), smoke_mat, subdiv=2, scale=(1.3, 1.2, 0.9), smooth=True)
             key(puff, "location", 1)
             puff.location.z += size * 2.5
             puff.location.x += size * 1.2

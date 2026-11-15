@@ -85,7 +85,7 @@ scenes:
     lighting: interior_day
     camera: {shot: side_follow, from: [-2.0, -4, 1.5], to: [-1.9, 1.5, 1.45], look: [1.4, 3, 1.1], look_to: [1.5, 6, 1.1], lens: 26, fstop: 4}
     actors:
-      - {id: melee, count: 9, area: [1.3, 4.5, 2.0, 2.0], roles: [shopper, civilian, shopper], action: gather, to: [1.5, 4.5], radius: 1.4, stagger: 0.8, props: [bottle, box], prop_chance: 0.5}
+      - {id: melee, count: 9, area: [1.3, 4.5, 2.4, 2.4], roles: [shopper, civilian, shopper], action: react, to: [1.5, 4.5], start: 0.4, stagger: 2.5, props: [bottle, box], prop_chance: 0.5}
       - {id: faller, role: shopper, at: [0.6, 3.2], face: 60, action: fall, start: 2.4}
       - {id: faller2, role: civilian, at: [2.2, 6.2], face: 220, action: fall, start: 3.6}
       - {id: shover, role: shopper, at: [1.0, 5.6], face: 150, action: react, start: 1.6}
@@ -159,7 +159,7 @@ scenes:
     environment: {type: coastal_city, seed: 11, variant: fire, fires: 3, people: 6, traffic: 2, jam: true}
     lighting: overcast
     lighting_overrides: {sun: 3.0, elevation: 40, azimuth: -60, horizon: [0.70, 0.64, 0.58], zenith: [0.42, 0.44, 0.50]}
-    camera: {shot: push_in, from: [-140, -160, 90], to: [-86, -46, 52], look: [-46, 46, 26], look_to: [-46, 46, 22], lens: 34, fstop: 6, shake: {strength: 0.6, start: 2.0, end: 7.0, scale: 5}}
+    camera: {shot: push_in, from: [-150, -150, 85], to: [-98, -56, 48], look: {ref: "anchor:fire0", offset: [0, 0, 4]}, look_to: anchor:fire0, lens: 34, fstop: 6, shake: {strength: 0.6, start: 2.0, end: 7.0, scale: 5}}
     actors:
       - {id: evacuees, count: 14, area: [-46, 20, 12, 6], roles: [civilian, child, civilian, worker], action: scatter, radius: 16, stagger: 1.5, props: [box, bottle], prop_chance: 0.4}
       - {id: crew, count: 4, area: [-30, 26, 4, 3], roles: [worker, paramedic, police, worker], action: gather, to: [-40, 34], radius: 3, stagger: 0.8}
@@ -271,7 +271,7 @@ scenes:
     duration: 6.5
     environment: {type: coastal_city, seed: 11, variant: night_fires, fires: 2, people: 0, traffic: 0, jam: false}
     lighting: night_emergency
-    camera: {shot: side_follow, from: [-24, -30, 2.2], to: [-4, -26, 2.0], look: [-8, -8, 1.6], look_to: [-6, -6, 1.4], lens: 28, fstop: 3.5, shake: {strength: 0.8, start: 0.0, end: 6.5, scale: 7}}
+    camera: {shot: side_follow, from: [-8, -36, 2.6], to: [8, -28, 2.2], look: [-8, -10, 1.6], look_to: [-7, -7, 1.4], lens: 28, fstop: 3.5, shake: {strength: 0.8, start: 0.0, end: 6.5, scale: 7}}
     actors:
       - {id: mob, count: 16, area: [-12, -16, 10, 4], roles: [civilian, civilian, shopper, worker], action: gather, to: [-8, -8], radius: 3.0, stagger: 1.2, props: [jerrycan, bottle, bucket], prop_chance: 0.7}
       - {id: guards, count: 4, area: [-9, -4, 6, 0.4], roles: [police], action: stand, to: [-8, -12]}

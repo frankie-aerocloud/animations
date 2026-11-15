@@ -174,6 +174,8 @@ def crowd(ctx, spec):
             sub["face_at"] = [to[0], to[1]]
         elif to:
             sub["face_at"] = [to[0], to[1]]
+        if action in ("react", "fall", "point", "look_around", "crouch") and spec.get("stagger"):
+            sub["start"] = float(spec.get("start", 0.0)) + rng.uniform(0.0, float(spec["stagger"]))
         if spec.get("props") and rng.random() < float(spec.get("prop_chance", 0.6)):
             sub["prop"] = rng.choice(spec["props"])
         actor = build(ctx, sub)
