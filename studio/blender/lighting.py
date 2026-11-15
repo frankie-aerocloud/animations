@@ -9,12 +9,12 @@ import bpy
 from studio.blender.primitives import box
 
 PRESETS = {
-    "soft_daylight": dict(sun=5.0, angle=2.0, elevation=48, azimuth=-35, colour=(1.0, 0.95, 0.88), zenith=(0.20, 0.42, 0.84), horizon=(0.60, 0.72, 0.88), ambient=0.55, fog=0.0030, fog_colour=(0.76, 0.84, 0.94), exposure=-0.25),
-    "golden_hour": dict(sun=4.0, angle=2.0, elevation=14, azimuth=-110, colour=(1.0, 0.68, 0.40), zenith=(0.22, 0.34, 0.66), horizon=(0.94, 0.66, 0.42), ambient=0.45, fog=0.0050, fog_colour=(0.95, 0.74, 0.54), exposure=-0.1),
-    "overcast": dict(sun=2.6, angle=10.0, elevation=58, azimuth=-20, colour=(0.92, 0.94, 1.0), zenith=(0.46, 0.52, 0.60), horizon=(0.74, 0.76, 0.78), ambient=0.8, fog=0.0060, fog_colour=(0.80, 0.82, 0.84), exposure=-0.25),
-    "harsh_noon": dict(sun=6.5, angle=1.0, elevation=74, azimuth=10, colour=(1.0, 0.98, 0.94), zenith=(0.20, 0.44, 0.86), horizon=(0.80, 0.82, 0.80), ambient=0.5, fog=0.0018, fog_colour=(0.92, 0.90, 0.84), exposure=-0.35),
-    "dusk_urgent": dict(sun=2.4, angle=2.5, elevation=7, azimuth=-125, colour=(1.0, 0.42, 0.22), zenith=(0.06, 0.10, 0.28), horizon=(0.86, 0.38, 0.22), ambient=0.4, fog=0.0070, fog_colour=(0.60, 0.34, 0.28), exposure=0.0),
-    "night_emergency": dict(sun=0.4, angle=4.0, elevation=35, azimuth=60, colour=(0.55, 0.65, 1.0), zenith=(0.02, 0.03, 0.08), horizon=(0.10, 0.08, 0.14), ambient=0.35, fog=0.0050, fog_colour=(0.14, 0.12, 0.20), exposure=0.4),
+    "soft_daylight": dict(sun=5.0, angle=2.0, elevation=48, azimuth=-35, colour=(1.0, 0.95, 0.88), zenith=(0.20, 0.42, 0.84), horizon=(0.60, 0.72, 0.88), ambient=0.55, fog=0.0010, fog_colour=(0.78, 0.85, 0.94), exposure=-0.25),
+    "golden_hour": dict(sun=4.0, angle=2.0, elevation=14, azimuth=-110, colour=(1.0, 0.68, 0.40), zenith=(0.22, 0.34, 0.66), horizon=(0.94, 0.66, 0.42), ambient=0.45, fog=0.0016, fog_colour=(0.92, 0.80, 0.66), exposure=-0.1),
+    "overcast": dict(sun=2.6, angle=10.0, elevation=58, azimuth=-20, colour=(0.92, 0.94, 1.0), zenith=(0.46, 0.52, 0.60), horizon=(0.74, 0.76, 0.78), ambient=0.8, fog=0.0018, fog_colour=(0.82, 0.84, 0.86), exposure=-0.25),
+    "harsh_noon": dict(sun=6.5, angle=1.0, elevation=74, azimuth=10, colour=(1.0, 0.98, 0.94), zenith=(0.20, 0.44, 0.86), horizon=(0.80, 0.82, 0.80), ambient=0.5, fog=0.0007, fog_colour=(0.92, 0.90, 0.84), exposure=-0.35),
+    "dusk_urgent": dict(sun=2.4, angle=2.5, elevation=7, azimuth=-125, colour=(1.0, 0.42, 0.22), zenith=(0.06, 0.10, 0.28), horizon=(0.86, 0.38, 0.22), ambient=0.4, fog=0.0017, fog_colour=(0.64, 0.48, 0.44), exposure=0.0),
+    "night_emergency": dict(sun=0.4, angle=4.0, elevation=35, azimuth=60, colour=(0.55, 0.65, 1.0), zenith=(0.02, 0.03, 0.08), horizon=(0.10, 0.08, 0.14), ambient=0.35, fog=0.0015, fog_colour=(0.16, 0.14, 0.22), exposure=0.4),
     "interior_day": dict(sun=3.0, angle=5.0, elevation=38, azimuth=-55, colour=(1.0, 0.94, 0.84), zenith=(0.55, 0.65, 0.82), horizon=(0.80, 0.78, 0.72), ambient=0.75, fog=0.0, fog_colour=(0.9, 0.9, 0.9), exposure=-0.35),
 }
 

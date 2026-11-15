@@ -7,7 +7,7 @@ scenes:
     lighting: soft_daylight
     camera: {shot: aerial_establish, from: [-70, -190, 110], to: [-14, -82, 52], look: [10, 30, 10], look_to: [0, 0, 4], lens: 30, fstop: 8, whip_out: {duration: 0.4}}
     events:
-      - {type: flash, at: 5.0, amount: 2.4}
+      - {type: flash, at: 5.0, amount: 3.0}
       - {type: water_level, target: tag:water, start: 5.0, end: 6.2, delta: -1.8, ease: expo_in}
       - {type: water_level, target: tag:reservoir, start: 5.0, end: 6.4, delta: -7.0, ease: expo_in}
       - {type: scale, target: tag:jet, start: 5.0, end: 5.3, to: [0.01, 0.01, 0.01]}
