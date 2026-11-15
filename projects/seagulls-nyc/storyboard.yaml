@@ -5,10 +5,10 @@ scenes:
     environment: {type: harbour_dawn, swarms: 3, swarm_count: 2400}
     lighting: golden_hour
     lighting_overrides: {elevation: 5, azimuth: 92, colour: [1.0, 0.68, 0.42], horizon: [0.95, 0.62, 0.40], zenith: [0.22, 0.30, 0.56], ambient: 0.4, fog: 0.0012}
-    camera: {shot: push_in, from: [-6, 44, 4.2], to: [1, 58, 3.0], look: [6, 70, 1.6], look_to: [8, 300, 40], lens: 30, fstop: 4}
+    camera: {shot: push_in, from: [-14, 34, 7.5], to: [-4, 50, 5.5], look: [6, 84, 1.4], look_to: [8, 320, 44], lens: 30, fstop: 4}
     actors:
-      - {id: fisherman, role: fisherman, at: [6, 66, 0.9], face: 0, action: point, side: r, start: 3.0, end: 9.0}
-      - {id: mate, role: fisherman, at: [3.5, 63, 0.9], face: 20, action: look_around, start: 1.0}
+      - {id: fisherman, role: fisherman, at: [6, 80, 0.9], face: 0, action: point, side: r, start: 3.0, end: 9.0}
+      - {id: mate, role: fisherman, at: [3.5, 77, 0.9], face: 20, action: look_around, start: 1.0}
     captions:
       - {kind: title, text: "WHAT IF ONE MILLION SEAGULLS ATTACKED NEW YORK?", at: 0.5, until: 5.0}
       - {kind: chapter, text: "06:00 AM", sub: "The first sighting", at: 5.4, until: 8.6}
@@ -24,7 +24,7 @@ scenes:
     lighting_overrides: {elevation: 7, azimuth: 92, colour: [1.0, 0.7, 0.45], horizon: [0.94, 0.64, 0.42], zenith: [0.24, 0.32, 0.58], ambient: 0.42, fog: 0.0012}
     camera: {shot: static, from: [2, 56, 2.4], look: [0, 240, 40], look_to: [-4, 90, 26], lens: 24, fstop: 4, shake: {strength: 0.6, start: 5.0, end: 11.0, scale: 5}}
     actors:
-      - {id: fisherman, role: fisherman, at: [6, 66, 0.9], face: 0, action: react, start: 6.5}
+      - {id: fisherman, role: fisherman, at: [6, 80, 0.9], face: 0, action: react, start: 6.5}
     captions:
       - {text: "THOUSANDS OF WHITE DOTS", at: 0.6, until: 4.0}
       - {kind: title, text: "ONE MILLION OF THEM", at: 7.0, until: 10.6}
@@ -123,8 +123,9 @@ scenes:
   - id: s09_airport
     duration: 8.0
     environment: {type: airport, birds: 2}
-    lighting: harsh_noon
-    camera: {shot: aerial_establish, from: [-620, -520, 150], to: [-330, -280, 95], look: [-100, -100, 5], look_to: [0, 250, 10], lens: 30, fstop: 8}
+    lighting: soft_daylight
+    lighting_overrides: {elevation: 58, azimuth: 20}
+    camera: {shot: aerial_establish, from: [-430, -240, 120], to: [-230, -40, 70], look: [-60, 150, 6], look_to: [0, 330, 8], lens: 30, fstop: 8}
     captions:
       - {kind: chapter, text: "12:00 PM", sub: "New York goes into chaos", at: 0.1, until: 2.8}
       - {text: "FLIGHTS GROUNDED AT JFK, LAGUARDIA AND NEWARK", at: 3.2, until: 7.4}
@@ -189,7 +190,7 @@ scenes:
     environment: {type: metropolis, focus: times_square, birds: 2, jam: true, guard: true, closed: true, splats: 0.6, traffic: 0}
     lighting: golden_hour
     lighting_overrides: {elevation: 11, azimuth: -112}
-    camera: {shot: reveal, from: [-120, -70, 5], to: [-118, 36, 26], look: [-52, 20, 3], look_to: [-16, 74, 10], lens: 32, fstop: 6, whip_in: {duration: 0.3}}
+    camera: {shot: reveal, from: [-40, -70, 4], to: [-40, 26, 15], look: [-20, 40, 3], look_to: [0, 76, 8], lens: 30, fstop: 6, whip_in: {duration: 0.3}}
     actors:
       - {id: troops, count: 16, area: [-40, 40, 10, 24], roles: [soldier], action: walk, to: [-10, 70], jitter: 4.0, stagger: 2.0}
       - {id: sheltering, count: 10, area: [20, 50, 16, 10], roles: [civilian, child, civilian], action: walk, to: [40, 96], jitter: 3.0, stagger: 2.5, props: [box, bucket], prop_chance: 0.5}
@@ -227,7 +228,7 @@ scenes:
     duration: 6.0
     environment: {type: metropolis, focus: midtown, birds: 2, helicopters: 1, jam: true, traffic: 0}
     lighting: dusk_urgent
-    camera: {shot: tracking, from: [-220, -40, 96], to: [-150, 60, 90], look: [-160, 30, 70], look_to: [40, 210, 66], lens: 40, fstop: 5.6, whip_in: {duration: 0.3}, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
+    camera: {shot: tracking, from: [-340, -70, 112], to: [-300, 70, 100], look: [-160, 40, 70], look_to: [-30, 180, 76], lens: 40, fstop: 5.6, whip_in: {duration: 0.3}, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
     events:
       - {type: move, target: object:flock0, path: [[-240, -40, 60], [-120, 40, 72], [40, 210, 70]], start: 0.0, end: 6.0, ease: linear}
       - {type: move, target: object:flock1, path: [[-60, 200, 90], [-120, 60, 74], [-240, -60, 60]], start: 0.5, end: 6.0, ease: linear}
@@ -254,7 +255,7 @@ scenes:
     duration: 9.0
     environment: {type: metropolis, focus: bridge, night: true, birds: 3, roost: true, traffic: 0, jam: false}
     lighting: night_emergency
-    camera: {shot: push_in, from: [120, -560, 70], to: [250, -440, 46], look: [430, -380, 40], look_to: [400, -380, 34], lens: 36, fstop: 5.6}
+    camera: {shot: push_in, from: [150, -600, 80], to: [300, -480, 44], look: [430, -380, 44], look_to: [420, -385, 34], lens: 36, fstop: 5.6}
     captions:
       - {kind: chapter, text: "02:00 AM", sub: "The worst is yet to come", at: 0.1, until: 2.8}
       - {text: "ROOFTOPS, BRIDGES, STREETLIGHTS", at: 3.4, until: 8.4}
@@ -280,9 +281,9 @@ scenes:
 
   - id: s19_more
     duration: 6.0
-    environment: {type: harbour_dawn, swarms: 4, swarm_count: 3000}
+    environment: {type: harbour_dawn, swarms: 4, swarm_count: 3000, swarm_near: true}
     lighting: night_emergency
-    lighting_overrides: {sun: 0.6, elevation: 30, azimuth: 60}
+    lighting_overrides: {sun: 1.6, elevation: 28, azimuth: 70, ambient: 0.8, exposure: 0.9, zenith: [0.05, 0.08, 0.2], horizon: [0.2, 0.18, 0.3]}
     camera: {shot: push_in, from: [-40, -30, 14], to: [-10, 30, 8], look: [0, 500, 90], look_to: [0, 300, 60], lens: 30, fstop: 5.6}
     captions:
       - {text: "STILL NO SIGN OF THEM LEAVING", at: 0.6, until: 5.4}
@@ -312,7 +313,7 @@ scenes:
     environment: {type: metropolis, focus: park, birds: 2, nests: true, traffic: 0, park_trees: 120}
     lighting: golden_hour
     lighting_overrides: {elevation: 8, azimuth: 95, colour: [1.0, 0.72, 0.48], horizon: [0.9, 0.68, 0.52], zenith: [0.28, 0.36, 0.62], ambient: 0.42}
-    camera: {shot: push_in, from: [-90, 520, 40], to: [-30, 600, 14], look: [0, 650, 2], look_to: [0, 640, 1], lens: 40, fstop: 4}
+    camera: {shot: push_in, from: [-110, 540, 30], to: [-62, 578, 5], look: [-20, 640, 2], look_to: [-42, 598, 0.7], lens: 40, fstop: 3.5}
     captions:
       - {kind: title, text: "WHAT HAPPENS WHEN THEY START BREEDING?", at: 2.6, until: 9.0}
     hud: {hours: 30, hours_end: 30, sub: "A HYPOTHETICAL SCENARIO"}

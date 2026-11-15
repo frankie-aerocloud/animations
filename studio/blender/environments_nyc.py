@@ -50,7 +50,7 @@ def harbour_dawn(ctx, spec):
         props.bench(ctx, f"bench{i}", (-150.0 + i * 60.0, -32.0, 0.7), 0.0)
     for i in range(10):
         vegetation.tree(ctx, f"tree{i}", (-280.0 + i * 60.0, -58.0, -0.3), "round", 1.0)
-    vehicles.boat(ctx, "trawler", (6.0, 70.0, -0.5), 0.0, 10.0, "navy")
+    vehicles.boat(ctx, "trawler", (6.0, 84.0, -0.5), 0.0, 10.0, "navy")
     vehicles.boat(ctx, "dinghy", (-14.0, 28.0, -0.5), 0.4, 5.0, "white")
     vehicles.ship(ctx, "freighter", (420.0, 700.0, -0.6), math.radians(80), 110.0, "rust")
     # Manhattan on the horizon
@@ -66,8 +66,8 @@ def harbour_dawn(ctx, spec):
         birds.swarm(ctx, f"swarm{i}", int(spec.get("swarm_count", 2400)), far, (220.0, 200.0, 60.0), path=[far, close], start=0.0, end=ctx.duration + 1.0, size=1.6 if near else 1.3)
     for i in range(int(spec.get("flocks", 0))):
         birds.flock(ctx, f"flock{i}", 28, (rng.uniform(-60, 60), 420.0 + i * 80.0, 30.0 + i * 8.0), (26.0, 26.0, 10.0), path=[(rng.uniform(-60, 60), 420.0 + i * 80.0, 30.0 + i * 8.0), (rng.uniform(-30, 30), -60.0, 22.0 + i * 6.0)], start=float(spec.get("flock_start", 0.0)) + i * 0.8, speed=20.0, scale=1.1)
-    ctx.anchor("boat", (6.0, 70.0, 1.2))
-    ctx.anchor("deck", (6.0, 66.0, 0.9))
+    ctx.anchor("boat", (6.0, 84.0, 1.2))
+    ctx.anchor("deck", (6.0, 80.0, 0.9))
     ctx.anchor("pier_end", (0.0, 66.0, 0.8))
     ctx.anchor("horizon", (0.0, 900.0, 60.0))
     ctx.anchor("shore", (0.0, -30.0, 1.0))
@@ -238,6 +238,8 @@ def metropolis(ctx, spec):
     if spec.get("nests", False):
         for i in range(60):
             birds.nest(ctx, f"nest{i}", (rng.uniform(-100, 100), 650.0 + rng.uniform(-200, 200), 0.42), rng.randint(2, 4), bird=i % 3 != 0)
+        for i in range(24):
+            birds.nest(ctx, f"nest_close{i}", (-44.0 + rng.uniform(-14, 14), 596.0 + rng.uniform(-9, 9), 0.42), rng.randint(2, 4), bird=i % 4 != 0)
         birds.roost_area(ctx, "roost.park", (0.0, 650.0), (200.0, 420.0), 260, 0.45, 1.1)
     for i in range(int(spec.get("helicopters", 0))):
         heli = vehicles.helicopter(ctx, f"heli{i}", (fx - 160.0 + i * 120.0, fy - 120.0 + i * 60.0, 70.0 + i * 10.0), 0.0, searchlight=night, lit=True)
