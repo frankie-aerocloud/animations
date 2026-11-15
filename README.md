@@ -7,7 +7,9 @@ Everything is free and open-source software and runs on one machine: no cloud re
 no accounts.
 
 The first production is **"What Happens If The World Runs Out Of Water In 24 Hours?"**
-(`projects/water-crisis`), a hypothetical scenario told in twelve shots over 82 seconds.
+(`projects/water-crisis`): a hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in
+eighteen shots over 118 seconds, from the first dry tap to a city-wide blackout, night fires and a dawn
+aerial that ends on "What would you do?".
 
 ## Toolchain
 
@@ -108,11 +110,16 @@ A project is three YAML files plus optional audio:
 Camera behaviours: `aerial_establish`, `push_in`, `tracking`, `orbit`, `side_follow`,
 `first_person`, `close_up`, `wide`, `reveal`, `static`, with depth of field (`fstop`, `focus`),
 `shake`, `lens_to`, and `whip_in`/`whip_out` for fast location changes that pair with the `whip`
-transition. Environments: `coastal_city`, `residential_street`, `kitchen_interior`,
-`supermarket_interior`, `distribution_point`, `hospital_exterior`, `farm`, `industrial`,
-`reservoir`, `port`, `desert`. Character roles: civilian, shopper, child, nurse, doctor, paramedic,
-worker, farmer, police; actions: idle, walk, run, look_around, point, fall, carry, gather, react,
-queue, crouch, stand. The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
+transition. Environments: `coastal_city` (variants `normal`, `crisis`, `fire`, `night`,
+`night_fires`, `dawn`, plus flags `dry`, `night`, `emergency`, `fires`, `smoke`, `helicopters`,
+`jam`), `residential_street`, `kitchen_interior`, `supermarket_interior`, `distribution_point`,
+`hospital_exterior` (`crisis`), `farm` (`health`, `dry`), `industrial`, `reservoir`, `port`
+(`night`), `desert`, `highway` (`jam`, `night`). Character roles: civilian, shopper, child, nurse,
+doctor, paramedic, worker, farmer, police; actions: idle, walk, run, look_around, point, fall,
+carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
+movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit
+windows and lamps). Caption kinds: `title`, `caption` and `chapter` (large hour card with an
+optional `sub` line). The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
 anything outside it.
 
 Coordinates are metres in each environment's world space; every builder in

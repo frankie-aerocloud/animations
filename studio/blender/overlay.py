@@ -123,12 +123,18 @@ class Overlay:
         safe = float(self.style.get("safe_width", 0.82))
         titles = self.style["title"]
         captions = self.style["caption"]
+        chapters = self.style.get("chapter", titles)
         for i, card in enumerate(self.spec.get("cards", [])):
             kind = card.get("kind", "caption")
-            cfg = titles if kind == "title" else captions
+            cfg = {"title": titles, "chapter": chapters}.get(kind, captions)
             body = card["text"] if kind == "title" else card["text"].upper()
-            objects, sockets = self.card(f"card{i}", body, float(cfg["size"]), tuple(cfg["colour"]), 0.0, float(card.get("y", cfg["y"])), width=safe, weight=float(cfg.get("weight", 0.0)), tracking=float(cfg.get("tracking", 1.0)))
-            self.visible(sockets, card["start"], card["end"], pop=objects if kind == "title" else None)
+            y = float(card.get("y", cfg["y"]))
+            objects, sockets = self.card(f"card{i}", body, float(cfg["size"]), tuple(cfg["colour"]), 0.0, y, width=safe, weight=float(cfg.get("weight", 0.0)), tracking=float(cfg.get("tracking", 1.0)))
+            if card.get("sub"):
+                sub_objects, sub_sockets = self.card(f"card{i}.sub", str(card["sub"]).upper(), float(cfg.get("sub_size", captions["size"])), tuple(cfg.get("accent", cfg["colour"])), 0.0, y - float(cfg["size"]) * 1.15, width=safe, weight=float(captions.get("weight", 0.0)), tracking=1.15)
+                objects += sub_objects
+                sockets += sub_sockets
+            self.visible(sockets, card["start"], card["end"], pop=objects if kind in ("title", "chapter") else None)
         self.hud()
         self.subtitles()
 

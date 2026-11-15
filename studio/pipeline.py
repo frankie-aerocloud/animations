@@ -201,7 +201,7 @@ class Pipeline:
             duration = float(scene["duration"])
             end = start + duration
             for caption in scene.get("captions") or []:
-                cards.append({"kind": caption.get("kind", "caption"), "text": str(caption["text"]), "start": start + float(caption.get("at", 0.0)), "end": start + float(caption.get("until", duration)), "y": caption.get("y")})
+                cards.append({"kind": caption.get("kind", "caption"), "text": str(caption["text"]), "sub": caption.get("sub"), "start": start + float(caption.get("at", 0.0)), "end": start + float(caption.get("until", duration)), "y": caption.get("y")})
             hud = scene.get("hud")
             if hud:
                 show = start + float(hud.get("show_at", 0.0))

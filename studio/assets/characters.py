@@ -161,6 +161,12 @@ def crowd(ctx, spec):
             sub["path"] = [[px, py], [to[0] + radius * math.cos(angle), to[1] + radius * math.sin(angle)]]
             sub["face_at"] = [to[0], to[1]]
             sub["start"] = float(spec.get("start", 0.0)) + rng.uniform(0.0, float(spec.get("stagger", 1.0)))
+        elif action == "scatter":
+            radius = float(spec.get("radius", 12.0)) * rng.uniform(0.6, 1.3)
+            angle = rng.uniform(0, math.tau)
+            sub["path"] = [[px, py], [px + radius * math.cos(angle), py + radius * math.sin(angle)]]
+            sub["action"] = "run"
+            sub["start"] = float(spec.get("start", 0.0)) + rng.uniform(0.0, float(spec.get("stagger", 0.8)))
         elif action == "queue" and to:
             dx, dy = spec.get("direction", [-1, 0])
             gap = float(spec.get("gap", 0.85))

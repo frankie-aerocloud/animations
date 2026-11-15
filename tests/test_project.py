@@ -13,7 +13,7 @@ class ProjectValidationTests(unittest.TestCase):
     def test_shipped_project_is_valid(self):
         self.assertEqual(validate_project(self.project), [])
         self.assertGreaterEqual(self.project.duration, 60.0)
-        self.assertLessEqual(self.project.duration, 90.0)
+        self.assertLessEqual(self.project.duration, 180.0)
 
     def assertProblem(self, text):
         problems = validate_project(self.project)

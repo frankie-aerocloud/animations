@@ -10,11 +10,13 @@ from studio.assets.props import cross
 from studio.blender.primitives import box, cone, cylinder, ico, mesh_from_pydata, multi_box, parent
 
 
-def building(ctx, name, loc, size, wall="concrete", roof="flat", rot=0.0, seed=0, glass="glass", window=(1.2, 1.4), floor_height=3.2, door=True, trim="stone", units=True, tank=False):
-    """Box building with window grid, parapet or pitched/dome roof. Returns the body object."""
+def building(ctx, name, loc, size, wall="concrete", roof="flat", rot=0.0, seed=0, glass="glass", window=(1.2, 1.4), floor_height=3.2, door=True, trim="stone", units=True, tank=False, lit=None, lit_fraction=0.55):
+    """Box building with window grid, parapet or pitched/dome roof. Returns the body object.
+
+    `lit` is an emissive material; when given, roughly `lit_fraction` of the windows use it (night scenes)."""
     w, d, h = size
     rng = random.Random(seed)
-    mats = [ctx.mat(wall), ctx.palette.glass(f"{name} glass", glass), ctx.mat(trim), ctx.mat("roof_dark")]
+    mats = [ctx.mat(wall), ctx.palette.glass(f"{name} glass", glass), ctx.mat(trim), ctx.mat("roof_dark"), lit or ctx.mat("roof_dark")]
     boxes = [((0, 0, h / 2), (w, d, h), 0)]
     ww, wh = window
     floors = max(1, int(h / floor_height))
@@ -30,10 +32,11 @@ def building(ctx, name, loc, size, wall="concrete", roof="flat", rot=0.0, seed=0
                         continue
                     if rng.random() < 0.08:
                         continue
+                    index = 4 if lit is not None and rng.random() < lit_fraction else 1
                     if axis == "x":
-                        boxes.append(((offset, sign * (other / 2), z), (ww, 0.14, wh), 1))
+                        boxes.append(((offset, sign * (other / 2), z), (ww, 0.14, wh), index))
                     else:
-                        boxes.append(((sign * (other / 2), offset, z), (0.14, ww, wh), 1))
+                        boxes.append(((sign * (other / 2), offset, z), (0.14, ww, wh), index))
     if roof == "flat":
         for cx, cy, sx, sy in ((0, d / 2, w, 0.3), (0, -d / 2, w, 0.3), (w / 2, 0, 0.3, d), (-w / 2, 0, 0.3, d)):
             boxes.append(((cx, cy, h + 0.35), (sx + 0.3, sy + 0.3, 0.7), 2))
@@ -41,6 +44,7 @@ def building(ctx, name, loc, size, wall="concrete", roof="flat", rot=0.0, seed=0
             for _ in range(rng.randint(1, 3)):
                 boxes.append(((rng.uniform(-w * 0.3, w * 0.3), rng.uniform(-d * 0.3, d * 0.3), h + 0.5), (rng.uniform(1.2, 2.4), rng.uniform(1.2, 2.0), 1.0), 2))
     body = multi_box(ctx, name, boxes, mats, loc, (0, 0, rot), bevel=min(0.12, w * 0.02))
+    ctx.anchor(f"{name}.roof", (loc[0], loc[1], loc[2] + h))
     if roof == "pitched":
         ridge = h + min(w, d) * 0.35
         verts = [(-w / 2 - 0.5, -d / 2 - 0.5, h), (w / 2 + 0.5, -d / 2 - 0.5, h), (w / 2 + 0.5, d / 2 + 0.5, h), (-w / 2 - 0.5, d / 2 + 0.5, h), (-w / 2 - 0.5, 0, ridge), (w / 2 + 0.5, 0, ridge)]
@@ -57,27 +61,27 @@ def building(ctx, name, loc, size, wall="concrete", roof="flat", rot=0.0, seed=0
     return body
 
 
-def house(ctx, name, loc, seed=0, rot=0.0, size=None):
+def house(ctx, name, loc, seed=0, rot=0.0, size=None, lit=None):
     rng = random.Random(seed)
     w, d, h = size or (rng.uniform(7, 10), rng.uniform(6, 8), rng.uniform(3.2, 3.6) * rng.choice((1, 1, 2)))
     wall = rng.choice(("white", "cream", "plaster", "sand"))
-    body = building(ctx, name, loc, (w, d, h), wall, "pitched", rot, seed, window=(1.1, 1.2), floor_height=3.2, units=False)
+    body = building(ctx, name, loc, (w, d, h), wall, "pitched", rot, seed, window=(1.1, 1.2), floor_height=3.2, units=False, lit=lit)
     chimney = box(ctx, f"{name}.chimney", (0.7, 0.7, 1.6), (w * 0.3, d * 0.2, h + 0.6), ctx.mat("stone"), anchor="base")
     parent(chimney, body)
     return body
 
 
-def tower(ctx, name, loc, seed=0, height=None, rot=0.0):
+def tower(ctx, name, loc, seed=0, height=None, rot=0.0, lit=None):
     rng = random.Random(seed)
     h = height or rng.uniform(24, 60)
     w, d = rng.uniform(12, 18), rng.uniform(12, 18)
     wall = rng.choice(("concrete", "plaster", "white", "stone"))
-    return building(ctx, name, loc, (w, d, h), wall, "flat", rot, seed, window=(1.6, 1.8), floor_height=3.4, tank=rng.random() < 0.4)
+    return building(ctx, name, loc, (w, d, h), wall, "flat", rot, seed, window=(1.6, 1.8), floor_height=3.4, tank=rng.random() < 0.4, lit=lit)
 
 
-def apartment(ctx, name, loc, seed=0, rot=0.0):
+def apartment(ctx, name, loc, seed=0, rot=0.0, lit=None):
     rng = random.Random(seed)
-    return building(ctx, name, loc, (rng.uniform(12, 22), rng.uniform(9, 14), rng.uniform(9, 18)), rng.choice(("cream", "plaster", "white", "sand")), "flat", rot, seed, tank=rng.random() < 0.5)
+    return building(ctx, name, loc, (rng.uniform(12, 22), rng.uniform(9, 14), rng.uniform(9, 18)), rng.choice(("cream", "plaster", "white", "sand")), "flat", rot, seed, tank=rng.random() < 0.5, lit=lit)
 
 
 def hospital(ctx, name, loc, rot=0.0):

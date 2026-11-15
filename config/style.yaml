@@ -75,5 +75,6 @@ overlay:                 # ortho overlay space: x in [-0.5, 0.5], y in [-0.889, 
   fade: 0.25
   title:    {size: 0.074, y: 0.50, weight: 0.0018, tracking: 1.0,  colour: [1.0, 1.0, 1.0]}
   caption:  {size: 0.036, y: -0.28, weight: 0.0011, tracking: 1.08, colour: [1.0, 1.0, 1.0]}
+  chapter:  {size: 0.115, y: 0.17, weight: 0.0034, tracking: 1.02, colour: [1.0, 1.0, 1.0], sub_size: 0.036, accent: [0.62, 0.90, 1.0]}
   hud:      {x: -0.41, y: 0.27, label_size: 0.021, clock_size: 0.068, sub_size: 0.019, colour: [1.0, 1.0, 1.0], accent: [0.62, 0.90, 1.0]}
   subtitle: {size: 0.037, y: -0.47, max_chars: 42, weight: 0.0012, colour: [1.0, 1.0, 1.0], plate: [0.02, 0.03, 0.05], plate_alpha: 0.58}

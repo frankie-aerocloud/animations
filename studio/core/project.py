@@ -195,8 +195,8 @@ def validate_project(project: Project) -> list[str]:
             at, until = caption.get("at", 0.0), caption.get("until", duration)
             if not (_number(at) and _number(until) and 0 <= at < until <= duration + 0.5):
                 errors.append(f"{label}: caption {caption['text']!r} must have 0 <= at < until <= scene duration")
-            if caption.get("kind", "caption") not in ("title", "caption"):
-                errors.append(f"{label}: caption kind must be title or caption")
+            if caption.get("kind", "caption") not in catalogue.CARD_KINDS:
+                errors.append(f"{label}: caption kind must be one of {', '.join(catalogue.CARD_KINDS)}")
         for cue in scene.get("sfx") or []:
             if not isinstance(cue, dict) or cue.get("sound") not in catalogue.SFX:
                 errors.append(f"{label}: sfx sound must be one of {', '.join(catalogue.SFX)}")
