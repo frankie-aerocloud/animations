@@ -10,7 +10,7 @@ scenes:
     environment: {type: mojave, truck: true}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: aerial_establish, from: [-40, 760, 55], to: [-22, 580, 30], look: [2.6, 600, 2], look_to: [2.6, 470, 2], lens: 30, fstop: 8}
+    camera: {shot: aerial_establish, from: [-22, 668, 16], to: [-12, 532, 8], look: [2.6, 600, 2], look_to: [2.6, 470, 2.4], lens: 30, fstop: 6}
     captions:
       - {kind: title, text: "WHAT IF ONE MILLION LIONS ATTACKED LAS VEGAS?", at: 0.4, until: 5.6}
     hud: {hours: 24, hours_end: 23.8, show_at: 0.4, sub: "06:00 AM"}
@@ -23,7 +23,7 @@ scenes:
     environment: {type: mojave, truck: true, dust: true}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: push_in, from: [-12, 470, 3.2], to: [-12, 478, 3.5], look: [500, 1400, 60], look_to: [520, 1400, 55], lens: 32, fstop: 5.6}
+    camera: {shot: push_in, from: [-7, 462, 2.6], to: [-7, 470, 2.9], look: [500, 1400, 60], look_to: [520, 1400, 55], lens: 32, fstop: 5.6}
     captions:
       - {kind: chapter, text: "06:00 AM", sub: "Something is coming", at: 0.1, until: 3.0}
     hud: {hours: 23.8, hours_end: 23.5, sub: "06:00 AM"}
@@ -36,9 +36,9 @@ scenes:
     environment: {type: mojave, truck: false, dust: true, hordes: 3}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: static, from: [14, 22, 1.2], look: [38, 110, 3], look_to: [30, 80, 2], lens: 32, fstop: 3.5, shake: {strength: 0.7, start: 1.5, end: 7.0, scale: 6}}
+    camera: {shot: static, from: [16, 18, 1.1], look: [26, 70, 2.5], look_to: [18, 40, 1.4], lens: 30, fstop: 3.5, shake: {strength: 0.7, start: 1.5, end: 7.0, scale: 6}}
     actors:
-      - {id: pride, kind: lion, count: 9, area: [40, 120, 50, 24], action: run, to: [5, 30], jitter: 6, stagger: 1.0, start: 0.3, speed: 9}
+      - {id: pride, kind: lion, count: 9, area: [30, 78, 36, 14], action: run, to: [2, 26], jitter: 5, stagger: 1.0, start: 0.2, speed: 7}
     captions:
       - {text: "THOUSANDS OF THEM", at: 1.4, until: 6.4}
     hud: {hours: 23.5, hours_end: 23.2, sub: "06:20 AM"}
@@ -66,7 +66,7 @@ scenes:
     lighting_overrides: *morning
     camera: {shot: tracking, from: [26, -5.5, 1.8], to: [22, -5.0, 1.7], look: [-40, 0, 1.2], look_to: [-30, 0, 1.2], lens: 30, fstop: 4}
     actors:
-      - {id: arrivals, kind: lion, count: 7, area: [-62, 0, 24, 6], action: walk, to: [-20, 0], jitter: 3, stagger: 1.5}
+      - {id: arrivals, kind: lion, count: 7, area: [-36, 0, 16, 5], action: walk, to: [-6, 0], jitter: 2, stagger: 1.2}
       - {id: fleeing, count: 6, area: [-6, 2, 10, 6], roles: [civilian, shopper, child], action: run, to: [40, 0], jitter: 2, stagger: 1.0}
     captions:
       - {kind: chapter, text: "08:00 AM", sub: "The Strip is overrun", at: 0.1, until: 2.9}
@@ -77,12 +77,13 @@ scenes:
 
   - id: s06_strip
     duration: 7.0
-    environment: {type: vegas_strip, focus: strip, lions: 1, lion_action: run, cars: true, car_count: 28}
+    environment: {type: vegas_strip, focus: strip, lions: 0, cars: true, car_count: 28}
     lighting: soft_daylight
     lighting_overrides: *morning
     camera: {shot: tracking, from: [-6, 70, 3.0], to: [-6, 95, 2.6], look: [0, 0, 1.5], look_to: [0, 25, 1.2], lens: 28, fstop: 4, shake: {strength: 0.5, start: 0.5, end: 7.0, scale: 6}}
     actors:
-      - {id: tourists, count: 14, area: [0, 40, 36, 20], roles: [civilian, shopper, child, civilian], action: run, to: [0, 160], jitter: 6, stagger: 1.0, props: [box, bottle], prop_chance: 0.3}
+      - {id: tourists, count: 14, area: [0, 52, 36, 16], roles: [civilian, shopper, child, civilian], action: run, to: [0, 170], jitter: 6, stagger: 1.0, props: [box, bottle], prop_chance: 0.3}
+      - {id: flood, kind: lion, count: 12, area: [2, 22, 28, 18], action: run, to: [0, 140], jitter: 6, stagger: 1.2, speed: 7}
     captions:
       - {kind: alert, text: "Lions on the Strip. Shelter in place.", at: 1.2, until: 5.6}
     hud: {hours: 21.7, hours_end: 21.4, sub: "08:20 AM"}
@@ -95,11 +96,11 @@ scenes:
     environment: {type: vegas_strip, focus: entrance, barricades: true, cars: true, car_count: 12}
     lighting: soft_daylight
     lighting_overrides: *morning
-    camera: {shot: close_up, from: [-8, 222, 2.0], to: [-12, 230, 2.3], look: [-34, 248, 1.6], look_to: [-35, 250, 1.6], lens: 30, fstop: 3.5}
+    camera: {shot: close_up, from: [-24, 214, 1.7], to: [-25, 219, 1.8], look: [-33, 250, 1.6], look_to: [-34, 252, 1.6], lens: 28, fstop: 3.5}
     actors:
       - {id: guards, count: 6, area: [-37, 250, 2, 30], roles: [police], action: stand, to: [0, 250]}
       - {id: dragger, role: police, at: [-30, 238], face: 90, action: carry, prop: box}
-      - {id: stalkers, kind: lion, count: 3, area: [-16, 200, 8, 10], action: prowl, to: [-22, 236], jitter: 2, stagger: 1.0}
+      - {id: stalkers, kind: lion, count: 3, area: [-20, 222, 6, 6], action: prowl, to: [-27, 240], jitter: 1.5, stagger: 0.8}
     captions:
       - {text: "CASINOS BARRICADE THEIR DOORS", at: 0.4, until: 3.8}
     hud: {hours: 21.4, hours_end: 21.2, sub: "08:40 AM"}
@@ -112,9 +113,9 @@ scenes:
     environment: {type: vegas_strip, focus: fountains, cars: false}
     lighting: soft_daylight
     lighting_overrides: *morning
-    camera: {shot: side_follow, from: [12, 468, 2.4], to: [12, 492, 2.6], look: [-50, 520, 9], look_to: [-50, 540, 9], lens: 26, fstop: 5.6}
+    camera: {shot: side_follow, from: [14, 470, 7.0], to: [14, 494, 7.5], look: [-55, 520, 6], look_to: [-55, 540, 6], lens: 26, fstop: 5.6}
     actors:
-      - {id: prowlers, kind: lion, count: 6, area: [-27, 470, 6, 20], action: prowl, to: [-28, 540], jitter: 2, stagger: 1.2}
+      - {id: prowlers, kind: lion, count: 6, area: [-26, 488, 6, 12], action: prowl, to: [-28, 530], jitter: 2, stagger: 1.2}
     captions:
       - {text: "LIONS ROAM THE FOUNTAINS", at: 0.3, until: 4.3}
     hud: {hours: 21.2, hours_end: 21.0, sub: "09:00 AM"}
@@ -143,7 +144,7 @@ scenes:
     environment: {type: desert_airport, lions: 2}
     lighting: harsh_noon
     lighting_overrides: *noon
-    camera: {shot: aerial_establish, from: [-430, -240, 120], to: [-230, -40, 70], look: [-60, 150, 6], look_to: [0, 330, 8], lens: 30, fstop: 8}
+    camera: {shot: aerial_establish, from: [-360, -235, 42], to: [-210, -200, 26], look: [-80, -150, 2], look_to: [40, -120, 4], lens: 30, fstop: 6}
     captions:
       - {kind: chapter, text: "12:00 PM", sub: "Vegas shuts down", at: 0.1, until: 2.9}
       - {kind: alert, text: "All flights suspended", at: 3.2, until: 6.8}
@@ -157,9 +158,9 @@ scenes:
     environment: {type: vegas_strip, focus: strip, guard: true, cars: true, car_count: 10}
     lighting: harsh_noon
     lighting_overrides: *noon
-    camera: {shot: static, from: [6, -20, 1.8], look: [-12, -120, 2.5], look_to: [-12, -100, 2.5], lens: 30, fstop: 4, whip_in: {duration: 0.3}}
+    camera: {shot: static, from: [-8, -95, 1.6], look: [-17, -185, 2.6], look_to: [-17, -150, 2.6], lens: 30, fstop: 4, whip_in: {duration: 0.3}}
     actors:
-      - {id: troops, count: 10, area: [-6, -70, 16, 12], roles: [soldier], action: walk, to: [-4, -30], jitter: 3, stagger: 1.0}
+      - {id: troops, count: 10, area: [-4, -125, 10, 12], roles: [soldier], action: walk, to: [-2, -100], jitter: 2, stagger: 1.0}
     events:
       - {type: move, target: object:army0, path: [[-17, -230], [-17, -110]], start: 0.0, end: 4.0, face: true}
       - {type: move, target: object:army2, path: [[-17, -260], [-17, -140]], start: 0.0, end: 4.0, face: true}
@@ -209,7 +210,7 @@ scenes:
     environment: {type: vegas_strip, focus: rooftops, rooftops: true, lions: 1, closed: true}
     lighting: harsh_noon
     lighting_overrides: *noon
-    camera: {shot: aerial_establish, from: [-5, -150, 45], to: [-20, -95, 38], look: [-58, -40, 16], look_to: [-58, -10, 16], lens: 35, fstop: 5.6}
+    camera: {shot: aerial_establish, from: [-30, -110, 30], to: [-38, -84, 25], look: [-58, -40, 16], look_to: [-58, -20, 16.5], lens: 35, fstop: 5.6}
     captions:
       - {text: "EVEN THE CASINO ROOFTOPS", at: 0.3, until: 5.7}
     hud: {hours: 15.8, hours_end: 14.5, sub: "03:00 PM"}
@@ -222,7 +223,7 @@ scenes:
     environment: {type: vegas_strip, focus: strip, perimeter: true, dusk: true, cars: false}
     lighting: dusk_urgent
     lighting_overrides: {fog: 0.0004}
-    camera: {shot: push_in, from: [6, 20, 3.6], to: [4, 8, 3.1], look: [0, -60, 1.2], look_to: [0, -70, 1.0], lens: 30, fstop: 4}
+    camera: {shot: push_in, from: [6, 22, 7.5], to: [4, 12, 6.5], look: [0, -60, 1.0], look_to: [0, -70, 1.0], lens: 30, fstop: 4}
     actors:
       - {id: approach, kind: lion, count: 12, area: [0, -120, 40, 20], action: prowl, to: [0, -55], jitter: 8, stagger: 2.0, roar_chance: 0.25}
       - {id: line, count: 8, area: [0, -18, 40, 2], roles: [soldier], action: stand, to: [0, -80]}
@@ -276,9 +277,9 @@ scenes:
     duration: 5.5
     environment: {type: vegas_strip, focus: strip, night: true, districts_dark: true, cars: true, car_count: 8}
     lighting: night_emergency
-    camera: {shot: push_in, from: [-3, 2.5, 0.9], to: [-3.5, 4.0, 1.0], look: [-4, 10, 1.5], look_to: [-4, 10, 1.7], lens: 30, fstop: 2.8}
+    camera: {shot: push_in, from: [-13, 4.5, 0.9], to: [-13.5, 6.0, 1.0], look: [-14, 12, 1.5], look_to: [-14, 12, 1.7], lens: 30, fstop: 2.8}
     actors:
-      - {id: king, kind: lion, male: true, scale: 1.15, at: [-4, 10], face: 180, action: idle, roar_at: 1.2, hold: 1.4}
+      - {id: king, kind: lion, male: true, scale: 1.15, at: [-14, 12], face: 180, action: idle, roar_at: 1.2, hold: 1.4}
       - {id: shadows, kind: lion, count: 4, area: [6, 40, 20, 20], action: prowl, to: [6, 80], stagger: 1.0}
     captions:
       - {text: "THEIR ROARS ECHO BETWEEN THE TOWERS", at: 2.9, until: 5.3}
@@ -291,7 +292,7 @@ scenes:
     duration: 6.5
     environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, valley_hordes: 5, cars: false}
     lighting: night_emergency
-    camera: {shot: aerial_establish, from: [900, -1500, 320], to: [700, -1180, 270], look: [300, -700, 0], look_to: [200, -600, 0], lens: 30, fstop: 8}
+    camera: {shot: aerial_establish, from: [700, -1150, 140], to: [600, -980, 110], look: [300, -600, 0], look_to: [250, -550, 0], lens: 30, fstop: 8}
     captions:
       - {text: "SPREADING ACROSS THE VALLEY", at: 0.3, until: 6.2}
     hud: {hours: 3.5, hours_end: 2.4, sub: "03:00 AM"}
@@ -301,7 +302,7 @@ scenes:
 
   - id: s21_eyes
     duration: 6.5
-    environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, eyes: true, eye_count: 3000, cars: false}
+    environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, eyes: true, eye_count: 3600, eye_size: 0.5, eye_strength: 60, cars: false}
     lighting: night_emergency
     camera: {shot: push_in, from: [0, -1520, 10], to: [0, -1490, 26], look: [0, -2600, 1], look_to: [0, -2500, 6], lens: 30, fstop: 8}
     captions:
@@ -316,7 +317,7 @@ scenes:
     environment: {type: vegas_strip, focus: strip, lions: 3, closed: true, fountains: false, cars: true, car_count: 26}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: aerial_establish, from: [120, -500, 160], to: [60, -300, 120], look: [0, 0, 20], look_to: [0, 100, 10], lens: 30, fstop: 8}
+    camera: {shot: aerial_establish, from: [40, -260, 60], to: [20, -160, 40], look: [0, -20, 5], look_to: [0, 40, 3], lens: 30, fstop: 6}
     captions:
       - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 3.0}
     hud: {hours: 0.25, hours_end: 0.0, sub: "06:00 AM"}
@@ -329,9 +330,9 @@ scenes:
     environment: {type: casino_floor}
     lighting: interior_day
     lighting_overrides: {ambient: 0.5, exposure: -0.5}
-    camera: {shot: push_in, from: [0.6, -16, 1.2], to: [0.5, -14, 1.25], look: [0, 10, 1.3], look_to: [0, 8, 1.3], lens: 30, fstop: 3.5}
+    camera: {shot: push_in, from: [0.6, -13, 1.1], to: [0.5, -12, 1.15], look: [0, 4, 1.2], look_to: [0, 2, 1.2], lens: 30, fstop: 3.5}
     actors:
-      - {id: visitor, kind: lion, male: true, at: [0, 18], action: walk, path: [[0, 18], [0, -6]], start: 0.2, speed: 1.4}
+      - {id: visitor, kind: lion, male: true, at: [0, 6], action: walk, path: [[0, 6], [0, -4]], start: 0.2, speed: 1.0}
     captions:
       - {text: "THE CASINOS ARE EMPTY", at: 0.4, until: 5.8}
     hud: {hours: 0.0, hours_end: 0.0, sub: "06:00 AM"}
@@ -344,7 +345,7 @@ scenes:
     environment: {type: vegas_strip, focus: rooftops, rooftops: true, lions: 1, closed: true, fountains: false, cars: true, car_count: 18}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: push_in, from: [-24, -62, 21], to: [-33, -50, 19], look: [-50, -40, 18], look_to: [-49, -40, 18.6], lens: 30, fstop: 4}
+    camera: {shot: push_in, from: [-38, -52, 18.6], to: [-43, -47, 18.3], look: [-50, -40, 17.6], look_to: [-49.5, -40, 18.0], lens: 32, fstop: 4}
     actors:
       - {id: ruler, kind: lion, male: true, scale: 1.1, at: [-50, -40, 16.0], face: 90, action: idle, roar_at: 3.0, hold: 1.6}
     captions:

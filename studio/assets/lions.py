@@ -214,10 +214,12 @@ def _silhouette(ox, oy, oz, male, s):
     return boxes
 
 
-def horde(ctx, name, count, centre, extent=(160.0, 80.0), path=None, start=0.0, end=None, groups=8, bob=0.06, z=0.0, facing=None, speed=None):
-    """Thousands of lions as a few merged meshes that sweep along `path` (local +Y faces the travel)."""
+def horde(ctx, name, count, centre, extent=(160.0, 80.0), path=None, start=0.0, end=None, groups=8, bob=0.06, z=0.0, facing=None, speed=None, eyes=False):
+    """Thousands of lions as a few merged meshes that sweep along `path` (local +Y faces the travel).
+    eyes=True adds eye-shine so the horde reads at night."""
     rng = ctx.rng
     fur, mane = ctx.mat("lion", roughness=0.9), ctx.mat("mane", roughness=0.95)
+    shine = ctx.palette.emissive(f"{name} eyeshine", (1.0, 0.7, 0.25), 60.0)
     cx, cy = centre[0], centre[1]
     root = empty(ctx, name, (cx, cy, z))
     if path and len(path) > 1:
@@ -230,8 +232,11 @@ def horde(ctx, name, count, centre, extent=(160.0, 80.0), path=None, start=0.0, 
         gx, gy = rng.uniform(-w * 0.35, w * 0.35), rng.uniform(-d * 0.35, d * 0.35)
         boxes = []
         for _ in range(per):
-            boxes += _silhouette(gx + rng.uniform(-w * 0.15, w * 0.15), gy + rng.uniform(-d * 0.15, d * 0.15), 0.0, rng.random() < 0.4, rng.uniform(0.85, 1.1))
-        group = multi_box(ctx, f"{name}.g{g}", boxes, [fur, mane])
+            lx, ly, ls = gx + rng.uniform(-w * 0.15, w * 0.15), gy + rng.uniform(-d * 0.15, d * 0.15), rng.uniform(0.85, 1.1)
+            boxes += _silhouette(lx, ly, 0.0, rng.random() < 0.4, ls)
+            if eyes:
+                boxes += [((lx + side * 0.3 * ls, ly + 1.22 * ls, 1.25 * ls), (0.32 * ls, 0.1, 0.24 * ls), 2) for side in (-1, 1)]
+        group = multi_box(ctx, f"{name}.g{g}", boxes, [fur, mane, shine])
         parent(group, root)
         key(group, "location", 1, (0.0, 0.0, 0.0))
         add_noise(group, "location", 1.5, 1, ctx.frames, scale=12.0, phase=g * 2.1)
@@ -281,7 +286,7 @@ def resting(ctx, name, points, scale=1.0):
 def eyes(ctx, name, points, strength=9.0, size=0.07):
     """Pairs of eye-shine dots for night shots (tag: eyes). Distant eyes need an exaggerated `size`
     to survive anti-aliasing; the pairs keep their spacing in proportion."""
-    glow = ctx.palette.emissive(f"{name} eyeshine", (1.0, 0.82, 0.38), strength)
+    glow = ctx.palette.emissive(f"{name} eyeshine", (1.0, 0.7, 0.25), strength)
     boxes = []
     for x, y, z in points:
         for side in (-1, 1):

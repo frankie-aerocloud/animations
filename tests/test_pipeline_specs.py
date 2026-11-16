@@ -38,6 +38,14 @@ class PipelineSpecTests(unittest.TestCase):
         scene["camera"]["lens"] = 999
         self.assertNotEqual(before, self.pipeline.scene_hash(scene))
 
+    def test_caption_styling_does_not_invalidate_scene_frames(self):
+        scene = self.project.scenes[0]
+        before = self.pipeline.scene_hash(scene)
+        self.project.style["overlay"]["subtitle"]["size"] = 0.5
+        self.assertEqual(before, self.pipeline.scene_hash(scene))
+        self.project.style["palette"]["sand"] = [0, 0, 0]
+        self.assertNotEqual(before, self.pipeline.scene_hash(scene))
+
     def test_overlay_spec_uses_absolute_times_and_merges_hud_windows(self):
         cues = [Cue(0.5, 2.0, "Hello"), Cue(2.1, 3.0, "World")]
         spec = self.pipeline.overlay_spec(cues)

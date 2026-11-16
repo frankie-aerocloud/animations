@@ -118,7 +118,9 @@ class Pipeline:
     def scene_hash(self, scene: dict[str, Any]) -> str:
         """Fingerprint of everything a scene's frames depend on except code (see deps_current)."""
         spec = self.scene_spec(scene)
-        return fingerprint({key: spec[key] for key in ("render", "profile", "style", "scene", "font")})
+        data = {key: spec[key] for key in ("render", "profile", "scene", "font")}
+        data["style"] = {key: value for key, value in spec["style"].items() if key != "overlay"}  # captions only affect the overlay pass
+        return fingerprint(data)
 
     @staticmethod
     def deps_current(scene_dir: Path) -> bool:

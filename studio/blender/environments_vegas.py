@@ -38,9 +38,40 @@ def _glow(name, rgb, strength, alpha):
     return material
 
 
+def desert_material(ctx, name="desert floor"):
+    """Warm sand broken up by darker gravel patches and fine streaks (local to this module so the
+    shared material library, and every other film's renders, stay unchanged)."""
+    material = bpy.data.materials.get(name)
+    if material is not None:
+        return material
+    material = ctx.palette.make(name, ctx.palette.colour("desert_sand"), 0.95)
+    nodes, links = material.node_tree.nodes, material.node_tree.links
+    bsdf = nodes["Principled BSDF"]
+    coords = nodes.new("ShaderNodeTexCoord")
+    patches = nodes.new("ShaderNodeTexNoise")
+    patches.inputs["Scale"].default_value = 0.004
+    patches.inputs["Detail"].default_value = 6.0
+    links.new(coords.outputs["Object"], patches.inputs["Vector"])
+    ramp = nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].position = 0.42
+    ramp.color_ramp.elements[0].color = (*ctx.palette.colour("desert_sand"), 1.0)
+    ramp.color_ramp.elements[1].position = 0.62
+    ramp.color_ramp.elements[1].color = (*ctx.palette.colour("mesa"), 1.0)
+    links.new(patches.outputs["Fac"], ramp.inputs[0])
+    grain = nodes.new("ShaderNodeTexNoise")
+    grain.inputs["Scale"].default_value = 0.6
+    links.new(coords.outputs["Object"], grain.inputs["Vector"])
+    mix = nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    mix.inputs[0].default_value = 0.12
+    links.new(ramp.outputs[0], mix.inputs[6])
+    links.new(grain.outputs["Color"], mix.inputs[7])
+    links.new(mix.outputs[2], bsdf.inputs["Base Color"])
+    return material
+
+
 def _desert_ground(ctx, name="ground", size=(8000, 8000), amplitude=3.0, seed=21):
-    material = ctx.palette.terrain("desert floor", [(-4.0, "soil"), (0.0, "desert_sand"), (6.0, "beach"), (40.0, "mesa"), (160.0, "rock")], noise_mix=0.12)
-    return terrain.ground(ctx, name, size, (80, 80), amplitude=amplitude, seed=seed, material=material, noise_scale=0.004)
+    return terrain.ground(ctx, name, size, (80, 80), amplitude=amplitude, seed=seed, material=desert_material(ctx), noise_scale=0.004)
 
 
 def ridge(ctx, name, centre, length, width, height, rot=0.0, seed=0):
@@ -90,13 +121,13 @@ def scrub(ctx, name, centre, radius, count, avoid_x=12.0):
 
 def dust_cloud(ctx, name, centre, length=900.0, height=60.0, drift=(0.0, 0.0), count=26):
     rng = ctx.rng
-    material = ctx.mat("beach", roughness=1.0, alpha=0.55)
+    material = ctx.mat("desert_sand", roughness=1.0, alpha=0.32)
     puffs = []
     for i in range(count):
         px = centre[0] + rng.uniform(-length / 2, length / 2)
-        py = centre[1] + rng.uniform(-60, 60)
-        r = rng.uniform(height * 0.4, height)
-        puff = ico(ctx, f"{name}.{i}", r, (px, py, r * 0.6), material, subdiv=2, scale=(1.6, 1.2, 0.8), smooth=True)
+        py = centre[1] + rng.uniform(-80, 80)
+        r = rng.uniform(height * 0.6, height * 1.3)
+        puff = ico(ctx, f"{name}.{i}", r, (px, py, r * rng.uniform(0.5, 1.6)), material, subdiv=2, scale=(1.8, 1.3, 1.1), smooth=True)
         key(puff, "location", 1)
         puff.location.x += drift[0]
         puff.location.y += drift[1]
@@ -128,15 +159,17 @@ def mojave(ctx, spec):
     for i, (cx, cy, length, height, rot) in enumerate(((-2200, 1800, 2600, 380, 20), (2400, 2200, 3000, 460, -15), (2600, -1200, 2200, 300, 70), (-2600, -1400, 2400, 340, 105), (300, 3400, 3600, 520, 0))):
         ridge(ctx, f"mesa{i}", (cx, cy), length, 700.0, height, rot, i)
     props.road(ctx, "highway", (0.0, -4200.0), (0.0, 4200.0), 11.0, 0.05)
-    poles = [((-9.0, -1500.0 + k * 60.0, 5.5), (0.35, 0.35, 11.0), 0) for k in range(60)]
-    poles += [((-9.0, -1500.0 + k * 60.0, 10.6), (3.2, 0.25, 0.25), 0) for k in range(60)]
+    poles = [((-16.0, -1500.0 + k * 60.0, 5.5), (0.35, 0.35, 11.0), 0) for k in range(60)]
+    poles += [((-16.0, -1500.0 + k * 60.0, 10.6), (3.2, 0.25, 0.25), 0) for k in range(60)]
     multi_box(ctx, "power_poles", poles, [ctx.mat("trunk", roughness=0.9)])
     for i in range(70):
         x, y = rng.uniform(-700, 700), rng.uniform(-900, 1400)
         if abs(x) > 18:
             joshua_tree(ctx, f"joshua{i}", (x, y, 0.0), 1.0)
-    for i in range(10):
-        scrub(ctx, f"scrub{i}", (rng.uniform(-500, 500), rng.uniform(-600, 900)), 120.0, 60)
+    for i in range(40):
+        scrub(ctx, f"scrub{i}", (rng.uniform(-420, 420), rng.uniform(-200, 900)), 90.0, 70)
+    for i in range(4):
+        ridge(ctx, f"south{i}", (-2400.0 + i * 1600.0, -5200.0), 2200.0, 800.0, rng.uniform(300, 520), 0.0, 10 + i)
     for i in range(30):
         ico(ctx, f"rock{i}", rng.uniform(0.8, 3.5), (rng.uniform(-600, 600), rng.uniform(-600, 1200), 0.0), ctx.mat("rock"), subdiv=1, scale=(1.4, 1.0, 0.6))
     if spec.get("skyline", True):
@@ -147,9 +180,10 @@ def mojave(ctx, spec):
         vehicles.drive(ctx, truck, [(2.6, 600.0), (2.6, 600.0 - speed * (ctx.duration + 1.0))], 0.0, ctx.duration + 1.0, speed=speed, z=0.05)
     if spec.get("dust"):
         dust_cloud(ctx, "dust", (900.0, 1500.0), 1600.0, 70.0, drift=(-120.0, -260.0))
+    radius = float(spec.get("horde_radius", 900.0))
     for i in range(int(spec.get("hordes", 0))):
-        a = math.radians(rng.uniform(20, 160))
-        start = (1700.0 * math.cos(a), 1700.0 * math.sin(a))
+        a = math.radians(rng.uniform(40, 140))
+        start = (radius * math.cos(a) * 1.6, radius * math.sin(a))
         target = (start[0] * 0.25, start[1] * 0.25 - 900.0)
         lions.horde(ctx, f"horde{i}", int(spec.get("horde_size", 700)), start, (220.0, 120.0), path=[start, target], groups=8, speed=12.0)
     ridge_count = int(spec.get("ridge", 0))
@@ -196,7 +230,7 @@ def pyramid(ctx, name, centre, size=150.0, height=105.0, night=False):
     faces = [(0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4), (3, 2, 1, 0)]
     mesh_from_pydata(ctx, name, verts, faces, [ctx.mat("glass", roughness=0.15, metallic=0.4)], (x, y, 0.0), bevel=0.4)
     if night:
-        beam = cylinder(ctx, f"{name}.beam", 2.5, 2400.0, (x, y, height), _glow(f"{name} beam", (0.85, 0.92, 1.0), 6.0, 0.45), segments=10, anchor="base", radius2=9.0)
+        beam = cylinder(ctx, f"{name}.beam", 2.0, 2400.0, (x, y, height), _glow(f"{name} beam", (0.85, 0.92, 1.0), 3.0, 0.28), segments=10, anchor="base", radius2=7.0)
         ctx.tag("beam", beam)
     ctx.anchor(f"{name}.top", (x, y, height))
 
@@ -213,7 +247,7 @@ def needle(ctx, name, base, height=330.0, lit=None):
 
 def sphere_arena(ctx, name, centre, radius=58.0, night=False):
     x, y = centre
-    colour = ctx.palette.emissive(f"{name} skin", "neon_blue", 4.0 if night else 1.2)
+    colour = ctx.palette.emissive(f"{name} skin", "neon_blue", 1.4 if night else 0.7)
     orb = ico(ctx, name, radius, (x, y, radius * 0.82), colour, subdiv=3, smooth=True)
     socket = orb.active_material.node_tree.nodes[0].inputs.get("Color") if orb.active_material.node_tree.nodes else None
     if socket is not None and night:
@@ -385,8 +419,8 @@ def vegas_strip(ctx, spec):
             props.barrier(ctx, f"perimeter{i}", (-24.0 + i * 3.6, fy - 30.0, 0.08), 0.0)
         for i, x in enumerate((-30.0, -10.0, 10.0, 30.0)):  # behind the barrier line, aimed out at the approach
             floodlight(ctx, f"flood{i}", (x, fy - 22.0, 0.08), (x * 0.5, fy - 110.0, 0.0), night or bool(spec.get("dusk")))
-        for i in range(4):
-            landmarks.army_truck(ctx, f"perimeter_truck{i}", (-21.0 + i * 14.0, fy - 12.0, 0.08), math.pi / 2, lit=night)
+        for i, (x, y) in enumerate(((-30.0, fy - 6.0), (-30.0, fy + 8.0), (30.0, fy - 6.0), (30.0, fy + 8.0))):
+            landmarks.army_truck(ctx, f"perimeter_truck{i}", (x, y, 0.08), 0.0, lit=night)
     for i in range(int(spec.get("helicopters", 0))):
         path = spec.get("heli_path") or [[fx - 220.0, fy - 260.0, 95.0], [fx + 60.0, fy + 240.0, 90.0]]
         path = [(p[0] + i * 40.0, p[1] - i * 60.0, p[2] + i * 15.0) for p in path]
@@ -410,7 +444,7 @@ def vegas_strip(ctx, spec):
     for i in range(int(spec.get("valley_hordes", 0))):
         a = math.tau * i / max(1, int(spec.get("valley_hordes", 0))) + 0.3
         start, end_point = (2300.0 * math.cos(a), 2300.0 * math.sin(a)), (900.0 * math.cos(a), 900.0 * math.sin(a))
-        lions.horde(ctx, f"valley_horde{i}", 600, start, (260.0, 160.0), path=[start, end_point], groups=6, speed=12.0)
+        lions.horde(ctx, f"valley_horde{i}", 600, start, (260.0, 160.0), path=[start, end_point], groups=6, speed=12.0, eyes=night)
     if night and spec.get("eyes"):
         pts = []
         for _ in range(int(spec.get("eye_count", 2600))):
@@ -469,7 +503,9 @@ def casino_floor(ctx, spec):
         cylinder(ctx, f"table{i}", 1.8, 0.9, (x, y, 0.0), ctx.mat("felt", roughness=0.9), segments=16, anchor="base", bevel=0.1)
         cylinder(ctx, f"table{i}.rim", 1.95, 0.2, (x, y, 0.85), ctx.mat("trunk"), segments=16, anchor="base")
     for i, (x, y) in enumerate(((-18.0, -8.0), (18.0, -8.0), (-18.0, 12.0), (18.0, 12.0), (0.0, 2.0))):
-        ico(ctx, f"chandelier{i}", 1.6, (x, y, 5.6), ctx.palette.emissive(f"chandelier {i}", (1.0, 0.85, 0.6), 8.0), subdiv=1)
+        glass = ctx.palette.emissive(f"chandelier {i}", (1.0, 0.85, 0.6), 2.2)
+        for k, (dx, dy, dz, r) in enumerate(((0, 0, 0, 0.55), (0.7, 0, -0.35, 0.35), (-0.7, 0, -0.35, 0.35), (0, 0.7, -0.35, 0.35), (0, -0.7, -0.35, 0.35))):
+            ico(ctx, f"chandelier{i}.{k}", r, (x + dx, y + dy, 5.9 + dz), glass, subdiv=1)
         lighting.area_light(ctx, f"chandelier{i}.light", (x, y, 6.6), 1400.0, 5.0, (1.0, 0.82, 0.6))
     for x in (-24.0, 24.0):
         for y in (-16.0, 0.0, 16.0):
@@ -486,7 +522,7 @@ def desert_airport(ctx, spec):
     environments_nyc.airport(ctx, {k: v for k, v in spec.items() if k != "type"} | {"birds": 0})
     ground = bpy.data.objects.get("ground")
     if ground is not None:
-        ground.data.materials[0] = ctx.palette.terrain("airport desert", [(-1.0, "soil"), (0.0, "desert_sand"), (3.0, "beach")])
+        ground.data.materials[0] = desert_material(ctx)
     mountain_ring(ctx, 2600.0, 420.0, 7)
     rng = ctx.rng
     level = int(spec.get("lions", 2))
@@ -500,7 +536,12 @@ def desert_suburb(ctx, spec):
     environments.residential_street(ctx, {k: v for k, v in spec.items() if k != "type"})
     ground = bpy.data.objects.get("ground")
     if ground is not None:
-        ground.data.materials[0] = ctx.palette.terrain("suburb desert", [(-1.0, "soil"), (0.0, "desert_sand"), (2.0, "beach")])
+        ground.data.materials[0] = desert_material(ctx)
+    gravel = ctx.palette.colour("beach")
+    for name in ("grass", "grass_dry"):  # xeriscaped yards: the lawns become gravel
+        material = bpy.data.materials.get(name)
+        if material is not None:
+            material.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (*gravel, 1.0)
     for i in range(3):
         ridge(ctx, f"ridge{i}", (-900.0 + i * 900.0, 1400.0), 1600.0, 600.0, 320.0, 0.0, i)
     return None
