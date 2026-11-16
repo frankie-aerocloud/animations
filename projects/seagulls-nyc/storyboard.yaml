@@ -1,0 +1,323 @@
+# Story clock: 06:00 start. Coordinates are metres in each environment (studio/blender/environments_nyc.py).
+scenes:
+  - id: s01_sighting
+    duration: 9.0
+    environment: {type: harbour_dawn, swarms: 3, swarm_count: 2400}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 5, azimuth: 92, colour: [1.0, 0.68, 0.42], horizon: [0.95, 0.62, 0.40], zenith: [0.22, 0.30, 0.56], ambient: 0.4, fog: 0.0012}
+    camera: {shot: push_in, from: [-14, 34, 7.5], to: [-4, 50, 5.5], look: [6, 84, 1.4], look_to: [8, 320, 44], lens: 30, fstop: 4}
+    actors:
+      - {id: fisherman, role: fisherman, at: [6, 80, 0.9], face: 0, action: point, side: r, start: 3.0, end: 9.0}
+      - {id: mate, role: fisherman, at: [3.5, 77, 0.9], face: 20, action: look_around, start: 1.0}
+    captions:
+      - {kind: title, text: "WHAT IF ONE MILLION SEAGULLS ATTACKED NEW YORK?", at: 0.5, until: 5.0}
+      - {kind: chapter, text: "06:00 AM", sub: "The first sighting", at: 5.4, until: 8.6}
+    hud: {hours: 6, hours_end: 6.2, show_at: 5.4, sub: "A HYPOTHETICAL SCENARIO"}
+    sfx: [{sound: swell, at: 0.3, gain_db: -6}, {sound: gulls, at: 4.5, gain_db: -14}]
+    music: {intensity: 0.3}
+    transition: {type: dissolve, duration: 0.5}
+
+  - id: s02_dots
+    duration: 11.0
+    environment: {type: harbour_dawn, swarms: 4, swarm_count: 3200, flocks: 4, flock_start: 0.8, swarm_near: true}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 7, azimuth: 92, colour: [1.0, 0.7, 0.45], horizon: [0.94, 0.64, 0.42], zenith: [0.24, 0.32, 0.58], ambient: 0.42, fog: 0.0012}
+    camera: {shot: static, from: [2, 56, 2.4], look: [0, 240, 40], look_to: [-4, 90, 26], lens: 24, fstop: 4, shake: {strength: 0.6, start: 5.0, end: 11.0, scale: 5}}
+    actors:
+      - {id: fisherman, role: fisherman, at: [6, 80, 0.9], face: 0, action: react, start: 6.5}
+    captions:
+      - {text: "THOUSANDS OF WHITE DOTS", at: 0.6, until: 4.0}
+      - {kind: title, text: "ONE MILLION OF THEM", at: 7.0, until: 10.6}
+    hud: {hours: 6.2, hours_end: 7, sub: "06:00 TO 07:00"}
+    sfx: [{sound: gulls, at: 0.5, gain_db: -8}, {sound: flapping, at: 5.5, gain_db: -2}, {sound: gulls, at: 6.0, gain_db: 0}, {sound: impact, at: 7.0, gain_db: 0}]
+    music: {intensity: 0.45}
+    transition: {type: whip, duration: 0.35}
+
+  - id: s03_approach
+    duration: 7.0
+    environment: {type: metropolis, focus: harbour, birds: 2, traffic: 6, people: 0}
+    lighting: soft_daylight
+    lighting_overrides: {elevation: 18, azimuth: 95, colour: [1.0, 0.86, 0.68], fog: 0.00025}
+    camera: {shot: aerial_establish, from: [-700, -1300, 140], to: [-420, -1000, 110], look: [-200, -400, 80], look_to: [-60, -200, 120], lens: 30, fstop: 8, whip_in: {duration: 0.35}}
+    captions:
+      - {text: "HEADING STRAIGHT FOR NEW YORK CITY", at: 0.8, until: 6.4}
+    hud: {hours: 7, hours_end: 8, sub: "07:00 TO 08:00"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -6}, {sound: riser, at: 3.5, gain_db: -2}, {sound: whoosh, at: 6.6}]
+    music: {intensity: 0.55}
+    transition: {type: whip, duration: 0.35}
+
+  - id: s04_statue
+    duration: 7.0
+    environment: {type: metropolis, focus: statue, birds: 2, traffic: 4}
+    lighting: soft_daylight
+    lighting_overrides: {fog: 0.0004}
+    camera: {shot: orbit, centre: [-330, -780, 60], radius: 150, height: 40, angle_from: 200, angle_to: 262, look: [-330, -780, 62], lens: 35, fstop: 6, whip_in: {duration: 0.3}}
+    captions:
+      - {kind: chapter, text: "08:00 AM", sub: "The attack begins", at: 0.1, until: 2.8}
+    hud: {hours: 8, hours_end: 8.3, sub: "08:00 AM"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -2}, {sound: flapping, at: 1.0, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s05_skyline
+    duration: 6.0
+    environment: {type: metropolis, focus: midtown, birds: 3, jam: true, traffic: 4}
+    lighting: soft_daylight
+    camera: {shot: side_follow, from: [-420, 40, 170], to: [-260, 110, 150], look: [-40, 120, 120], look_to: [20, 150, 110], lens: 30, fstop: 8}
+    captions:
+      - {text: "BIRDS SWARM THE SKYSCRAPERS", at: 0.6, until: 5.4}
+    hud: {hours: 8.3, hours_end: 8.8, sub: "08:00 AM"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -4}, {sound: horns, at: 1.0, gain_db: -10}]
+    music: {intensity: 0.65}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s06_times_square
+    duration: 9.0
+    environment: {type: metropolis, focus: times_square, birds: 2, jam: true, traffic: 0, people: 0, rubbish: true}
+    lighting: soft_daylight
+    camera: {shot: side_follow, from: [-34, 36, 3.2], to: [-10, 44, 2.8], look: [0, 72, 2], look_to: [12, 78, 3], lens: 28, fstop: 4, whip_in: {duration: 0.3}, shake: {strength: 0.5, start: 1.0, end: 9.0, scale: 6}}
+    actors:
+      - {id: crowd, count: 26, area: [0, 70, 40, 30], roles: [civilian, shopper, child, civilian], action: scatter, radius: 26, stagger: 2.5, props: [box, bottle], prop_chance: 0.3}
+      - {id: cover, count: 8, area: [10, 62, 14, 8], roles: [civilian, shopper], action: react, to: [0, 70], start: 0.5, stagger: 3.0}
+      - {id: vendor, role: worker, at: [-8, 80], face: 180, action: react, start: 1.2}
+      - {id: diner, role: civilian, at: [4, 64], face: 300, action: fall, start: 3.4}
+    events:
+      - {type: move, target: object:flock0, path: [[-60, 110, 50], [-6, 78, 4], [50, 60, 40]], start: 0.5, end: 3.2, ease: in_out}
+      - {type: move, target: object:flock1, path: [[60, 30, 60], [8, 66, 5], [-50, 90, 45]], start: 3.0, end: 6.0, ease: in_out}
+      - {type: move, target: object:flock2, path: [[-40, 20, 70], [-14, 72, 4], [30, 100, 50]], start: 5.5, end: 8.5, ease: in_out}
+    captions:
+      - {text: "PEOPLE RUN FOR COVER", at: 0.8, until: 4.0}
+      - {text: "FOOD STALLS. RESTAURANTS. BINS.", at: 4.4, until: 8.4}
+    hud: {hours: 8.8, hours_end: 9.5, sub: "08:00 TO 09:00"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: 2}, {sound: crowd, at: 0.0, gain_db: -2}, {sound: flapping, at: 0.6, gain_db: 0}, {sound: flapping, at: 3.2, gain_db: 0}, {sound: splat, at: 2.6}, {sound: glass, at: 4.2, gain_db: -4}, {sound: thud, at: 3.5}]
+    music: {intensity: 0.7}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s07_park
+    duration: 6.0
+    environment: {type: metropolis, focus: park, birds: 2, nests: true, traffic: 2, park_trees: 120}
+    lighting: soft_daylight
+    camera: {shot: aerial_establish, from: [-160, 380, 90], to: [-60, 520, 60], look: [0, 640, 2], look_to: [10, 680, 2], lens: 32, fstop: 8}
+    captions:
+      - {text: "CENTRAL PARK BECOMES A NESTING GROUND", at: 0.6, until: 5.4}
+    hud: {hours: 9.5, hours_end: 10.5, sub: "09:00 TO 10:00"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -4}]
+    music: {intensity: 0.6}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s08_police
+    duration: 5.0
+    environment: {type: metropolis, focus: times_square, birds: 1, jam: true, guard: false, traffic: 0, rubbish: true}
+    lighting: soft_daylight
+    camera: {shot: close_up, from: [26, 40, 2.2], to: [18, 44, 2.0], look: [-6, 58, 1.5], look_to: [-8, 62, 1.6], lens: 40, fstop: 3.5}
+    actors:
+      - {id: officers, count: 4, area: [-6, 56, 6, 2], roles: [police], action: look_around, to: [0, 80], start: 0.2, stagger: 1.5}
+      - {id: caller, role: civilian, at: [4, 52], face: 20, action: point, side: l, start: 0.6, end: 4.6}
+      - {id: panicked, count: 6, area: [-10, 62, 12, 6], roles: [civilian, shopper, child], action: scatter, radius: 10, stagger: 2.0}
+    captions:
+      - {text: "THOUSANDS OF EMERGENCY CALLS. NOBODY KNOWS WHY.", at: 0.5, until: 4.6}
+    hud: {hours: 10.5, hours_end: 12, sub: "10:00 TO 12:00"}
+    sfx: [{sound: siren, at: 0.2, gain_db: -6}, {sound: gulls, at: 0.0, gain_db: -8}, {sound: crowd, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.6}
+    transition: {type: fade_black, duration: 0.4}
+
+  - id: s09_airport
+    duration: 8.0
+    environment: {type: airport, birds: 2}
+    lighting: soft_daylight
+    lighting_overrides: {elevation: 58, azimuth: 20, fog: 0.0004}
+    camera: {shot: aerial_establish, from: [-430, -240, 120], to: [-230, -40, 70], look: [-60, 150, 6], look_to: [0, 330, 8], lens: 30, fstop: 8}
+    captions:
+      - {kind: chapter, text: "12:00 PM", sub: "New York goes into chaos", at: 0.1, until: 2.8}
+      - {text: "FLIGHTS GROUNDED AT JFK, LAGUARDIA AND NEWARK", at: 3.2, until: 7.4}
+    hud: {hours: 12, hours_end: 12.4, sub: "12:00 PM"}
+    sfx: [{sound: jets, at: 0.0, gain_db: -4}, {sound: gulls, at: 0.5, gain_db: -6}]
+    music: {intensity: 0.65}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s10_restaurants
+    duration: 7.0
+    environment: {type: metropolis, focus: times_square, birds: 2, jam: true, closed: true, rubbish: true, traffic: 0}
+    lighting: harsh_noon
+    camera: {shot: side_follow, from: [28, 96, 2.6], to: [8, 92, 2.4], look: [-6, 70, 1.6], look_to: [-12, 66, 1.4], lens: 30, fstop: 4, whip_in: {duration: 0.3}, shake: {strength: 0.3, start: 0.0, end: 7.0, scale: 5}}
+    actors:
+      - {id: defenders, count: 10, area: [-6, 72, 20, 14], roles: [civilian, shopper, worker], action: react, to: [0, 90], start: 0.3, stagger: 4.0, props: [box, bottle], prop_chance: 0.6}
+      - {id: fleeing, count: 8, area: [10, 60, 10, 8], roles: [civilian, child], action: scatter, radius: 18, stagger: 3.0}
+      - {id: shutter, role: worker, at: [-20, 84], face: 90, action: carry, prop: box}
+    events:
+      - {type: move, target: object:flock0, path: [[40, 120, 50], [-4, 76, 3], [-40, 40, 40]], start: 0.3, end: 3.0, ease: in_out}
+      - {type: move, target: object:flock1, path: [[-40, 110, 55], [2, 68, 3], [40, 30, 45]], start: 3.2, end: 6.4, ease: in_out}
+    captions:
+      - {text: "RESTAURANTS SHUT. MARKETS VANISH.", at: 0.6, until: 6.4}
+    hud: {hours: 12.4, hours_end: 13, sub: "12:00 TO 13:00"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: 0}, {sound: flapping, at: 0.5, gain_db: -2}, {sound: flapping, at: 3.4, gain_db: -2}, {sound: crowd, at: 0.0, gain_db: -6}, {sound: glass, at: 2.2, gain_db: -6}]
+    music: {intensity: 0.7}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s11_waste
+    duration: 9.0
+    environment: {type: metropolis, focus: times_square, birds: 2, jam: true, closed: true, rubbish: true, splats: 1.0, traffic: 0}
+    lighting: harsh_noon
+    camera: {shot: push_in, from: [-170, -120, 160], to: [-90, -30, 90], look: [0, 70, 40], look_to: [0, 70, 12], lens: 32, fstop: 8}
+    captions:
+      - {kind: title, text: "ONE MILLION BIRDS. AN ENORMOUS AMOUNT OF WASTE.", at: 1.4, until: 6.0}
+      - {text: "STREETS, CARS AND ROOFTOPS ARE COVERED", at: 6.2, until: 8.6}
+    hud: {hours: 13, hours_end: 14.5, sub: "13:00 TO 14:00"}
+    sfx: [{sound: splat, at: 1.4, gain_db: 2}, {sound: splat, at: 2.1}, {sound: splat, at: 2.9, gain_db: 1}, {sound: splat, at: 3.4}, {sound: gulls, at: 0.0, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s12_defend
+    duration: 7.0
+    environment: {type: metropolis, focus: times_square, birds: 2, jam: true, closed: true, rubbish: true, splats: 0.8, traffic: 0}
+    lighting: harsh_noon
+    camera: {shot: side_follow, from: [-30, 100, 2.4], to: [-12, 104, 2.6], look: [-4, 74, 1.6], look_to: [6, 70, 1.6], lens: 30, fstop: 4, shake: {strength: 0.4, start: 0.0, end: 7.0, scale: 5}}
+    actors:
+      - {id: defenders, count: 12, area: [0, 70, 24, 16], roles: [civilian, shopper, worker, civilian], action: react, to: [0, 90], start: 0.2, stagger: 4.5, props: [box, bottle, bucket], prop_chance: 0.7}
+      - {id: shopkeeper, role: worker, at: [-14, 80], face: 160, action: point, side: r, start: 0.5, end: 6.5}
+      - {id: runner, role: shopper, at: [20, 60], action: run, path: [[20, 60], [-20, 56]], start: 1.0, prop: box}
+    events:
+      - {type: move, target: object:flock0, path: [[30, 120, 50], [0, 78, 3], [-30, 30, 40]], start: 0.5, end: 3.2, ease: in_out}
+      - {type: move, target: object:flock1, path: [[-50, 100, 55], [-6, 72, 3], [40, 50, 45]], start: 3.6, end: 6.6, ease: in_out}
+    captions:
+      - {text: "NEW YORKERS FIGHT FOR THEIR FOOD, HOMES AND BUSINESSES", at: 0.6, until: 6.4}
+    hud: {hours: 14.5, hours_end: 16, sub: "14:00 TO 16:00"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: 0}, {sound: crowd, at: 0.0, gain_db: -4}, {sound: flapping, at: 0.8, gain_db: -2}, {sound: flapping, at: 3.8, gain_db: -2}, {sound: thud, at: 2.5, gain_db: -4}]
+    music: {intensity: 0.7}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s13_guard
+    duration: 8.0
+    environment: {type: metropolis, focus: times_square, birds: 2, jam: true, guard: true, closed: true, splats: 0.6, traffic: 0}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 11, azimuth: -112}
+    camera: {shot: reveal, from: [-40, -70, 4], to: [-40, 26, 15], look: [-20, 40, 3], look_to: [0, 76, 8], lens: 30, fstop: 6, whip_in: {duration: 0.3}}
+    actors:
+      - {id: troops, count: 16, area: [-40, 40, 10, 24], roles: [soldier], action: walk, to: [-10, 70], jitter: 4.0, stagger: 2.0}
+      - {id: sheltering, count: 10, area: [20, 50, 16, 10], roles: [civilian, child, civilian], action: walk, to: [40, 96], jitter: 3.0, stagger: 2.5, props: [box, bucket], prop_chance: 0.5}
+    events:
+      - {type: move, target: object:army0, path: [[-52, -80], [-52, 10]], start: 0.0, end: 4.0, face: true}
+      - {type: move, target: object:army1, path: [[-52, -95], [-52, -2]], start: 0.3, end: 4.6, face: true}
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 8.0, rate: 5, strength: 25}
+    captions:
+      - {kind: chapter, text: "06:00 PM", sub: "The city fights back", at: 0.1, until: 2.8}
+      - {text: "THE NATIONAL GUARD ARRIVES. SHELTERS OPEN.", at: 3.2, until: 7.4}
+    hud: {hours: 18, hours_end: 18.4, sub: "06:00 PM"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -4}, {sound: siren, at: 1.0, gain_db: -8}, {sound: gulls, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.75}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s14_drones
+    duration: 7.0
+    environment: {type: metropolis, focus: times_square, birds: 3, jam: true, guard: true, closed: true, splats: 0.6, traffic: 0}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 8, azimuth: -115}
+    camera: {shot: orbit, centre: [0, 70, 16], radius: 44, height: 24, angle_from: 236, angle_to: 284, look: [0, 70, 22], lens: 30, fstop: 6}
+    actors:
+      - {id: line, count: 8, area: [0, 46, 24, 1], roles: [soldier], action: stand, to: [0, 70]}
+    events:
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 7.0, rate: 5, strength: 25}
+    captions:
+      - {text: "DRONES AND LOUDSPEAKERS TRY TO REDIRECT THE BIRDS", at: 0.6, until: 3.8}
+      - {text: "THEY ARE NOT BEHAVING NORMALLY", at: 4.0, until: 6.6}
+    hud: {hours: 18.4, hours_end: 19, sub: "06:00 TO 07:00 PM"}
+    sfx: [{sound: drone_buzz, at: 0.0, gain_db: -2}, {sound: loudspeaker, at: 0.8, gain_db: 0}, {sound: gulls, at: 0.0, gain_db: -2}, {sound: loudspeaker, at: 4.2, gain_db: -2}]
+    music: {intensity: 0.75}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s15_helicopter
+    duration: 6.0
+    environment: {type: metropolis, focus: midtown, birds: 2, helicopters: 1, heli_alt: 205, jam: true, traffic: 0}
+    lighting: dusk_urgent
+    camera: {shot: tracking, from: [-250, -40, 215], to: [-90, 260, 211], look: [-200, 20, 205], look_to: [-40, 320, 201], lens: 38, fstop: 5.6, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
+    events:
+      - {type: move, target: object:flock0, path: [[-250, 70, 200], [-140, 170, 207], [-20, 300, 202]], start: 0.0, end: 6.0, ease: linear}
+      - {type: move, target: object:flock1, path: [[-20, 130, 214], [-125, 175, 205], [-260, 240, 196]], start: 0.0, end: 6.0, ease: linear}
+    captions:
+      - {text: "HELICOPTERS STRUGGLE TO OPERATE SAFELY", at: 0.6, until: 5.4}
+    hud: {hours: 19, hours_end: 20, sub: "07:00 TO 08:00 PM"}
+    sfx: [{sound: helicopter, at: 0.0, gain_db: 2}, {sound: gulls, at: 0.5, gain_db: -4}, {sound: flapping, at: 1.5, gain_db: -4}]
+    music: {intensity: 0.8}
+    transition: {type: fade_black, duration: 0.5}
+
+  - id: s16_shutdown
+    duration: 7.0
+    environment: {type: metropolis, focus: midtown, night: true, birds: 2, jam: false, traffic: 2, roost: true}
+    lighting: night_emergency
+    camera: {shot: aerial_establish, from: [-500, -300, 200], to: [-360, -120, 170], look: [0, 100, 60], look_to: [0, 160, 80], lens: 30, fstop: 6}
+    captions:
+      - {text: "MILLIONS STAY INDOORS. NEW YORK HAS SHUT DOWN.", at: 0.8, until: 6.4}
+    hud: {hours: 20, hours_end: 22, sub: "08:00 TO 10:00 PM"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -10}, {sound: rumble, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.6}
+    transition: {type: dissolve, duration: 0.6}
+
+  - id: s17_night
+    duration: 9.0
+    environment: {type: metropolis, focus: bridge, night: true, birds: 3, roost: true, traffic: 0, jam: false}
+    lighting: night_emergency
+    camera: {shot: push_in, from: [434, -404, 36], to: [411, -393, 31], look: [369, -375, 50], look_to: [340, -367, 75], lens: 32, fstop: 4}
+    captions:
+      - {kind: chapter, text: "02:00 AM", sub: "The worst is yet to come", at: 0.1, until: 2.8}
+      - {text: "ROOFTOPS, BRIDGES, STREETLIGHTS", at: 3.4, until: 8.4}
+    hud: {hours: 26, hours_end: 26.5, sub: "02:00 AM"}
+    sfx: [{sound: gulls, at: 0.4, gain_db: -4}, {sound: gulls, at: 4.0, gain_db: -6}, {sound: rumble, at: 0.0, gain_db: -10}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s18_science
+    duration: 9.0
+    environment: {type: metropolis, focus: times_square, night: true, birds: 3, rubbish: true, roost: true, splats: 0.7, closed: true, traffic: 0}
+    lighting: night_emergency
+    camera: {shot: orbit, centre: [0, 70, 10], radius: 120, height: 90, angle_from: 220, angle_to: 262, look: [0, 70, 6], lens: 30, fstop: 6, ease: linear}
+    actors:
+      - {id: scientists, count: 3, area: [-20, 44, 6, 2], roles: [doctor], action: look_around, to: [0, 70], start: 0.3, stagger: 2.0}
+    captions:
+      - {text: "THE BIRDS ARE NOT ATTACKING AT RANDOM", at: 0.8, until: 4.2}
+      - {text: "THEY FOLLOW A TRAIL OF FOOD WASTE ACROSS THE CITY", at: 4.6, until: 8.6}
+    hud: {hours: 26.5, hours_end: 27.5, sub: "02:00 TO 03:00 AM"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -6}, {sound: tick, at: 4.6, gain_db: 2}]
+    music: {intensity: 0.55}
+    transition: {type: dissolve, duration: 0.5}
+
+  - id: s19_more
+    duration: 6.0
+    environment: {type: harbour_dawn, swarms: 4, swarm_count: 3000, swarm_near: true}
+    lighting: golden_hour
+    lighting_overrides: {sun: 0.8, elevation: 2, azimuth: 92, colour: [1.0, 0.55, 0.4], horizon: [0.62, 0.36, 0.34], zenith: [0.04, 0.06, 0.16], ambient: 0.3, exposure: 0.0, fog: 0.0006}
+    camera: {shot: push_in, from: [-40, -30, 14], to: [-10, 30, 8], look: [0, 500, 90], look_to: [0, 300, 60], lens: 30, fstop: 5.6}
+    captions:
+      - {text: "STILL NO SIGN OF THEM LEAVING", at: 0.6, until: 5.4}
+    hud: {hours: 27.5, hours_end: 29, sub: "03:00 TO 05:00 AM"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -4}, {sound: swell, at: 2.0, gain_db: -6}]
+    music: {intensity: 0.7}
+    transition: {type: fade_black, duration: 0.6}
+
+  - id: s20_aftermath
+    duration: 15.6
+    environment: {type: metropolis, focus: times_square, birds: 3, jam: true, closed: true, rubbish: true, splats: 1.0, guard: true, traffic: 0}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 6, azimuth: 95, colour: [1.0, 0.7, 0.46], horizon: [0.9, 0.66, 0.5], zenith: [0.26, 0.34, 0.6], ambient: 0.4, fog: 0.0007}
+    camera: {shot: aerial_establish, from: [-260, -260, 150], to: [-120, -80, 90], look: [0, 90, 30], look_to: [0, 72, 8], lens: 30, fstop: 8}
+    captions:
+      - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 3.0}
+      - {text: "ONE MILLION SEAGULLS. ONE CITY AT A STANDSTILL.", at: 3.4, until: 7.4}
+      - {text: "DAMAGED VEHICLES. GROUNDED FLIGHTS. A CITY COVERED.", at: 7.8, until: 11.6}
+      - {text: "NEW YORK SURVIVED THE FIRST 24 HOURS", at: 12.0, until: 15.2}
+    hud: {hours: 29, hours_end: 30, sub: "COUNTING TO 06:00 AM"}
+    sfx: [{sound: tick, at: 1.0, gain_db: 2}, {sound: tick, at: 2.0, gain_db: 2}, {sound: impact, at: 3.0, gain_db: -2}, {sound: gulls, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.7}
+    transition: {type: dissolve, duration: 0.6}
+
+  - id: s21_breeding
+    duration: 9.0
+    environment: {type: metropolis, focus: park, birds: 2, nests: true, traffic: 0, park_trees: 120}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 8, azimuth: 95, colour: [1.0, 0.72, 0.48], horizon: [0.9, 0.68, 0.52], zenith: [0.28, 0.36, 0.62], ambient: 0.42}
+    camera: {shot: push_in, from: [-110, 540, 30], to: [-62, 578, 5], look: [-20, 640, 2], look_to: [-42, 598, 0.7], lens: 40, fstop: 3.5}
+    captions:
+      - {kind: title, text: "WHAT HAPPENS WHEN THEY START BREEDING?", at: 2.6, until: 9.0}
+    hud: {hours: 30, hours_end: 30, sub: "A HYPOTHETICAL SCENARIO"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -6}, {sound: thud, at: 2.6, gain_db: 2}, {sound: swell, at: 5.0, gain_db: -10}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}

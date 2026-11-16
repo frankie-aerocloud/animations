@@ -12,6 +12,10 @@ ENVIRONMENTS = (
     "reservoir",
     "port",
     "desert",
+    "highway",
+    "harbour_dawn",
+    "metropolis",
+    "airport",
 )
 SHOTS = (
     "aerial_establish",
@@ -47,7 +51,7 @@ LIGHTING = (
     "night_emergency",
     "interior_day",
 )
-ROLES = ("civilian", "shopper", "child", "nurse", "doctor", "paramedic", "worker", "farmer", "police")
+ROLES = ("civilian", "shopper", "child", "nurse", "doctor", "paramedic", "worker", "farmer", "police", "soldier", "fisherman")
 ACTIONS = (
     "idle",
     "walk",
@@ -61,7 +65,9 @@ ACTIONS = (
     "queue",
     "crouch",
     "stand",
+    "scatter",
 )
-EVENTS = ("water_level", "hide", "show", "move", "spin", "flicker", "flash", "scale", "deplete", "sun")
-SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd")
+EVENTS = ("water_level", "hide", "show", "move", "spin", "flicker", "flash", "scale", "deplete", "sun", "blackout")
+SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat")
 PROPS = ("jerrycan", "bottle", "bucket", "box", "pan")
+CARD_KINDS = ("title", "caption", "chapter")

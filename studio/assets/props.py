@@ -6,7 +6,9 @@ import math
 
 from mathutils import Vector
 
-from studio.blender.primitives import box, cone, cylinder, multi_box, parent, text
+import bpy
+
+from studio.blender.primitives import add_noise, box, cone, cylinder, ico, key, multi_box, multi_shape, parent, set_interp, text
 
 
 def tap(ctx, name, loc, rot=0.0, scale=1.0):
@@ -162,13 +164,75 @@ def barrier(ctx, name, loc, rot=0.0, length=2.4):
 def lamp_post(ctx, name, loc, height=7.0, rot=0.0, lit=False):
     x, y, z = loc
     steel = ctx.mat("dark_steel")
-    pole = cylinder(ctx, name, 0.12, height, (x, y, z), steel, segments=8, anchor="base")
-    arm = box(ctx, f"{name}.arm", (0.12, 1.6, 0.12), (0, 0.7, height - 0.1), steel, anchor="base")
-    parent(arm, pole)
-    head = box(ctx, f"{name}.lamp", (0.3, 0.6, 0.18), (0, 1.3, height - 0.2), ctx.mat("lamp", emission=4.0 if lit else 0.0), bevel=0.02)
-    parent(head, pole)
+    lamp_mat = ctx.mat("lamp", emission=5.0 if lit else 0.0)
+    pole = multi_shape(ctx, name, [((0, 0.7, height - 0.04), (0.12, 1.6, 0.12), 0), ((0, 1.3, height - 0.2), (0.3, 0.6, 0.18), 1)], [((0, 0, height / 2), 0.12, height, "z", 0)], [steel, lamp_mat], (x, y, z))
+    if lit:
+        if lamp_mat not in ctx.tags.get("street_lights", []):
+            ctx.tag("street_lights", lamp_mat)
+        data = bpy.data.lights.new(f"{name}.light", "POINT")
+        data.energy = 600.0
+        data.color = (1.0, 0.82, 0.55)
+        data.shadow_soft_size = 0.6
+        light = bpy.data.objects.new(f"{name}.light", data)
+        light.location = (0, 1.3, height - 0.5)
+        ctx.link(light)
+        parent(light, pole)
+        ctx.tag("street_lamps", light)
     pole.rotation_euler = (0, 0, rot)
     return pole
+
+
+def fire(ctx, name, loc, size=3.0, flames=True, smoke=True, light=True):
+    """Flickering low-poly flames, a rising smoke column and an orange point light (tags: flame, smoke, fire_light)."""
+    x, y, z = loc
+    rng = ctx.rng
+    hot = ctx.palette.emissive(f"{name} hot", "yellow", 4.5)
+    warm = ctx.palette.emissive(f"{name} warm", "orange", 3.2)
+    if flames:
+        for i in range(6):
+            radius = size * rng.uniform(0.45, 1.0)
+            height = size * rng.uniform(1.6, 3.4)
+            flame = cone(ctx, f"{name}.flame{i}", radius, height, (x + rng.uniform(-size, size) * 0.8, y + rng.uniform(-size, size) * 0.8, z), hot if i % 2 else warm, segments=6, tip=0.05)
+            flame.rotation_euler = (rng.uniform(-0.18, 0.18), rng.uniform(-0.18, 0.18), 0.0)
+            key(flame, "scale", 1, (1.0, 1.0, 1.0))
+            add_noise(flame, "scale", 0.28, 1, ctx.frames, scale=2.0, phase=i * 3.1)
+            ctx.tag("flame", flame)
+    if smoke:
+        smoke_mat = ctx.mat("rock" if flames else "stone", roughness=1.0, alpha=0.72)
+        for i in range(7):
+            puff = ico(ctx, f"{name}.smoke{i}", size * (0.8 + 0.3 * i), (x + i * size * 0.5, y + i * size * 0.35, z + size * 1.8 + i * size * 1.7), smoke_mat, subdiv=2, scale=(1.3, 1.2, 0.9), smooth=True)
+            key(puff, "location", 1)
+            puff.location.z += size * 2.5
+            puff.location.x += size * 1.2
+            key(puff, "location", ctx.frames)
+            set_interp(puff, "LINEAR")
+            ctx.tag("smoke", puff)
+    if light and flames:
+        data = bpy.data.lights.new(f"{name}.light", "POINT")
+        data.energy = 3000.0 * size
+        data.color = (1.0, 0.45, 0.12)
+        data.shadow_soft_size = size
+        lamp = bpy.data.objects.new(f"{name}.light", data)
+        lamp.location = (x, y, z + size * 1.5)
+        ctx.link(lamp)
+        key(data, "energy", 1)
+        add_noise(data, "energy", 1000.0 * size, 1, ctx.frames, scale=3.0)
+        ctx.tag("fire_light", lamp)
+    ctx.anchor(name, (x, y, z + size * 1.5))
+
+
+def stretcher(ctx, name, loc, rot=0.0, occupied=True):
+    x, y, z = loc
+    frame = box(ctx, name, (0.7, 2.0, 0.08), (x, y, z + 0.6), ctx.mat("white"), bevel=0.01, rot=(0, 0, rot))
+    for dx, dy in ((-0.3, -0.85), (0.3, -0.85), (-0.3, 0.85), (0.3, 0.85)):
+        leg = box(ctx, f"{name}.leg", (0.05, 0.05, 0.6), (dx, dy, -0.6), ctx.mat("dark_steel"), anchor="base")
+        parent(leg, frame)
+    if occupied:
+        body = box(ctx, f"{name}.blanket", (0.6, 1.7, 0.28), (0, -0.1, 0.18), ctx.mat("teal", roughness=0.9), bevel=0.06)
+        parent(body, frame)
+        head = box(ctx, f"{name}.head", (0.24, 0.24, 0.24), (0, 0.85, 0.16), ctx.mat("skin_2"), bevel=0.05)
+        parent(head, frame)
+    return frame
 
 
 def bench(ctx, name, loc, rot=0.0):

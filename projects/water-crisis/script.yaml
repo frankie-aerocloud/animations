@@ -1,34 +1,43 @@
 # Narration. `at` is seconds after the start of the named scene. A line may run on into later scenes.
+# Hypothetical scenario: the consequences are plausible, not predictions.
 lines:
   - id: n01
     scene: s01_hook
     at: 0.3
-    text: "What if, in a single day, every tap, river and reservoir on Earth simply stopped giving us water?"
+    text: "Imagine every tap, river and reservoir on Earth stopped giving us water, right now. This is a hypothetical. Here is how the next twenty-four hours could unfold."
   - id: n02
-    scene: s02_tap
-    at: 0.2
-    text: "This is a hypothetical scenario. But within the first hour, taps would run dry, and people would rush to fill bottles, pans and bathtubs with whatever was left in the pipes."
+    scene: s02_h1_tap
+    at: 1.0
+    text: "Hour one. Taps sputter and die. People fill pans, bottles and bathtubs with whatever is left in the pipes, and the emergency lines light up."
   - id: n03
-    scene: s04_supermarket
-    at: 0.2
-    text: "Six hours in, supermarket shelves would be stripped of bottled water, and emergency distribution points would open."
-  - id: n04
-    scene: s06_hospital
-    at: 0.1
-    text: "Hospitals, which rely on water for hygiene, sterilisation and dialysis, would be among the first places to struggle."
-  - id: n05
-    scene: s07_farm
-    at: 1.2
-    text: "By twelve hours, irrigation would stop and livestock would need water urgently. Power stations and factories that depend on water for cooling would begin shutting down."
-  - id: n06
-    scene: s09_reservoir
-    at: 0.2
-    text: "At eighteen hours, reservoirs and rivers would sit at record lows. Ports, transport and supply chains would slow, and the pressure on cities would keep rising."
-  - id: n07
-    scene: s11_city_crisis
+    scene: s04_h2_pov
     at: 0.3
-    text: "After twenty-four hours, no city would have collapsed. But everything we rely on, from food and medicine to electricity, would already be running on borrowed time."
+    text: "Hour two. Supermarkets are stripped of bottled water within minutes, and scuffles break out over the last crates."
+  - id: n04
+    scene: s06_h4_distribution
+    at: 0.3
+    text: "Hour four. Emergency distribution points open, and orderly queues turn into crowds. The roads out of the city jam solid."
+  - id: n05
+    scene: s08_h8_hospital
+    at: 0.3
+    text: "Hour eight. Hospitals ration every litre for surgery and dialysis. Downtown, a fire takes hold, and the hydrants give nothing."
+  - id: n06
+    scene: s10_h12_farm
+    at: 0.3
+    text: "Hour twelve. Irrigation has stopped, livestock are in distress, and the reservoirs are showing their beds."
+  - id: n07
+    scene: s12_h15_industrial
+    at: 0.3
+    text: "Hour fifteen. Power stations that cool with water shut down. The city goes dark, ports and supply chains stall, and helicopters sweep the streets."
   - id: n08
-    scene: s12_close
-    at: 0.4
-    text: "Modern civilisation runs on a reliable supply of freshwater. Water is not optional."
+    scene: s15_h20_fires
+    at: 0.3
+    text: "Hour twenty. In the dark, fires burn unchecked and every bottle is fought over. Water is no longer a utility. It is survival."
+  - id: n09
+    scene: s17_h24_dawn
+    at: 0.3
+    text: "Hour twenty-four. Nothing has fully collapsed. But food, medicine, power and order are all running on borrowed time. Water is not optional."
+  - id: n10
+    scene: s18_end
+    at: 1.2
+    text: "What would you do?"

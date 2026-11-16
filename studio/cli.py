@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -10,9 +11,17 @@ from pathlib import Path
 
 from studio.core.configuration import OUTPUT_DIR
 from studio.core.project import load_project, validate_project
-from studio.pipeline import Pipeline, PipelineError
+from studio.pipeline import Pipeline, PipelineError, failures
 
 PROFILE_HELP = "render profile from config/render.yaml (preview, standard, high)"
+
+
+def keep_awake() -> None:
+    """macOS idle and maintenance sleep pause Blender for minutes at a time, so hold a sleep
+    assertion until this process exits. `-s` applies on mains power only; batteries drain normally."""
+    caffeinate = shutil.which("caffeinate")
+    if sys.platform == "darwin" and caffeinate:
+        subprocess.Popen([caffeinate, "-s", "-w", str(os.getpid())], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def doctor() -> int:
@@ -89,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
     project_command("render", "render every scene whose inputs changed")
     project_command("assemble", "narration, subtitles, overlay, audio mix, FFmpeg assembly, validation and manifest")
     project_command("build", "the complete pipeline")
+    check = project_command("check", "play the finished MP4 end to end and run every technical check")
+    check.add_argument("--file", type=Path, help="check this MP4 instead of the profile's output")
     clean = sub.add_parser("clean", help="delete generated output for a project")
     clean.add_argument("project")
     args = parser.parse_args(argv)
@@ -109,6 +120,27 @@ def main(argv: list[str] | None = None) -> int:
             print(f"removed {target}")
             return 0
         pipeline = Pipeline(project, "preview" if args.command == "preview" else args.profile, force=args.force, log=lambda message: print(message, flush=True))
+        if args.command == "check":
+            target = args.file or pipeline.final
+            if not target.exists():
+                if args.file:
+                    print(f"error: {target} does not exist", file=sys.stderr)
+                    return 1
+                done, total = pipeline.progress()
+                print(f"{target.name} has not been built yet: {done} of {total} scene frames rendered ({100 * done // max(1, total)}%).")
+                print(f"Build it with: python -m studio.cli build {args.project} --profile {pipeline.profile.name}")
+                return 1
+            rows = pipeline.deep_check(target)
+            width = max(len(name) for name, _, _ in rows)
+            print(f"{target}")
+            done, total = pipeline.progress()
+            if not args.file and done < total:
+                print(f"  note: this file predates the current storyboard ({done} of {total} frames rendered for it); run build to replace it")
+            for name, passed, detail in rows:
+                print(f"  {'PASS' if passed else 'FAIL'}  {name.ljust(width)}  {detail}")
+            print("FAILED:\n  " + "\n  ".join(failures(rows)) if failures(rows) else "all checks passed")
+            return 1 if failures(rows) else 0
+        keep_awake()
         if args.command == "storyboard":
             return storyboard(pipeline, args.stills)
         pipeline.require_valid()
@@ -129,8 +161,9 @@ def main(argv: list[str] | None = None) -> int:
                 overlay_frames = pipeline.render_overlay(cues)
                 audio = pipeline.mix(lines)
                 final = pipeline.assemble(results, audio, srt, overlay_frames)
-                problems = pipeline.validate_output(final)
-                pipeline.write_manifest(final, results, lines, srt, audio, problems)
+                checks = pipeline.deep_check(final)
+                pipeline.write_manifest(final, results, lines, srt, audio, checks)
+                problems = failures(checks)
                 if problems:
                     raise PipelineError("final video failed validation:\n  - " + "\n  - ".join(problems))
                 print(f"done: {final}")

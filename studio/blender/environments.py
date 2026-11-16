@@ -13,6 +13,7 @@ from studio.core import catalogue
 
 FOG_EXTENT = {
     "coastal_city": (900, 900, 220),
+    "highway": (800, 800, 160),
     "reservoir": (900, 900, 260),
     "farm": (700, 700, 140),
     "industrial": (600, 600, 160),
@@ -23,21 +24,22 @@ FOG_EXTENT = {
 }
 
 
-def _city_block(ctx, name, centre, size, kind, seed, dry=False, pools=True):
+def _city_block(ctx, name, centre, size, kind, seed, dry=False, pools=True, night=False, lit=()):
     rng = ctx.rng
     cx, cy = centre
     w, d = size
+    glow = rng.choice(lit) if lit else None
     props.pavement(ctx, f"{name}.pavement", (cx, cy), (w + 4, d + 4), 0.0)
     if kind == "plaza":
         box(ctx, f"{name}.paving", (w, d, 0.1), (cx, cy, 0.18), ctx.mat("plaster"), anchor="base")
         water.fountain(ctx, f"{name}.fountain", (cx, cy, 0.28), radius=4.0)
-        hall = buildings.building(ctx, f"{name}.hall", (cx, cy + d / 2 - 7, 0.2), (26, 12, 9), "white", "dome", 0.0, seed, window=(1.4, 2.2), trim="stone", units=False)
+        hall = buildings.building(ctx, f"{name}.hall", (cx, cy + d / 2 - 7, 0.2), (26, 12, 9), "white", "dome", 0.0, seed, window=(1.4, 2.2), trim="stone", units=False, lit=glow)
         for i, (dx, dy) in enumerate(((-12, -10), (12, -10), (-12, 4), (12, 4))):
             vegetation.tree(ctx, f"{name}.tree{i}", (cx + dx, cy + dy, 0.28), "round", 0.9)
         for i, (dx, dy, rot) in enumerate(((-7, -4, 0.0), (7, -4, 0.0), (0, -13, math.pi))):
             props.bench(ctx, f"{name}.bench{i}", (cx + dx, cy + dy, 0.28), rot)
         for i, (dx, dy) in enumerate(((-15, -15), (15, -15), (-15, 12), (15, 12))):
-            props.lamp_post(ctx, f"{name}.lamp{i}", (cx + dx, cy + dy, 0.28), 6.0, 0.0, dry)
+            props.lamp_post(ctx, f"{name}.lamp{i}", (cx + dx, cy + dy, 0.28), 6.0, 0.0, night)
         ctx.anchor("plaza", (cx, cy, 0.3))
         ctx.anchor("fountain", (cx, cy, 1.0))
         ctx.anchor("hall", (cx, cy + d / 2 - 7, 9.0))
@@ -47,20 +49,20 @@ def _city_block(ctx, name, centre, size, kind, seed, dry=False, pools=True):
         for i in range(n):
             x = cx - w / 2 + (w / n) * (i + 0.5) + rng.uniform(-2, 2)
             y = cy + rng.uniform(-d * 0.2, d * 0.2)
-            buildings.tower(ctx, f"{name}.tower{i}", (x, y, 0.18), seed * 10 + i)
+            buildings.tower(ctx, f"{name}.tower{i}", (x, y, 0.18), seed * 10 + i, lit=glow)
         return None
     if kind == "apartments":
         for i, (sx, sy) in enumerate(((-1, -1), (1, -1), (-1, 1), (1, 1))):
             if rng.random() < 0.15:
                 vegetation.tree(ctx, f"{name}.tree{i}", (cx + sx * w * 0.25, cy + sy * d * 0.25, 0.18), "round")
                 continue
-            buildings.apartment(ctx, f"{name}.apt{i}", (cx + sx * w * 0.25, cy + sy * d * 0.25, 0.18), seed * 10 + i)
+            buildings.apartment(ctx, f"{name}.apt{i}", (cx + sx * w * 0.25, cy + sy * d * 0.25, 0.18), seed * 10 + i, lit=glow)
         return None
     if kind == "commercial":
         buildings.warehouse(ctx, f"{name}.store", (cx, cy, 0.18), (w * 0.8, d * 0.45, 7), 0.0, "plaster")
         box(ctx, f"{name}.carpark", (w * 0.8, d * 0.4, 0.05), (cx, cy - d * 0.27, 0.18), ctx.mat("asphalt"), anchor="base")
         for i in range(5):
-            vehicles.car(ctx, f"{name}.car{i}", (cx - w * 0.3 + i * 6.0, cy - d * 0.3, 0.23), rot=0.0)
+            vehicles.car(ctx, f"{name}.car{i}", (cx - w * 0.3 + i * 6.0, cy - d * 0.3, 0.23), rot=0.0, lit=night)
         return None
     # houses (residential / resort)
     cols, rows = 3, 2
@@ -69,7 +71,7 @@ def _city_block(ctx, name, centre, size, kind, seed, dry=False, pools=True):
             x = cx - w / 2 + (w / cols) * (i + 0.5)
             y = cy - d / 2 + (d / rows) * (j + 0.5)
             rot = 0.0 if j == 0 else math.pi
-            buildings.house(ctx, f"{name}.house{i}{j}", (x + rng.uniform(-1, 1), y + (3.0 if j == 0 else -3.0), 0.18), seed * 10 + i * 2 + j, rot)
+            buildings.house(ctx, f"{name}.house{i}{j}", (x + rng.uniform(-1, 1), y + (3.0 if j == 0 else -3.0), 0.18), seed * 10 + i * 2 + j, rot, lit=glow)
             garden_y = y - 4.5 if j == 0 else y + 4.5
             if pools and rng.random() < (0.55 if kind == "resort" else 0.25):
                 water.pool(ctx, f"{name}.pool{i}{j}", (x, garden_y, 0.18), (5.0, 2.8))
@@ -81,12 +83,33 @@ def _city_block(ctx, name, centre, size, kind, seed, dry=False, pools=True):
     return None
 
 
+FIRE_SPOTS = ((-46.0, 46.0, 0.3), (92.0, 0.0, 0.3), (46.0, -46.0, 0.3), (-92.0, 46.0, 0.3), (138.0, 46.0, 0.3))
+
+
 def coastal_city(ctx, spec):
-    """Coastal city: plaza, towers, apartments, resort houses with pools, river, reservoir and port."""
+    """Coastal city: plaza, towers, apartments, resort houses with pools, river, reservoir and port.
+
+    Flags (all optional, defaults follow `variant`): dry, night (lit windows, lamps, headlights),
+    emergency (tanker, tents, pallets, ambulances, queues), fires (burning blocks), smoke (smouldering
+    columns, no flames), helicopters, jam (cars queued on the coast road), people, traffic.
+    """
     rng = ctx.rng
     seed = int(spec.get("seed", 1))
-    dry = spec.get("variant") == "crisis"
+    variant = str(spec.get("variant", "normal"))
+    dry = bool(spec.get("dry", variant != "normal"))
+    night = bool(spec.get("night", variant in ("night", "night_fires")))
+    emergency = bool(spec.get("emergency", variant != "normal"))
+    fires = int(spec.get("fires", {"fire": 3, "night_fires": 4}.get(variant, 0)))
+    smoke = bool(spec.get("smoke", variant == "dawn"))
+    helicopters = int(spec.get("helicopters", 0))
+    jam = bool(spec.get("jam", variant in ("night", "night_fires", "dawn")))
     pal = ctx.palette
+    lit = []
+    if night:
+        for i in range(6):
+            material = pal.make(f"windows lit {i}", (1.0, 0.68, 0.32), 0.5, 0.0, 1.5)
+            ctx.tag("window_lights", material)
+            lit.append(material)
     ground_mat = pal.terrain("city ground", [(-9.0, "mud"), (-1.5, "beach"), (0.0, "sand"), (0.6, "pavement"), (5.0, "grass"), (16.0, "grass_dry"), (32.0, "rock"), (46.0, "stone")])
     terrain.ground(ctx, "ground", (900, 900), (120, 120), amplitude=5.0, seed=seed, material=ground_mat, coast={"y": -70.0, "depth": 9.0, "width": 36.0}, flat=[(-175, -66, 175, 120, 14)], rise={"axis": "y", "start": 118, "end": 260, "height": 42, "extra_noise": 10.0}, bowl={"centre": (60.0, 165.0), "radius": 45.0, "depth": 14.0}, noise_scale=0.02)
     water.surface(ctx, "sea", (1000, 300), (0.0, -214.0, -0.5), "sea", tags=("sea",))
@@ -123,7 +146,9 @@ def coastal_city(ctx, spec):
                 kind = "apartments" if rng.random() < 0.7 else "commercial"
             else:
                 kind = "houses"
-            _city_block(ctx, f"block{block_index}", (x, y), (36, 36), kind, seed * 100 + block_index, dry)
+            _city_block(ctx, f"block{block_index}", (x, y), (36, 36), kind, seed * 100 + block_index, dry, night=night, lit=lit)
+    for i, (x, y) in enumerate(((-69, -23), (69, -23), (-115, 23), (115, 23), (-69, 69), (69, 69), (-23, 115), (161, 69))):
+        props.lamp_post(ctx, f"streetlamp{i}", (x + 6.0, y + 6.0, 0.3), 8.0, 0.0, night)
     # port
     quay = box(ctx, "quay", (70, 18, 2.2), (-150.0, -74.0, -1.0), ctx.mat("concrete"), bevel=0.1, anchor="base")
     for i, x in enumerate((-168, -140)):
@@ -150,11 +175,13 @@ def coastal_city(ctx, spec):
         y = rng.choice((-23, 23, 69))
         direction = 1 if i % 2 else -1
         start_x = rng.uniform(-150, 150)
-        car_obj = vehicles.car(ctx, f"traffic{i}", (start_x, y + direction * 2.5, 0.25), rot=math.pi / 2 if direction > 0 else -math.pi / 2)
+        car_obj = vehicles.car(ctx, f"traffic{i}", (start_x, y + direction * 2.5, 0.25), rot=math.pi / 2 if direction > 0 else -math.pi / 2, lit=night)
         vehicles.drive(ctx, car_obj, [(start_x, y + direction * 2.5), (start_x + direction * 220.0, y + direction * 2.5)], 0.0, speed=11.0, z=0.25)
+    if jam:
+        vehicles.traffic_jam(ctx, "jam_out", (-195.0, -61.5), (195.0, -61.5), lanes=2, gap=7.0, lit=night, lane_width=2.6)
+        vehicles.traffic_jam(ctx, "jam_in", (195.0, -66.5), (-195.0, -66.5), lanes=1, gap=22.0, lit=night, lane_width=2.6)
     # ambient pedestrians on the plaza
-    people = int(spec.get("people", 14))
-    for i in range(people):
+    for i in range(int(spec.get("people", 14))):
         px, py = rng.uniform(-15, 15), rng.uniform(-16, 12)
         qx, qy = rng.uniform(-15, 15), rng.uniform(-16, 12)
         actor = characters.build(ctx, {"id": f"pedestrian{i}", "role": "civilian", "at": (px, py, 0.3)})
@@ -164,15 +191,36 @@ def coastal_city(ctx, spec):
             obj.location.z -= 7.0 if obj.name == "reservoir" else 1.6
         for obj in ctx.tagged("jet"):
             obj.scale = (0.01, 0.01, 0.01)
-        vehicles.lorry(ctx, "tanker", (-8.0, -8.0, 0.3), math.pi / 2, "navy", "tanker")
+    if emergency:
+        vehicles.lorry(ctx, "tanker", (-8.0, -8.0, 0.3), math.pi / 2, "navy", "tanker", lit=night)
         for i in range(2):
-            vehicles.van(ctx, f"ambulance{i}", (12.0 + i * 4.0, -12.0, 0.3), math.pi, "white", "ambulance")
+            vehicles.van(ctx, f"ambulance{i}", (12.0 + i * 4.0, -12.0, 0.3), math.pi, "white", "ambulance", lit=night)
+        vehicles.car(ctx, "police_car", (-16.0, 4.0, 0.3), math.pi / 2, "white", lit=night)
         for i, (dx, dy) in enumerate(((-14, 2), (-12, -14), (6, 4))):
             props.tent(ctx, f"tent{i}", (dx, dy, 0.3), (5.0, 3.5), 2.8, 0.0)
         for i in range(6):
             props.bottle_pallet(ctx, f"pallet{i}", (2.0 + (i % 3) * 1.6, -4.0 + (i // 3) * 1.4, 0.3), 2)
-        characters.crowd(ctx, {"id": "queue", "count": 22, "area": (-6.0, -6.0, 2.0, 2.0), "roles": ["civilian", "civilian", "child"], "action": "queue", "to": [-6.0, -6.0], "direction": [1, -0.15], "gap": 0.85, "props": ["jerrycan", "bottle", "bucket"]})
-        characters.crowd(ctx, {"id": "gatherers", "count": 10, "area": (0.0, -20.0, 20.0, 8.0), "roles": ["civilian", "civilian", "worker"], "action": "gather", "to": [-8.0, -8.0], "radius": 6.0, "stagger": 2.0, "props": ["jerrycan", "bucket"]})
+        for i in range(6):
+            props.barrier(ctx, f"barrier{i}", (-4.0 + i * 2.5, -2.0, 0.3), 0.0)
+        if not spec.get("quiet_plaza"):
+            characters.crowd(ctx, {"id": "queue", "count": 22, "area": (-6.0, -6.0, 2.0, 2.0), "roles": ["civilian", "civilian", "child"], "action": "queue", "to": [-6.0, -6.0], "direction": [1, -0.15], "gap": 0.85, "props": ["jerrycan", "bottle", "bucket"]})
+            characters.crowd(ctx, {"id": "gatherers", "count": 10, "area": (0.0, -20.0, 20.0, 8.0), "roles": ["civilian", "civilian", "worker"], "action": "gather", "to": [-8.0, -8.0], "radius": 6.0, "stagger": 2.0, "props": ["jerrycan", "bucket"]})
+    if fires or smoke:
+        vehicles.lorry(ctx, "fire_engine", (-20.0, -20.0, 0.3), math.radians(70), "red", "fire", lit=night)
+    roofs = [point for name, point in ctx.anchors.items() if name.endswith(".roof") and 8.0 < point.z < 40.0]
+    spots = []
+    for sx, sy, _ in FIRE_SPOTS:
+        candidates = [r for r in roofs if r not in spots]
+        if candidates:
+            spots.append(min(candidates, key=lambda r: (r.x - sx) ** 2 + (r.y - sy) ** 2))
+    for i in range(min(fires, len(spots))):
+        props.fire(ctx, f"fire{i}", (spots[i].x, spots[i].y, spots[i].z - 0.5), size=3.0 + 0.4 * i)
+    if smoke:
+        for i in range(min(3, len(spots))):
+            props.fire(ctx, f"smoulder{i}", (spots[i].x, spots[i].y, spots[i].z - 0.5), size=2.8, flames=False, light=False)
+    for i in range(helicopters):
+        heli = vehicles.helicopter(ctx, f"heli{i}", (-70.0 + i * 110.0, -30.0 + i * 50.0, 70.0 + i * 8.0), 0.0, searchlight=True, lit=True)
+        vehicles.drive(ctx, heli, [(-70.0 + i * 110.0, -30.0 + i * 50.0, 70.0 + i * 8.0), (10.0 + i * 40.0, 50.0 + i * 10.0, 66.0 + i * 8.0)], 0.0, ctx.duration, z=70.0)
     return quay
 
 
@@ -198,6 +246,11 @@ def residential_street(ctx, spec):
             props.fence(ctx, f"{name}.fence", (x - 7.5, side * 7.2), (x + 7.5, side * 7.2), 0.0, 0.9)
     for i, x in enumerate(range(-60, 61, 20)):
         props.lamp_post(ctx, f"lamp{i}", (x, 6.5, 0.0), 6.0, math.pi)
+    for i in range(int(spec.get("traffic", 0))):
+        direction = 1 if i % 2 else -1
+        start_x = -70.0 * direction + i * 9.0 * direction
+        car_obj = vehicles.car(ctx, f"traffic{i}", (start_x, direction * 2.0, 0.05), rot=math.pi / 2 if direction > 0 else -math.pi / 2)
+        vehicles.drive(ctx, car_obj, [(start_x, direction * 2.0), (start_x + direction * 150.0, direction * 2.0)], 0.3 * i, speed=float(spec.get("speed", 14.0)), z=0.05)
     # house_1 (x = -30, north side) carries the roof tank and garden tap used by the storyboard
     water.tank(ctx, "roof_tank", (-28.0, 20.0, 6.9), 1.0, 1.3, legs=False)
     cylinder(ctx, "tap_post", 0.06, 0.8, (-28.0, 9.0, 0.0), ctx.mat("dark_steel"), segments=6, anchor="base")
@@ -323,6 +376,7 @@ def distribution_point(ctx, spec):
 
 
 def hospital_exterior(ctx, spec):
+    rng = ctx.rng
     pal = ctx.palette
     terrain.ground(ctx, "ground", (400, 400), (40, 40), amplitude=0.5, seed=6, material=pal.terrain("hospital ground", [(-1.0, "grass"), (0.0, "grass"), (2.0, "grass_dry")]), noise_scale=0.05)
     box(ctx, "forecourt", (96.0, 64.0, 0.08), (0.0, -6.0, 0.0), ctx.mat("asphalt", roughness=0.85), anchor="base")
@@ -342,6 +396,15 @@ def hospital_exterior(ctx, spec):
         buildings.apartment(ctx, f"apt{i}", (x, 40.0, 0.0), 40 + i)
     props.sign_text(ctx, "sign", "EMERGENCY", (0.0, 13.6, 3.2), 1.1, colour="white", emission=2.0, weight=0.02)
     box(ctx, "sign_board", (12.0, 0.3, 2.0), (0.0, 13.9, 2.4), ctx.mat("red"), bevel=0.03, anchor="base")
+    if spec.get("crisis"):
+        for i in range(4):
+            vehicles.van(ctx, f"queued_ambulance{i}", (-20.0, -30.0 + i * 8.0, 0.08), 0.0, "white", "ambulance")
+        for i, (x, y, rot) in enumerate(((-32.0, -12.0, 0.1), (32.0, -12.0, -0.2), (-30.0, 2.0, 0.3))):
+            props.tent(ctx, f"triage{i}", (x, y, 0.08), (7.0, 5.0), 3.0, rot, "white")
+        for i in range(7):
+            props.stretcher(ctx, f"stretcher{i}", (-10.0 + i * 3.0, -12.0, 0.08), rng.uniform(-0.2, 0.2), occupied=i % 3 != 1)
+        for i in range(6):
+            props.barrier(ctx, f"barrier{i}", (-8.0 + i * 2.6, -4.0, 0.08), 0.0)
     ctx.anchor("entrance", (0.0, 12.0, 1.5))
     ctx.anchor("bay", (14.0, 4.0, 1.5))
     ctx.anchor("roof", (12.0, 38.0, 19.0))
@@ -355,8 +418,9 @@ def farm(ctx, spec):
     rng = ctx.rng
     pal = ctx.palette
     terrain.ground(ctx, "ground", (700, 700), (70, 70), amplitude=4.0, seed=8, material=pal.terrain("farm ground", [(-3.0, "soil"), (0.0, "grass_dry"), (1.5, "grass"), (12.0, "grass_dry"), (40.0, "rock")]), flat=[(-140, -110, 140, 120, 30)], rise={"axis": "y", "start": 150, "end": 350, "height": 60, "extra_noise": 12.0}, noise_scale=0.01)
-    vegetation.crop_rows(ctx, "field_west", (-70.0, 55.0, 0.0), (110.0, 90.0), 1.8, 1.0)
-    vegetation.crop_rows(ctx, "field_pivot", (70.0, 60.0, 0.0), (104.0, 104.0), 1.8, 1.0, circle=True)
+    health = float(spec.get("health", 1.0))
+    vegetation.crop_rows(ctx, "field_west", (-70.0, 55.0, 0.0), (110.0, 90.0), 1.8, health)
+    vegetation.crop_rows(ctx, "field_pivot", (70.0, 60.0, 0.0), (104.0, 104.0), 1.8, min(1.0, health + 0.2), circle=True)
     # centre-pivot irrigator: root empty at the centre, truss with towers and sprays
     pivot = empty(ctx, "pivot", (70.0, 60.0, 0.0))
     hub = cylinder(ctx, "pivot.hub", 0.6, 4.0, (0, 0, 0), ctx.mat("steel"), segments=10, anchor="base")
@@ -374,7 +438,7 @@ def farm(ctx, spec):
         ctx.tag("spray", spray)
     ctx.objects["pivot"] = pivot
     for i in range(10):
-        props.sprinkler(ctx, f"sprinkler{i}", (-118.0 + i * 11.0, 8.0, 0.0), 1.4, spray=True)
+        props.sprinkler(ctx, f"sprinkler{i}", (-118.0 + i * 11.0, 8.0, 0.0), 1.4, spray=not spec.get("dry"))
     buildings.barn(ctx, "barn", (-80.0, -70.0, 0.0), 0.0)
     buildings.house(ctx, "farmhouse", (-45.0, -92.0, 0.0), 9, 0.0, (12.0, 9.0, 3.6))
     buildings.silo(ctx, "silo", (-104.0, -70.0, 0.0), 3.0, 14.0)
@@ -383,7 +447,9 @@ def farm(ctx, spec):
     props.fence(ctx, "fence_n", (-50, -28), (10, -28), 0.0)
     props.fence(ctx, "fence_w", (-50, -72), (-50, -28), 0.0)
     props.fence(ctx, "fence_e", (10, -72), (10, -28), 0.0)
-    water.trough(ctx, "trough", (-20.0, -50.0, 0.0), (4.0, 1.0))
+    trough_water = water.trough(ctx, "trough", (-20.0, -50.0, 0.0), (4.0, 1.0))
+    if spec.get("dry"):
+        trough_water.location.z -= 0.4
     for i, (dx, dy, rot) in enumerate(((-3.5, 1.4, 0.9), (-1.0, 1.9, 0.2), (2.0, 1.6, -0.4), (3.6, -1.8, 2.6), (0.5, -2.2, 3.2), (-3.0, -2.4, 2.9))):
         props.cow(ctx, f"cow{i}", (-20.0 + dx, -50.0 + dy, 0.0), rot, rng.choice(("white", "white", "rust")))
     vehicles.tractor(ctx, "tractor", (-40.0, -40.0, 0.0), 0.4)
@@ -483,12 +549,15 @@ def port(ctx, spec):
     for i in range(3):
         vehicles.boat(ctx, f"boat{i}", (-150.0 + i * 8.0, -40.0, -0.5), rng.uniform(-0.4, 0.4), 7.0)
     props.road(ctx, "port_road", (-200, 32), (200, 32), 10.0, 0.02)
+    night = bool(spec.get("night", False))
     for i in range(9):
-        vehicles.lorry(ctx, f"lorry{i}", (-120.0 + i * 16.0, 29.5, 0.05), math.pi / 2, rng.choice(("white", "red", "navy", "teal")), "container")
+        vehicles.lorry(ctx, f"lorry{i}", (-120.0 + i * 16.0, 29.5, 0.05), math.pi / 2, rng.choice(("white", "red", "navy", "teal")), "container", lit=night)
+    if night:
+        vehicles.traffic_jam(ctx, "jam", (-200.0, 36.0), (200.0, 36.0), lanes=1, gap=9.0, lit=True, lorries=0.5)
     for i, x in enumerate((-90, -30, 40, 100)):
         buildings.warehouse(ctx, f"warehouse{i}", (x, 62.0, 0.0), (44.0, 26.0, 10.0), 0.0, rng.choice(("steel", "stone", "concrete")))
     for i, (x, y) in enumerate(((-120, 20), (-60, 20), (0, 20), (60, 20), (120, 20))):
-        props.lamp_post(ctx, f"lamp{i}", (x, y, 1.2), 12.0)
+        props.lamp_post(ctx, f"lamp{i}", (x, y, 1.2), 12.0, 0.0, night)
     ctx.anchor("quay", (0.0, -2.0, 2.2))
     ctx.anchor("crane", (0.0, -14.0, 20.0))
     ctx.anchor("ship", (0.0, -50.0, 6.0))
@@ -519,6 +588,42 @@ def desert(ctx, spec):
     return None
 
 
+def highway(ctx, spec):
+    """Dual carriageway leaving the city, with an overpass; `jam` queues traffic bumper to bumper."""
+    rng = ctx.rng
+    night = bool(spec.get("night", False))
+    pal = ctx.palette
+    terrain.ground(ctx, "ground", (700, 700), (70, 70), amplitude=6.0, seed=14, material=pal.terrain("verge", [(-3.0, "soil"), (0.0, "grass_dry"), (1.5, "grass"), (14.0, "grass_dry"), (40.0, "rock")]), flat=[(-320, -30, 320, 30, 30)], rise={"axis": "y", "start": 120, "end": 340, "height": 55, "extra_noise": 14.0}, noise_scale=0.012)
+    props.road(ctx, "carriageway_out", (-320, -7.5), (320, -7.5), 12.0, 0.02)
+    props.road(ctx, "carriageway_in", (-320, 7.5), (320, 7.5), 12.0, 0.02)
+    box(ctx, "central_barrier", (640.0, 0.6, 1.0), (0.0, 0.0, 0.0), ctx.mat("concrete"), bevel=0.05, anchor="base")
+    for i, x in enumerate(range(-300, 301, 40)):
+        props.lamp_post(ctx, f"lamp{i}", (x, -15.0, 0.0), 10.0, math.pi / 2 * 0, night)
+        props.lamp_post(ctx, f"lamp_in{i}", (x, 15.0, 0.0), 10.0, math.pi, night)
+    # overpass across both carriageways
+    box(ctx, "overpass_deck", (14.0, 70.0, 1.6), (40.0, 0.0, 7.0), ctx.mat("concrete"), bevel=0.1, anchor="base")
+    for y in (-30.0, -1.0, 29.0):
+        for x in (35.0, 45.0):
+            cylinder(ctx, f"pier{x}{y}", 1.1, 7.0, (x, y, 0.0), ctx.mat("stone"), segments=10, anchor="base")
+    for sign_x in (-120.0, 140.0):
+        box(ctx, f"gantry{sign_x}", (0.6, 30.0, 0.6), (sign_x, 0.0, 7.5), ctx.mat("dark_steel"), anchor="base")
+        for y in (-14.0, 14.0):
+            cylinder(ctx, f"gantry_post{sign_x}{y}", 0.3, 7.5, (sign_x, y, 0.0), ctx.mat("dark_steel"), segments=8, anchor="base")
+        box(ctx, f"sign{sign_x}", (0.3, 8.0, 2.4), (sign_x, -7.5, 8.6), ctx.mat("teal"), bevel=0.03, anchor="base")
+    if spec.get("jam", True):
+        vehicles.traffic_jam(ctx, "jam_out", (-310.0, -7.5), (310.0, -7.5), lanes=3, gap=7.0, lit=night, lane_width=3.5, lorries=0.12)
+        vehicles.traffic_jam(ctx, "jam_in", (310.0, 7.5), (-310.0, 7.5), lanes=1, gap=40.0, lit=night, lane_width=3.5)
+    vegetation.scatter_trees(ctx, "trees", (0.0, 90.0, 0.0), 300.0, 30, ("round", "conifer"), avoid=[(-330, -40, 330, 40)], dry=True)
+    vegetation.scatter_trees(ctx, "trees_south", (0.0, -90.0, 0.0), 300.0, 22, ("round", "round", "conifer"), avoid=[(-330, -40, 330, 40)], dry=True)
+    for i, x in enumerate((-200.0, -120.0, 180.0, 240.0)):
+        buildings.warehouse(ctx, f"shed{i}", (x, 70.0 + (i % 2) * 20.0, 0.0), (30.0, 18.0, 7.0), 0.0, rng.choice(("steel", "concrete")))
+    ctx.anchor("overpass", (40.0, 0.0, 8.6))
+    ctx.anchor("road_east", (200.0, -7.5, 1.0))
+    ctx.anchor("road_west", (-200.0, -7.5, 1.0))
+    ctx.anchor("centre", (0.0, -7.5, 1.0))
+    return None
+
+
 BUILDERS = {
     "coastal_city": coastal_city,
     "residential_street": residential_street,
@@ -531,7 +636,12 @@ BUILDERS = {
     "reservoir": reservoir,
     "port": port,
     "desert": desert,
+    "highway": highway,
 }
+from studio.blender import environments_nyc  # noqa: E402
+
+BUILDERS.update(environments_nyc.BUILDERS)
+FOG_EXTENT.update(environments_nyc.FOG_EXTENT)
 assert set(BUILDERS) == set(catalogue.ENVIRONMENTS), "environment catalogue and builders differ"
 
 

@@ -10,7 +10,7 @@ import random
 
 import bmesh
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 
 class Ctx:
@@ -113,6 +113,23 @@ def multi_box(ctx, name, boxes, mats, loc=(0, 0, 0), rot=(0, 0, 0), bevel=0.0):
     for centre, size, index in boxes:
         created = bmesh.ops.create_cube(bm, size=1.0)
         _place(created["verts"], size, "center", centre)
+        for face in {f for v in created["verts"] for f in v.link_faces}:
+            face.material_index = index
+    return _finish(ctx, name, bm, list(mats), loc, rot, bevel)
+
+
+def multi_shape(ctx, name, boxes, cylinders, mats, loc=(0, 0, 0), rot=(0, 0, 0), bevel=0.0):
+    """One mesh from boxes (centre, size, material_index) and cylinders (centre, radius, depth, axis, material_index)."""
+    bm = bmesh.new()
+    for centre, size, index in boxes:
+        created = bmesh.ops.create_cube(bm, size=1.0)
+        _place(created["verts"], size, "center", centre)
+        for face in {f for v in created["verts"] for f in v.link_faces}:
+            face.material_index = index
+    for centre, radius, depth, axis, index in cylinders:
+        created = bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=10, radius1=radius, radius2=radius, depth=depth)
+        rotation = {"z": Matrix.Identity(4), "x": Matrix.Rotation(math.pi / 2, 4, "Y"), "y": Matrix.Rotation(math.pi / 2, 4, "X")}[axis]
+        bmesh.ops.transform(bm, matrix=Matrix.Translation(Vector(centre)) @ rotation, verts=created["verts"])
         for face in {f for v in created["verts"] for f in v.link_faces}:
             face.material_index = index
     return _finish(ctx, name, bm, list(mats), loc, rot, bevel)
@@ -225,6 +242,14 @@ def fcurves(block, path=None):
     if path is not None:
         curves = [c for c in curves if c.data_path == path]
     return curves
+
+
+def clear_keys(block, path, frame_start, frame_end):
+    """Delete the keyframes of `path` between two frames (inclusive) so new keys replace them."""
+    for curve in fcurves(block, path):
+        doomed = [i for i, point in enumerate(curve.keyframe_points) if frame_start <= point.co.x <= frame_end]
+        for index in reversed(doomed):
+            curve.keyframe_points.remove(curve.keyframe_points[index])
 
 
 def set_interp(block, interpolation="BEZIER", easing="AUTO", path=None, frames=None):

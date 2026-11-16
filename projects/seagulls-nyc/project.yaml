@@ -1,0 +1,15 @@
+id: seagulls-nyc
+title: "What If One Million Seagulls Attacked New York?"
+language: en-GB
+hud_label: "LOCAL TIME"
+hud_wrap: 24            # the clock shows time of day and rolls over at midnight
+music_style: quirky     # dark-comedy underscore: plucked arpeggio over the tension pad
+premise: >
+  Cinematic disaster mockumentary. A hypothetical swarm of one million seagulls reaches New York City
+  at 6 AM and the film follows the next twenty-four hours.
+render: {}
+assets: assets/manifest.yaml
+audio:
+  narration_dir: audio/narration
+  music_file: null
+  sfx_dir: audio/sfx

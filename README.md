@@ -6,8 +6,18 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-The first production is **"What Happens If The World Runs Out Of Water In 24 Hours?"**
-(`projects/water-crisis`), a hypothetical scenario told in twelve shots over 82 seconds.
+Two productions ship with the repository:
+
+- **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
+  hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
+  118 seconds, from the first dry tap to a city-wide blackout, night fires and a dawn aerial that
+  ends on "What would you do?".
+- **"What If One Million Seagulls Attacked New York?"** (`projects/seagulls-nyc`): a dark-comedy
+  disaster mockumentary in twenty-one shots over 168 seconds, from a dawn sighting off Brooklyn to
+  the Statue of Liberty under birds, a Times Square stampede, grounded airliners, the National Guard,
+  a night roost on the bridge and a dawn ending on "What happens when they start breeding?".
+
+Both are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -44,7 +54,14 @@ python -m studio.cli render-scene projects/water-crisis --scene s02_tap --profil
 python -m studio.cli render projects/water-crisis --profile standard   # only scenes whose inputs changed
 python -m studio.cli assemble projects/water-crisis --profile standard # narration, subtitles, overlay, mix, MP4
 python -m studio.cli build projects/water-crisis --profile standard    # everything, then validate + manifest
+python -m studio.cli check projects/water-crisis --profile standard    # re-run every check on the finished MP4
 ```
+
+The final check decodes every video frame and audio sample, as a player does, and verifies
+resolution, frame rate, codecs, duration, matching audio and video lengths, black or frozen picture,
+loudness (EBU R128 against `audio.master.target_lufs`) and true peak, audio dropouts, the embedded
+subtitle track, that the file streams before it finishes downloading (`moov` before `mdat`), and
+YouTube Shorts limits (9:16, at most 180 s). `build` runs it and records each result in the manifest.
 
 `build` runs: validate configuration → validate assets and audio → build Blender scenes → render
 scenes → generate subtitles → render the caption overlay → mix audio → assemble with FFmpeg →
@@ -52,7 +69,14 @@ validate the MP4 → write `output/<project>/manifest-<profile>.json`.
 
 Every scene is fingerprinted (storyboard entry, style, render profile and the Blender-side source
 files). Re-running `render` or `build` only re-renders scenes whose fingerprint changed; `--force`
-rebuilds everything. Interrupted renders resume from the last complete frame.
+rebuilds everything. Interrupted renders resume from the last complete frame, so a long film can be
+rendered in several sittings: run `render` as often as needed, then `assemble`. A frame cut
+short mid-write (no PNG end marker) is detected and redrawn. On macOS the CLI holds a
+`caffeinate -s` assertion while it runs, so idle or maintenance sleep does not pause Blender on
+mains power; on battery the Mac sleeps normally and the render continues when it wakes.
+
+`project.yaml` also accepts `hud_label` (clock caption), `hud_wrap: 24` (a time-of-day clock that
+rolls over at midnight; omit it for an elapsed-time clock) and `music_style` (`tense` or `quirky`).
 
 Outputs live under `output/<project>/`: `scenes/<scene>/<profile>/` (frames, `.blend`, `clip.mp4`),
 `overlay/<profile>/frames/`, `audio/` (narration per line, procedural score, effects, final mix),
@@ -108,11 +132,23 @@ A project is three YAML files plus optional audio:
 Camera behaviours: `aerial_establish`, `push_in`, `tracking`, `orbit`, `side_follow`,
 `first_person`, `close_up`, `wide`, `reveal`, `static`, with depth of field (`fstop`, `focus`),
 `shake`, `lens_to`, and `whip_in`/`whip_out` for fast location changes that pair with the `whip`
-transition. Environments: `coastal_city`, `residential_street`, `kitchen_interior`,
-`supermarket_interior`, `distribution_point`, `hospital_exterior`, `farm`, `industrial`,
-`reservoir`, `port`, `desert`. Character roles: civilian, shopper, child, nurse, doctor, paramedic,
-worker, farmer, police; actions: idle, walk, run, look_around, point, fall, carry, gather, react,
-queue, crouch, stand. The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
+transition. Environments: `coastal_city` (variants `normal`, `crisis`, `fire`, `night`,
+`night_fires`, `dawn`, plus flags `dry`, `night`, `emergency`, `fires`, `smoke`, `helicopters`,
+`jam`), `residential_street`, `kitchen_interior`, `supermarket_interior`, `distribution_point`,
+`hospital_exterior` (`crisis`), `farm` (`health`, `dry`), `industrial`, `reservoir`, `port`
+(`night`), `desert`, `highway` (`jam`, `night`), and the New York set in
+`studio/blender/environments_nyc.py`: `harbour_dawn` (`swarms`, `flocks`, `swarm_near`),
+`metropolis` (`focus`, `night`, `birds` 0-3, `splats` 0-1, `jam`, `guard`, `closed`, `rubbish`,
+`nests`, `roost`, `helicopters`) and `airport` (`birds`, `splats`). The bird library
+(`studio/assets/birds.py`) provides rigged flapping flocks, merged distant swarms, perched roosts,
+nests, droppings and dives; `studio/assets/landmarks.py` provides the statue, spire and tapered
+towers, the suspension bridge, billboards, food carts, cafe tables, bins, rubbish, airliners,
+drones, army trucks, loudspeaker vans and police cars. Character roles: civilian, shopper, child,
+nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
+look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
+movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit
+windows and lamps). Caption kinds: `title`, `caption` and `chapter` (large hour card with an
+optional `sub` line). The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
 anything outside it.
 
 Coordinates are metres in each environment's world space; every builder in

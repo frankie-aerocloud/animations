@@ -25,6 +25,8 @@ ROLES = {
     "worker": dict(top=("hi_vis",), bottom=("trousers_2",), hat="hard_hat", hat_colour="yellow"),
     "farmer": dict(top=("shirt_4", "shirt_3"), bottom=("trousers_3",), hat="brim", hat_colour="sand"),
     "police": dict(top=("navy",), bottom=("navy",), hat="cap", hat_colour="navy", vest="hi_vis"),
+    "soldier": dict(top=("olive",), bottom=("olive",), hat="hard_hat", hat_colour="olive"),
+    "fisherman": dict(top=("yellow",), bottom=("navy",), hat="brim", hat_colour="trousers_2"),
 }
 SKINS = ("skin_1", "skin_2", "skin_3", "skin_4")
 HAIR = ("hair_1", "hair_2", "hair_3", "hair_4")
@@ -161,6 +163,12 @@ def crowd(ctx, spec):
             sub["path"] = [[px, py], [to[0] + radius * math.cos(angle), to[1] + radius * math.sin(angle)]]
             sub["face_at"] = [to[0], to[1]]
             sub["start"] = float(spec.get("start", 0.0)) + rng.uniform(0.0, float(spec.get("stagger", 1.0)))
+        elif action == "scatter":
+            radius = float(spec.get("radius", 12.0)) * rng.uniform(0.6, 1.3)
+            angle = rng.uniform(0, math.tau)
+            sub["path"] = [[px, py], [px + radius * math.cos(angle), py + radius * math.sin(angle)]]
+            sub["action"] = "run"
+            sub["start"] = float(spec.get("start", 0.0)) + rng.uniform(0.0, float(spec.get("stagger", 0.8)))
         elif action == "queue" and to:
             dx, dy = spec.get("direction", [-1, 0])
             gap = float(spec.get("gap", 0.85))
@@ -168,6 +176,8 @@ def crowd(ctx, spec):
             sub["face_at"] = [to[0], to[1]]
         elif to:
             sub["face_at"] = [to[0], to[1]]
+        if action in ("react", "fall", "point", "look_around", "crouch") and spec.get("stagger"):
+            sub["start"] = float(spec.get("start", 0.0)) + rng.uniform(0.0, float(spec["stagger"]))
         if spec.get("props") and rng.random() < float(spec.get("prop_chance", 0.6)):
             sub["prop"] = rng.choice(spec["props"])
         actor = build(ctx, sub)

@@ -1,24 +1,26 @@
 # One entry per shot. Times inside a scene are seconds from the scene start. Coordinates are metres in the
 # environment's world space (see studio/blender/environments.py for each layout and its named anchors).
+# Story clock: the scenario starts at 07:00, so hour 12 is dusk, hours 15-20 are night and hour 24 is dawn.
 scenes:
   - id: s01_hook
-    duration: 8.0
+    duration: 10.0
     environment: {type: coastal_city, seed: 11, people: 16, traffic: 10}
     lighting: soft_daylight
     camera: {shot: aerial_establish, from: [-70, -190, 110], to: [-14, -82, 52], look: [10, 30, 10], look_to: [0, 0, 4], lens: 30, fstop: 8, whip_out: {duration: 0.4}}
     events:
-      - {type: flash, at: 5.0, amount: 3.0}
-      - {type: water_level, target: tag:water, start: 5.0, end: 6.2, delta: -1.8, ease: expo_in}
-      - {type: water_level, target: tag:reservoir, start: 5.0, end: 6.4, delta: -7.0, ease: expo_in}
-      - {type: scale, target: tag:jet, start: 5.0, end: 5.3, to: [0.01, 0.01, 0.01]}
+      - {type: flash, at: 5.8, amount: 3.0}
+      - {type: water_level, target: tag:water, start: 5.8, end: 7.0, delta: -1.8, ease: expo_in}
+      - {type: water_level, target: tag:reservoir, start: 5.8, end: 7.2, delta: -7.0, ease: expo_in}
+      - {type: scale, target: tag:jet, start: 5.8, end: 6.1, to: [0.01, 0.01, 0.01]}
     captions:
-      - {kind: title, text: "WHAT IF ALL WATER DISAPPEARED?", at: 0.6, until: 4.8}
-    hud: {hours: 0, hours_end: 0, show_at: 5.3, sub: "HYPOTHETICAL SCENARIO"}
-    sfx: [{sound: riser, at: 1.8}, {sound: impact, at: 5.0, gain_db: 2}, {sound: whoosh, at: 7.6}]
+      - {kind: title, text: "WHAT IF ALL WATER DISAPPEARED?", at: 0.6, until: 5.6}
+      - {kind: caption, text: "A HYPOTHETICAL 24 HOURS", at: 6.6, until: 9.6}
+    hud: {hours: 0, hours_end: 0, show_at: 6.2, sub: "HYPOTHETICAL SCENARIO"}
+    sfx: [{sound: riser, at: 2.4}, {sound: impact, at: 5.8, gain_db: 2}, {sound: whoosh, at: 9.6}]
     music: {intensity: 0.3}
     transition: {type: whip, duration: 0.35}
 
-  - id: s02_tap
+  - id: s02_h1_tap
     duration: 5.0
     environment: {type: kitchen_interior}
     lighting: interior_day
@@ -30,174 +32,284 @@ scenes:
       - {type: move, target: tag:drop, path: [[0.4, 1.81, 1.0], [0.4, 1.81, 0.68]], start: 0.9, end: 1.15, ease: expo_in}
       - {type: hide, target: tag:drop, at: 1.16}
     captions:
-      - {text: "TAPS RUN DRY", at: 0.8, until: 4.6}
-    hud: {hours: 1, hours_end: 1.2, sub: "HOUR 1"}
+      - {kind: chapter, text: "HOUR 1", sub: "Taps run dry", at: 0.1, until: 2.8}
+    hud: {hours: 1, hours_end: 1.1, sub: "HOUR 1"}
     sfx: [{sound: drip, at: 1.0}, {sound: tick, at: 2.6}]
     music: {intensity: 0.35}
     transition: {type: cut, duration: 0.0}
 
-  - id: s03_street
-    duration: 6.5
-    environment: {type: residential_street, seed: 4}
+  - id: s03_h1_street
+    duration: 6.0
+    environment: {type: residential_street, seed: 4, traffic: 3, speed: 16}
     lighting: soft_daylight
     camera: {shot: side_follow, from: [-44, -3.5, 1.7], to: [-30, -2.5, 1.6], look: [-30, 9, 1.0], look_to: [-27, 9, 1.0], lens: 35, fstop: 4}
     actors:
       - {id: filler, role: civilian, at: [-27.6, 7.9], face: 180, action: crouch, start: 0.4, prop: jerrycan}
       - {id: child, role: child, at: [-29.2, 7.6], face: 160, action: look_around, start: 0.5}
       - {id: neighbour, role: civilian, at: [-36, 5.2], action: walk, path: [[-36, 5.2], [-29.5, 6.8]], start: 0.6, prop: bucket, face_at: [-28, 9]}
-      - {id: onlooker, role: civilian, at: [-24, 6.2], face: 230, action: look_around, start: 2.0}
-      - {id: runner, role: civilian, at: [-10, -4.5], action: run, path: [[-10, -4.5], [-26, -4.2]], start: 2.5, prop: bottle}
+      - {id: onlooker, role: civilian, at: [-24, 6.2], face: 230, action: react, start: 1.8}
+      - {id: runner, role: civilian, at: [-10, -4.5], action: run, path: [[-10, -4.5], [-26, -4.2]], start: 1.5, prop: bottle}
+      - {id: runner2, role: shopper, at: [-6, 4.6], action: run, path: [[-6, 4.6], [-22, 5.4]], start: 2.6, prop: jerrycan}
+      - {id: arguer, role: civilian, at: [-31.5, 7.2], face: 120, action: point, side: r, start: 2.0, end: 5.5}
     events:
       - {type: water_level, target: tag:tank_water, start: 0.5, end: 5.5, delta: -1.0, ease: linear}
     captions:
-      - {text: "THE LAST LITRES IN THE PIPES", at: 0.8, until: 6.0}
-    hud: {hours: 1.2, hours_end: 2.5, sub: "HOUR 1 TO 2"}
-    sfx: [{sound: crowd, at: 0.2, gain_db: -6}]
-    music: {intensity: 0.4}
-    transition: {type: dissolve, duration: 0.45}
+      - {text: "THE LAST LITRES IN THE PIPES", at: 0.6, until: 5.6}
+    hud: {hours: 1.1, hours_end: 2, sub: "HOUR 1 TO 2"}
+    sfx: [{sound: crowd, at: 0.2, gain_db: -6}, {sound: horns, at: 1.0, gain_db: -10}]
+    music: {intensity: 0.42}
+    transition: {type: whip, duration: 0.3}
 
-  - id: s04_supermarket
+  - id: s04_h2_pov
+    duration: 5.0
+    environment: {type: supermarket_interior}
+    lighting: interior_day
+    camera: {shot: first_person, actor: pov, pitch: 6, lens: 20, fstop: 2.8, focus_distance: 2.5, shake: {strength: 1.2, start: 0.0, end: 5.0, scale: 12}}
+    actors:
+      - {id: pov, role: shopper, at: [-0.6, -17], action: run, path: [[-0.6, -17], [-0.5, -4], [-0.2, 11]], start: 0.2, speed: 3.2}
+      - {id: rush, count: 14, area: [1.5, -10, 1.0, 4.0], roles: [shopper, civilian, child], action: run, to: [1.4, 12], jitter: 0.5, stagger: 2.4, props: [bottle, box], prop_chance: 0.4}
+      - {id: counter, count: 7, area: [1.6, 11, 0.8, 2.0], roles: [shopper, civilian], action: run, to: [1.5, -17], jitter: 0.4, stagger: 2.6, props: [bottle, box], prop_chance: 0.9}
+      - {id: left_lane, count: 5, area: [-1.8, 6, 0.5, 4.0], roles: [shopper, civilian], action: run, to: [-1.9, -17], jitter: 0.3, stagger: 2.5, props: [bottle], prop_chance: 0.6}
+    events:
+      - {type: deplete, target: tag:bottles, start: 0.3, end: 4.5, order: y, reverse: true}
+    captions:
+      - {kind: chapter, text: "HOUR 2", sub: "Shelves stripped in minutes", at: 0.1, until: 2.8}
+    hud: {hours: 2, hours_end: 2.1, sub: "HOUR 2"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: 0}, {sound: whoosh, at: 1.2, gain_db: -4}, {sound: whoosh, at: 3.1, gain_db: -4}]
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s05_h2_scuffle
     duration: 6.0
     environment: {type: supermarket_interior}
     lighting: interior_day
-    camera: {shot: side_follow, from: [-2.0, -16, 1.5], to: [-1.9, 5, 1.45], look: [1.2, -6, 1.1], look_to: [1.4, 14, 1.2], lens: 26, fstop: 4}
+    camera: {shot: side_follow, from: [-2.0, -4, 1.5], to: [-1.9, 1.5, 1.45], look: [1.4, 3, 1.1], look_to: [1.5, 6, 1.1], lens: 26, fstop: 4}
     actors:
-      - {id: shoppers, count: 18, area: [1.2, 13, 1.6, 4], roles: [shopper, shopper, civilian, child], action: run, to: [1.3, -19], jitter: 0.7, stagger: 3.2, props: [bottle, box], prop_chance: 0.5}
-      - {id: grabber, role: shopper, at: [1.9, 2.0], face: 90, action: react, start: 2.2}
-      - {id: grabber2, role: civilian, at: [1.7, 6.5], face: 90, action: carry, prop: box}
+      - {id: melee, count: 9, area: [1.3, 4.5, 2.4, 2.4], roles: [shopper, civilian, shopper], action: react, to: [1.5, 4.5], start: 0.4, stagger: 2.5, props: [bottle, box], prop_chance: 0.5}
+      - {id: faller, role: shopper, at: [0.6, 3.2], face: 60, action: fall, start: 2.4}
+      - {id: faller2, role: civilian, at: [2.2, 6.2], face: 220, action: fall, start: 3.6}
+      - {id: shover, role: shopper, at: [1.0, 5.6], face: 150, action: react, start: 1.6}
+      - {id: grabber, role: civilian, at: [2.0, 2.6], face: 20, action: carry, prop: box}
+      - {id: fleeing, count: 6, area: [0.2, 7, 1.5, 2], roles: [shopper, child, civilian], action: scatter, radius: 10, stagger: 1.5, props: [bottle], prop_chance: 0.7}
     events:
-      - {type: deplete, target: tag:bottles, start: 0.6, end: 5.6, order: y}
+      - {type: deplete, target: tag:bottles, start: 0.0, end: 2.0, order: y, reverse: true}
     captions:
-      - {text: "SHELVES EMPTY WITHIN HOURS", at: 0.8, until: 5.4}
-    hud: {hours: 6, hours_end: 6.4, sub: "HOUR 6"}
-    sfx: [{sound: crowd, at: 0.0, gain_db: -2}, {sound: whoosh, at: 5.6, gain_db: -3}]
-    music: {intensity: 0.55}
+      - {text: "SCUFFLES OVER THE LAST CRATES", at: 0.8, until: 5.4}
+    hud: {hours: 2.1, hours_end: 3, sub: "HOUR 2 TO 3"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: 2}, {sound: thud, at: 2.5, gain_db: 2}, {sound: glass, at: 3.0, gain_db: -2}, {sound: thud, at: 3.7, gain_db: 2}]
+    music: {intensity: 0.65}
     transition: {type: whip, duration: 0.3}
 
-  - id: s05_distribution
-    duration: 5.0
+  - id: s06_h4_distribution
+    duration: 6.5
     environment: {type: distribution_point}
     lighting: harsh_noon
-    camera: {shot: orbit, centre: [-6, 7, 1.0], radius: 26, height: 11, angle_from: 228, angle_to: 276, look: [-7, 7, 1.2], lens: 32, fstop: 5.6, whip_in: {duration: 0.3}}
+    camera: {shot: orbit, centre: [-4, 7, 1.0], radius: 24, height: 10, angle_from: 226, angle_to: 278, look: [-5, 7, 1.4], lens: 30, fstop: 5.6, whip_in: {duration: 0.3}, shake: {strength: 0.4, start: 2.5, end: 6.5, scale: 6}}
     actors:
-      - {id: queue, count: 20, area: [-6, 6.8, 2, 1], roles: [civilian, civilian, shopper, child], action: queue, to: [-3, 6.8], direction: [-1, 0], gap: 0.9, props: [jerrycan, bottle, bucket], prop_chance: 0.8}
-      - {id: arrivals, count: 8, area: [-36, -14, 10, 8], roles: [civilian, worker], action: walk, to: [-22, 6.5], jitter: 2.5, stagger: 1.5, props: [jerrycan, bucket]}
+      - {id: surge, count: 30, area: [-9, 2, 10, 6], roles: [civilian, civilian, shopper, child, worker], action: gather, to: [-1, 7.5], radius: 3.5, stagger: 2.5, props: [jerrycan, bottle, bucket], prop_chance: 0.8}
+      - {id: police_line, count: 6, area: [-4, 4.5, 7, 0.4], roles: [police], action: stand, to: [-4, 0]}
+      - {id: arrivals, count: 10, area: [-36, -14, 10, 8], roles: [civilian, worker], action: run, to: [-10, 4], jitter: 3.0, stagger: 2.0, props: [jerrycan, bucket]}
       - {id: volunteer, role: worker, at: [2.4, 7.4], face: 270, action: carry, prop: jerrycan}
       - {id: medic, role: paramedic, at: [16, -1], face: 250, action: look_around, start: 0.5}
+      - {id: pusher, role: civilian, at: [-3, 9.5], face: 200, action: react, start: 3.2}
     captions:
-      - {text: "EMERGENCY DISTRIBUTION POINTS", at: 0.6, until: 4.6}
-    hud: {hours: 6.4, hours_end: 7.5, sub: "HOUR 6 TO 7"}
-    sfx: [{sound: crowd, at: 0.2, gain_db: -4}]
-    music: {intensity: 0.55}
+      - {kind: chapter, text: "HOUR 4", sub: "Queues become crowds", at: 0.1, until: 2.8}
+    hud: {hours: 4, hours_end: 4.4, sub: "HOUR 4"}
+    sfx: [{sound: crowd, at: 0.2, gain_db: 0}, {sound: siren, at: 2.0, gain_db: -8}]
+    music: {intensity: 0.65}
     transition: {type: cut, duration: 0.0}
 
-  - id: s06_hospital
-    duration: 6.5
-    environment: {type: hospital_exterior}
-    lighting: overcast
-    camera: {shot: reveal, from: [-34, -78, 3.5], to: [-6, -40, 26], look: [0, 0, 5], look_to: [2, 24, 9], lens: 32, fstop: 5.6}
+  - id: s07_h4_highway
+    duration: 6.0
+    environment: {type: highway, jam: true}
+    lighting: harsh_noon
+    lighting_overrides: {azimuth: 40}
+    camera: {shot: side_follow, from: [-160, -60, 24], to: [10, -60, 24], look: [-120, 0, 2], look_to: [60, 0, 2], lens: 30, fstop: 8}
     actors:
-      - {id: porters, count: 6, area: [-10, 2, 4, 2], roles: [nurse, doctor, paramedic, worker], action: walk, to: [0, 12], jitter: 1.6, stagger: 1.0, props: [jerrycan, box], prop_chance: 0.9}
-      - {id: waiting, count: 7, area: [8, 14, 10, 3], roles: [civilian, child, civilian], action: stand, to: [0, 12]}
-    events:
-      - {type: move, target: object:parked_ambulance0, path: [[-80, -34], [-20, -34], [-20, -8], [4, -6]], start: 0.0, end: 4.6, face: true}
-      - {type: flicker, target: tag:beacon, start: 0.0, end: 6.5, rate: 5, strength: 25}
+      - {id: stranded, count: 18, area: [-80, -18, 150, 2.5], roles: [civilian, civilian, child, worker], action: stand, to: [0, -7]}
+      - {id: walkers, count: 8, area: [-120, -16.5, 40, 1.5], roles: [civilian, shopper], action: walk, to: [80, -16.5], jitter: 1.0, stagger: 2.0, props: [jerrycan, bottle], prop_chance: 0.5}
     captions:
-      - {text: "HOSPITALS NEED WATER TO STAY OPEN", at: 0.8, until: 6.0}
-    hud: {hours: 7.5, hours_end: 9, sub: "HOUR 7 TO 9"}
-    sfx: [{sound: siren, at: 0.2, gain_db: -4}]
+      - {text: "ROADS OUT OF THE CITY JAM SOLID", at: 0.6, until: 5.4}
+    hud: {hours: 4.4, hours_end: 6, sub: "HOUR 4 TO 6"}
+    sfx: [{sound: horns, at: 0.2, gain_db: -2}, {sound: horns, at: 3.0, gain_db: -4}]
     music: {intensity: 0.6}
     transition: {type: whip, duration: 0.3}
 
-  - id: s07_farm
-    duration: 7.5
-    environment: {type: farm}
-    lighting: golden_hour
-    lighting_overrides: {elevation: 24, azimuth: -140}
-    camera: {shot: wide, from: [-150, -150, 60], to: [-96, -96, 44], look: [-10, 0, 4], look_to: [30, 30, 4], lens: 28, fstop: 11, whip_in: {duration: 0.3}}
-    actors:
-      - {id: farmer, role: farmer, at: [-24, -44], face: 40, action: point, start: 1.5, end: 6.5, side: l}
-      - {id: hand, role: worker, at: [-18, -56], face: 20, action: carry, prop: bucket}
-    events:
-      - {type: spin, target: object:pivot, axis: z, turns: 0.06, start: 0.0, end: 3.6, ease: out}
-      - {type: hide, target: tag:spray, at: 3.3}
-      - {type: water_level, target: tag:trough_water, start: 2.0, end: 5.5, delta: -0.35, ease: linear}
-    captions:
-      - {text: "IRRIGATION STOPS. LIVESTOCK NEED WATER.", at: 0.8, until: 6.8}
-    hud: {hours: 12, hours_end: 12.8, sub: "HOUR 12"}
-    sfx: [{sound: rumble, at: 0.3, gain_db: -6}, {sound: tick, at: 3.3, gain_db: 4}]
-    music: {intensity: 0.65}
-    transition: {type: dissolve, duration: 0.45}
-
-  - id: s08_industrial
+  - id: s08_h8_hospital
     duration: 6.0
-    environment: {type: industrial}
-    lighting: soft_daylight
-    lighting_overrides: {elevation: 30, azimuth: -70, zenith: [0.30, 0.38, 0.50], horizon: [0.68, 0.66, 0.62], ambient: 0.5}
-    camera: {shot: orbit, centre: [-14, 44, 16], radius: 118, height: 42, angle_from: 238, angle_to: 280, look: [-16, 44, 16], look_to: [-20, 54, 22], lens: 34, fstop: 8}
+    environment: {type: hospital_exterior, crisis: true}
+    lighting: overcast
+    camera: {shot: reveal, from: [-34, -78, 3.5], to: [-6, -40, 26], look: [0, 0, 5], look_to: [2, 24, 9], lens: 32, fstop: 5.6, whip_in: {duration: 0.3}}
     actors:
-      - {id: crew, count: 5, area: [-20, -40, 8, 6], roles: [worker, worker, police], action: gather, to: [-20, -12], radius: 4, stagger: 1.5}
+      - {id: porters, count: 6, area: [-10, 2, 4, 2], roles: [nurse, doctor, paramedic, worker], action: walk, to: [0, 12], jitter: 1.6, stagger: 1.0, props: [jerrycan, box], prop_chance: 0.9}
+      - {id: waiting, count: 14, area: [10, 14, 12, 3], roles: [civilian, child, civilian], action: stand, to: [0, 12]}
+      - {id: triage_crowd, count: 10, area: [-30, -6, 8, 4], roles: [civilian, nurse, civilian], action: gather, to: [-32, -12], radius: 4, stagger: 1.5}
     events:
-      - {type: deplete, target: tag:steam, start: 1.0, end: 3.8, order: z, reverse: true}
-      - {type: spin, target: object:valve, axis: z, turns: 0.9, start: 1.2, end: 3.6, ease: in_out}
+      - {type: move, target: object:parked_ambulance0, path: [[-80, -34], [-20, -34], [-20, -8], [4, -6]], start: 0.0, end: 4.6, face: true}
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 6.0, rate: 5, strength: 25}
     captions:
-      - {text: "NO WATER, NO COOLING, NO POWER", at: 0.8, until: 5.4}
-    hud: {hours: 12.8, hours_end: 15, sub: "HOUR 13 TO 15"}
-    sfx: [{sound: alarm, at: 3.0, gain_db: -8}, {sound: rumble, at: 0.2, gain_db: -8}]
+      - {kind: chapter, text: "HOUR 8", sub: "Hospitals ration water", at: 0.1, until: 2.8}
+    hud: {hours: 8, hours_end: 8.4, sub: "HOUR 8"}
+    sfx: [{sound: siren, at: 0.2, gain_db: -4}, {sound: crowd, at: 1.0, gain_db: -8}]
     music: {intensity: 0.7}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s09_h8_fire
+    duration: 7.0
+    environment: {type: coastal_city, seed: 11, variant: fire, fires: 3, people: 6, traffic: 2, jam: true}
+    lighting: overcast
+    lighting_overrides: {sun: 3.0, elevation: 40, azimuth: -60, horizon: [0.70, 0.64, 0.58], zenith: [0.42, 0.44, 0.50]}
+    camera: {shot: push_in, from: [-150, -150, 85], to: [-98, -56, 48], look: {ref: "anchor:fire0", offset: [0, 0, 4]}, look_to: anchor:fire0, lens: 34, fstop: 6, shake: {strength: 0.6, start: 2.0, end: 7.0, scale: 5}}
+    actors:
+      - {id: evacuees, count: 14, area: [-46, 20, 12, 6], roles: [civilian, child, civilian, worker], action: scatter, radius: 16, stagger: 1.5, props: [box, bottle], prop_chance: 0.4}
+      - {id: crew, count: 4, area: [-30, 26, 4, 3], roles: [worker, paramedic, police, worker], action: gather, to: [-40, 34], radius: 3, stagger: 0.8}
+    events:
+      - {type: move, target: object:fire_engine, path: [[-20, -20], [-40, 0], [-44, 22]], start: 0.0, end: 4.0, face: true}
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 7.0, rate: 6, strength: 25}
+    captions:
+      - {text: "A FIRE TAKES HOLD. THE HYDRANTS GIVE NOTHING.", at: 0.8, until: 6.4}
+    hud: {hours: 8.4, hours_end: 10, sub: "HOUR 8 TO 10"}
+    sfx: [{sound: fire, at: 0.0, gain_db: 2}, {sound: siren, at: 0.5, gain_db: -6}, {sound: impact, at: 4.2, gain_db: -2}, {sound: crowd, at: 1.0, gain_db: -8}]
+    music: {intensity: 0.8}
     transition: {type: fade_black, duration: 0.4}
 
-  - id: s09_reservoir
-    duration: 7.5
+  - id: s10_h12_farm
+    duration: 6.0
+    environment: {type: farm, health: 0.15, dry: true}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 12, azimuth: -140}
+    camera: {shot: wide, from: [-150, -150, 60], to: [-96, -96, 44], look: [-10, 0, 4], look_to: [30, 30, 4], lens: 28, fstop: 11}
+    actors:
+      - {id: farmer, role: farmer, at: [-24, -44], face: 40, action: point, start: 1.5, end: 5.5, side: l}
+      - {id: hand, role: worker, at: [-18, -56], face: 20, action: carry, prop: bucket}
+      - {id: vet, role: paramedic, at: [-14, -52], face: 300, action: crouch, start: 0.8}
+    events:
+      - {type: hide, target: tag:spray, at: 0.1}
+    captions:
+      - {kind: chapter, text: "HOUR 12", sub: "Crops and livestock fail", at: 0.1, until: 2.8}
+    hud: {hours: 12, hours_end: 12.5, sub: "HOUR 12"}
+    sfx: [{sound: rumble, at: 0.3, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: dissolve, duration: 0.45}
+
+  - id: s11_h12_reservoir
+    duration: 6.5
     environment: {type: reservoir}
     lighting: golden_hour
+    lighting_overrides: {elevation: 9, azimuth: -120}
     camera: {shot: aerial_establish, from: [-150, -240, 125], to: [-50, -150, 80], look: [0, 30, 0], look_to: [10, 60, -6], lens: 30, fstop: 8, lens_to: 36}
     events:
-      - {type: water_level, target: tag:reservoir, start: 0.8, end: 6.4, delta: -14, ease: in_out}
+      - {type: water_level, target: tag:reservoir, start: 0.3, end: 5.6, delta: -14, ease: in_out}
     captions:
-      - {text: "RESERVOIRS AT RECORD LOWS", at: 0.8, until: 6.8}
-    hud: {hours: 18, hours_end: 18.8, sub: "HOUR 18"}
+      - {text: "RESERVOIRS SHOW THEIR BEDS", at: 0.8, until: 6.0}
+    hud: {hours: 12.5, hours_end: 14, sub: "HOUR 12 TO 14"}
     sfx: [{sound: swell, at: 0.4, gain_db: -4}, {sound: rumble, at: 2.0, gain_db: -4}]
-    music: {intensity: 0.75}
+    music: {intensity: 0.65}
     transition: {type: whip, duration: 0.3}
 
-  - id: s10_port
-    duration: 6.0
-    environment: {type: port}
+  - id: s12_h15_industrial
+    duration: 5.0
+    environment: {type: industrial}
     lighting: dusk_urgent
-    camera: {shot: side_follow, from: [-140, 96, 34], to: [60, 96, 34], look: [-110, -30, 6], look_to: [90, -30, 8], lens: 30, fstop: 6, whip_in: {duration: 0.3}}
+    camera: {shot: orbit, centre: [-14, 44, 16], radius: 118, height: 42, angle_from: 238, angle_to: 274, look: [-16, 44, 16], look_to: [-20, 54, 22], lens: 34, fstop: 8, whip_in: {duration: 0.3}}
+    actors:
+      - {id: crew, count: 5, area: [-20, -40, 8, 6], roles: [worker, worker, police], action: gather, to: [-20, -12], radius: 4, stagger: 1.0}
+    events:
+      - {type: deplete, target: tag:steam, start: 0.5, end: 3.4, order: z, reverse: true}
+      - {type: spin, target: object:valve, axis: z, turns: 0.9, start: 1.0, end: 3.2, ease: in_out}
+    captions:
+      - {kind: chapter, text: "HOUR 15", sub: "The power goes", at: 0.1, until: 2.8}
+    hud: {hours: 15, hours_end: 15.4, sub: "HOUR 15"}
+    sfx: [{sound: alarm, at: 2.4, gain_db: -8}, {sound: rumble, at: 0.2, gain_db: -8}]
+    music: {intensity: 0.75}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s13_h15_blackout
+    duration: 7.0
+    environment: {type: coastal_city, seed: 11, variant: night, helicopters: 2, people: 6, traffic: 4, quiet_plaza: true}
+    lighting: night_emergency
+    camera: {shot: aerial_establish, from: [60, -180, 120], to: [20, -100, 70], look: [0, 30, 12], look_to: [0, 10, 6], lens: 30, fstop: 6}
+    events:
+      - {type: blackout, target: [tag:window_lights, tag:street_lights, tag:street_lamps], start: 1.6, end: 5.2}
+    captions:
+      - {text: "THE CITY GOES DARK", at: 0.8, until: 6.4}
+    hud: {hours: 15.4, hours_end: 17, sub: "HOUR 15 TO 17"}
+    sfx: [{sound: helicopter, at: 0.0, gain_db: -2}, {sound: impact, at: 1.6, gain_db: -6}, {sound: rumble, at: 1.6, gain_db: -4}]
+    music: {intensity: 0.8}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s14_h15_port
+    duration: 5.0
+    environment: {type: port, night: true}
+    lighting: night_emergency
+    camera: {shot: side_follow, from: [-140, 96, 34], to: [40, 96, 34], look: [-110, -30, 6], look_to: [70, -30, 8], lens: 30, fstop: 6, whip_in: {duration: 0.3}}
     actors:
       - {id: dockers, count: 5, area: [-20, 18, 12, 4], roles: [worker, worker, police], action: gather, to: [-6, 22], radius: 3, stagger: 1.0}
     captions:
-      - {text: "PORTS, TRANSPORT AND SUPPLY CHAINS SLOW", at: 0.8, until: 5.4}
-    hud: {hours: 18.8, hours_end: 20.5, sub: "HOUR 19 TO 20"}
-    sfx: [{sound: rumble, at: 0.3, gain_db: -6}, {sound: whoosh, at: 5.6}]
+      - {text: "PORTS AND SUPPLY CHAINS STALL", at: 0.6, until: 4.6}
+    hud: {hours: 17, hours_end: 18, sub: "HOUR 17 TO 18"}
+    sfx: [{sound: horns, at: 0.3, gain_db: -6}, {sound: helicopter, at: 1.0, gain_db: -10}]
     music: {intensity: 0.8}
     transition: {type: zoom, duration: 0.4}
 
-  - id: s11_city_crisis
-    duration: 10.0
-    environment: {type: coastal_city, seed: 11, variant: crisis, people: 6, traffic: 2}
-    lighting: dusk_urgent
-    camera: {shot: push_in, from: [50, -170, 120], to: [16, -70, 46], look: [0, 10, 10], look_to: [-4, -6, 2], lens: 30, fstop: 6, shake: {strength: 0.35, start: 5.5, end: 8.5, scale: 4}}
+  - id: s15_h20_fires
+    duration: 8.0
+    environment: {type: coastal_city, seed: 11, variant: night_fires, fires: 4, helicopters: 1, people: 6, traffic: 2}
+    lighting: night_emergency
+    camera: {shot: push_in, from: [50, -170, 120], to: [16, -70, 46], look: [0, 10, 10], look_to: [-4, -6, 2], lens: 30, fstop: 6, shake: {strength: 0.5, start: 1.0, end: 8.0, scale: 4}}
     events:
-      - {type: flicker, target: tag:beacon, start: 0.0, end: 10.0, rate: 5, strength: 25}
+      - {type: blackout, target: [tag:window_lights], start: 0.0, end: 0.1, shuffle: false}
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 8.0, rate: 5, strength: 25}
     captions:
-      - {text: "RUNNING ON BORROWED TIME", at: 1.0, until: 5.0}
-      - {kind: title, text: "24 HOURS", at: 6.0, until: 9.6}
-    hud: {hours: 20.5, hours_end: 24, sub: "COUNTING TO HOUR 24"}
-    sfx: [{sound: riser, at: 3.6, gain_db: 2}, {sound: impact, at: 6.0, gain_db: 3}, {sound: tick, at: 7.0, gain_db: 2}, {sound: tick, at: 8.0, gain_db: 2}, {sound: tick, at: 9.0, gain_db: 2}]
+      - {kind: chapter, text: "HOUR 20", sub: "Fires burn unchecked", at: 0.1, until: 2.8}
+    hud: {hours: 20, hours_end: 20.6, sub: "HOUR 20"}
+    sfx: [{sound: fire, at: 0.0, gain_db: 0}, {sound: helicopter, at: 0.5, gain_db: -6}, {sound: siren, at: 3.0, gain_db: -8}, {sound: heartbeat, at: 3.5, gain_db: -2}]
     music: {intensity: 0.95}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s16_h20_plaza
+    duration: 6.5
+    environment: {type: coastal_city, seed: 11, variant: night_fires, fires: 2, people: 0, traffic: 0, jam: false}
+    lighting: night_emergency
+    camera: {shot: side_follow, from: [-8, -36, 2.6], to: [8, -28, 2.2], look: [-8, -10, 1.6], look_to: [-7, -7, 1.4], lens: 28, fstop: 3.5, shake: {strength: 0.8, start: 0.0, end: 6.5, scale: 7}}
+    actors:
+      - {id: mob, count: 16, area: [-12, -16, 10, 4], roles: [civilian, civilian, shopper, worker], action: gather, to: [-8, -8], radius: 3.0, stagger: 1.2, props: [jerrycan, bottle, bucket], prop_chance: 0.7}
+      - {id: guards, count: 4, area: [-9, -4, 6, 0.4], roles: [police], action: stand, to: [-8, -12]}
+      - {id: breakaway, count: 5, area: [-2, -14, 3, 2], roles: [civilian, shopper], action: scatter, radius: 12, stagger: 1.0, props: [box, jerrycan], prop_chance: 0.9}
+      - {id: down, role: civilian, at: [-5, -11], face: 90, action: fall, start: 2.8}
+    events:
+      - {type: blackout, target: [tag:window_lights], start: 0.0, end: 0.1, shuffle: false}
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 6.5, rate: 5, strength: 25}
+    captions:
+      - {text: "EVERY DROP IS FOUGHT OVER", at: 0.6, until: 5.8}
+    hud: {hours: 20.6, hours_end: 22, sub: "HOUR 20 TO 22"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: 3}, {sound: glass, at: 1.8, gain_db: -2}, {sound: thud, at: 2.9, gain_db: 2}, {sound: fire, at: 0.0, gain_db: -8}]
+    music: {intensity: 1.0}
     transition: {type: fade_black, duration: 0.6}
 
-  - id: s12_close
-    duration: 8.0
-    environment: {type: coastal_city, seed: 11, people: 12, traffic: 6}
+  - id: s17_h24_dawn
+    duration: 9.0
+    environment: {type: coastal_city, seed: 11, variant: dawn, people: 6, traffic: 1}
     lighting: golden_hour
-    camera: {shot: aerial_establish, from: [-30, -130, 45], to: [-80, -200, 130], look: [0, 20, 6], look_to: [0, 50, 12], lens: 28, fstop: 8, ease: out}
+    lighting_overrides: {elevation: 8, azimuth: 115, colour: [1.0, 0.72, 0.5], horizon: [0.88, 0.70, 0.56], zenith: [0.30, 0.38, 0.62], ambient: 0.4}
+    camera: {shot: aerial_establish, from: [-40, -150, 70], to: [-20, -110, 60], look: [0, 20, 8], look_to: [0, 10, 6], lens: 30, fstop: 8}
     captions:
-      - {kind: title, text: "WATER IS NOT OPTIONAL.", at: 1.6, until: 8.0}
+      - {kind: chapter, text: "HOUR 24", sub: "Running on borrowed time", at: 0.1, until: 3.2}
+      - {kind: title, text: "WATER IS NOT OPTIONAL.", at: 5.4, until: 9.0}
+    hud: {hours: 22, hours_end: 24, sub: "COUNTING TO HOUR 24"}
+    sfx: [{sound: tick, at: 1.0, gain_db: 2}, {sound: tick, at: 2.0, gain_db: 2}, {sound: tick, at: 3.0, gain_db: 2}, {sound: impact, at: 5.4, gain_db: 2}, {sound: swell, at: 0.3, gain_db: -8}]
+    music: {intensity: 0.7}
+    transition: {type: dissolve, duration: 0.5}
+
+  - id: s18_end
+    duration: 7.5
+    environment: {type: coastal_city, seed: 11, variant: dawn, people: 6, traffic: 1}
+    lighting: golden_hour
+    lighting_overrides: {elevation: 10, azimuth: 115, colour: [1.0, 0.74, 0.52], horizon: [0.88, 0.72, 0.58], zenith: [0.32, 0.40, 0.64], ambient: 0.42}
+    camera: {shot: aerial_establish, from: [-20, -110, 60], to: [-70, -190, 130], look: [0, 10, 6], look_to: [0, 40, 12], lens: 28, fstop: 8, ease: out}
+    captions:
+      - {kind: title, text: "WHAT WOULD YOU DO?", at: 0.8, until: 7.5}
     hud: {hours: 24, hours_end: 24, sub: "HYPOTHETICAL SCENARIO"}
-    sfx: [{sound: thud, at: 1.6, gain_db: 2}, {sound: swell, at: 5.5, gain_db: -8}]
-    music: {intensity: 0.5}
+    sfx: [{sound: thud, at: 0.8, gain_db: 2}, {sound: swell, at: 4.0, gain_db: -10}]
+    music: {intensity: 0.45}
     transition: {type: cut, duration: 0.0}

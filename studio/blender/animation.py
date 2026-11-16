@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import math
+import random
 
+import bpy
 from mathutils import Vector
 
-from studio.blender.primitives import fcurves, key, set_interp
+from studio.blender.primitives import clear_keys, fcurves, key, set_interp
 from studio.core.motion import heading, polyline_length, unwrap
 
 EASE = {"in_out": ("SINE", "EASE_IN_OUT"), "in": ("QUAD", "EASE_IN"), "out": ("QUAD", "EASE_OUT"), "linear": ("LINEAR", "AUTO"), "expo_in": ("EXPO", "EASE_IN"), "expo_out": ("EXPO", "EASE_OUT")}
@@ -77,6 +79,10 @@ def show(ctx, event):
 def move(ctx, event):
     f0, f1 = _range(ctx, event)
     for obj in targets(ctx, event["target"]):
+        # the event owns the motion inside its range: drop keys an asset (e.g. a flock loop) set there
+        clear_keys(obj, "location", f0, f1)
+        if event.get("face"):
+            clear_keys(obj, "rotation_euler", f0, f1)
         points = [Vector((p[0], p[1], p[2] if len(p) > 2 else obj.location.z)) for p in event["path"]]
         total = polyline_length(points)
         travelled = 0.0
@@ -198,6 +204,47 @@ def sun(ctx, event):
         key(light, "color", f1)
 
 
+def _material_emission(material):
+    if material is None or not material.use_nodes:
+        return None
+    nodes = material.node_tree.nodes
+    principled = nodes.get("Principled BSDF")
+    if principled is not None:
+        return principled.inputs["Emission Strength"]
+    for node in nodes:
+        if node.type == "EMISSION":
+            return node.inputs["Strength"]
+    return None
+
+
+def blackout(ctx, event):
+    """Switch tagged emissive materials (and tagged lights) off in a staggered sweep."""
+    f0, f1 = _range(ctx, event)
+    refs = event["target"] if isinstance(event["target"], list) else [event["target"]]
+    items = []
+    for ref in refs:
+        kind, _, name = str(ref).partition(":")
+        items.extend(ctx.tagged(name))
+    if event.get("shuffle", True):
+        random.Random(int(event.get("seed", 7))).shuffle(items)
+    for i, item in enumerate(items):
+        frame = f0 + round((f1 - f0) * i / max(1, len(items) - 1))
+        if isinstance(item, bpy.types.Material):
+            socket = _material_emission(item)
+            if socket is None:
+                continue
+            socket.keyframe_insert("default_value", frame=max(1, frame - 1))
+            socket.default_value = 0.0
+            socket.keyframe_insert("default_value", frame=frame)
+            for curve in fcurves(item.node_tree):
+                for point in curve.keyframe_points:
+                    point.interpolation = "CONSTANT"
+        elif getattr(item, "type", None) == "LIGHT":
+            key(item.data, "energy", max(1, frame - 1))
+            key(item.data, "energy", frame, 0.0)
+            set_interp(item.data, "CONSTANT")
+
+
 HANDLERS = {
     "water_level": water_level,
     "hide": hide,
@@ -209,4 +256,5 @@ HANDLERS = {
     "scale": scale,
     "deplete": deplete,
     "sun": sun,
+    "blackout": blackout,
 }

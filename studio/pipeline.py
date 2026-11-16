@@ -28,6 +28,13 @@ class PipelineError(RuntimeError):
     """A step failed in a way the user has to act on."""
 
 
+Checks = list[tuple[str, bool, str]]
+
+
+def failures(checks: Checks) -> list[str]:
+    return [f"{name}: {detail}" for name, passed, detail in checks if not passed]
+
+
 @dataclass
 class SceneResult:
     id: str
@@ -112,6 +119,18 @@ class Pipeline:
         spec = self.scene_spec(scene)
         return fingerprint({key: spec[key] for key in ("render", "profile", "style", "scene", "font")}, self._blender_sources())
 
+    def progress(self) -> tuple[int, int]:
+        """Frames already rendered for each scene's current fingerprint, and the total the film needs."""
+        done = total = 0
+        for scene in self.project.scenes:
+            count = int(scene["frames"]) + int(scene["handle_frames"])
+            total += count
+            scene_dir = self.scene_dir(str(scene["id"]))
+            hash_file = scene_dir / "scene.hash"
+            if hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == self.scene_hash(scene):
+                done += count - len(validate.missing_frames(scene_dir / "frames", count))
+        return done, total
+
     def render_scene(self, scene_id: str, still: float | None = None) -> SceneResult:
         scene = self.project.scene(scene_id)
         scene_dir = self.scene_dir(scene_id)
@@ -132,13 +151,18 @@ class Pipeline:
         if frames_dir.exists() and (self.force or not unchanged):
             shutil.rmtree(frames_dir)
             (scene_dir / "clip.mp4").unlink(missing_ok=True)
+        elif frames_dir.exists():
+            validate.remove_partial_frames(frames_dir)
         scene_dir.mkdir(parents=True, exist_ok=True)
-        self.log(f"[scene] {scene_id}: rendering {total} frames ({self.profile.name})")
+        # Written before rendering: the frames in this folder belong to this fingerprint, so an
+        # interrupted render resumes from its last complete frame instead of starting over.
+        hash_file.write_text(digest, encoding="utf-8")
+        done = len(list(frames_dir.glob("frame_*.png"))) if frames_dir.exists() else 0
+        self.log(f"[scene] {scene_id}: rendering {total - done} of {total} frames ({self.profile.name})")
         self._blender(self.scene_spec(scene), f"{scene_id}-{self.profile.name}")
         missing = validate.missing_frames(frames_dir, total)
         if missing:
             raise PipelineError(f"scene {scene_id}: {len(missing)} frames missing after render (first: {missing[0]})")
-        hash_file.write_text(digest, encoding="utf-8")
         return SceneResult(scene_id, frames_dir, total, False)
 
     def render_scenes(self, scene_ids: list[str] | None = None) -> list[SceneResult]:
@@ -166,11 +190,11 @@ class Pipeline:
         if configured:
             return self.project.resolve_path(str(configured))
         path = self.audio_dir / "music.wav"
-        digest = fingerprint([{"duration": s.get("duration"), "music": s.get("music")} for s in self.project.scenes], [REPO_ROOT / "studio" / "audio" / "music.py"])
+        digest = fingerprint([{"duration": s.get("duration"), "music": s.get("music")} for s in self.project.scenes] + [{"style": self.project.meta.get("music_style", "tense")}], [REPO_ROOT / "studio" / "audio" / "music.py"])
         stamp = self.audio_dir / "music.hash"
         if not (path.exists() and stamp.exists() and stamp.read_text(encoding="utf-8") == digest):
             self.log("[music] rendering procedural score")
-            music.render_score(self.project.scenes, path)
+            music.render_score(self.project.scenes, path, style=str(self.project.meta.get("music_style", "tense")))
             stamp.write_text(digest, encoding="utf-8")
         return path
 
@@ -201,7 +225,7 @@ class Pipeline:
             duration = float(scene["duration"])
             end = start + duration
             for caption in scene.get("captions") or []:
-                cards.append({"kind": caption.get("kind", "caption"), "text": str(caption["text"]), "start": start + float(caption.get("at", 0.0)), "end": start + float(caption.get("until", duration)), "y": caption.get("y")})
+                cards.append({"kind": caption.get("kind", "caption"), "text": str(caption["text"]), "sub": caption.get("sub"), "start": start + float(caption.get("at", 0.0)), "end": start + float(caption.get("until", duration)), "y": caption.get("y")})
             hud = scene.get("hud")
             if hud:
                 show = start + float(hud.get("show_at", 0.0))
@@ -226,7 +250,7 @@ class Pipeline:
             "fps": self.project.fps,
             "total_frames": self.project.total_frames,
             "cards": cards,
-            "hud": {"label": str(self.project.meta.get("hud_label", "ELAPSED")), "keys": keys, "visible": visible, "subs": subs},
+            "hud": {"label": str(self.project.meta.get("hud_label", "ELAPSED")), "keys": keys, "visible": visible, "subs": subs, "wrap": int(self.project.meta.get("hud_wrap") or 0)},
             "subtitles": [{"start": cue.start, "end": cue.end, "text": cue.text} for cue in cues],
             "output": {"dir": str(self.overlay_dir), "frames_dir": str(self.overlay_dir / "frames")},
         }
@@ -237,17 +261,21 @@ class Pipeline:
         digest = fingerprint({key: spec[key] for key in ("render", "profile", "style", "cards", "hud", "subtitles", "total_frames", "font")}, [REPO_ROOT / "studio" / "blender" / "overlay.py", REPO_ROOT / "studio" / "blender" / "primitives.py"])
         hash_file = self.overlay_dir / "overlay.hash"
         total = self.project.total_frames
-        if not self.force and hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == digest and validate.frames_complete(frames_dir, total):
+        unchanged = hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == digest
+        if unchanged and not self.force and validate.frames_complete(frames_dir, total):
             self.log(f"[overlay] unchanged, {total} frames already rendered")
             return frames_dir
-        if frames_dir.exists():
+        if frames_dir.exists() and (self.force or not unchanged):
             shutil.rmtree(frames_dir)
+        elif frames_dir.exists():
+            validate.remove_partial_frames(frames_dir)
+        self.overlay_dir.mkdir(parents=True, exist_ok=True)
+        hash_file.write_text(digest, encoding="utf-8")
         self.log(f"[overlay] rendering {total} caption/subtitle frames")
         self._blender(spec, f"overlay-{self.profile.name}")
         missing = validate.missing_frames(frames_dir, total)
         if missing:
             raise PipelineError(f"overlay pass left {len(missing)} frames missing")
-        hash_file.write_text(digest, encoding="utf-8")
         return frames_dir
 
     # ----- assembly -------------------------------------------------------------------
@@ -285,21 +313,19 @@ class Pipeline:
         render = self.project.render
         return tuple(max(2, int(round(int(render[key]) * self.profile.scale)) // 2 * 2) for key in ("width", "height"))  # type: ignore[return-value]
 
-    def validate_output(self, path: Path) -> list[str]:
+    def deep_check(self, path: Path | None = None) -> Checks:
         width, height = self.expected_size()
-        problems = validate.validate_output(path, width, height, self.project.fps, self.project.duration)
-        if not problems:
-            black = validate.unexpected_black(path, self.allowed_black())
-            problems += [f"unexpected black frames at {start:.2f}-{end:.2f}s" for start, end in black]
-        return problems
+        target = float((self.project.audio.get("master") or {}).get("target_lufs", -14.0))
+        return validate.deep_check(path or self.final, width, height, self.project.fps, self.project.duration, self.allowed_black(), self.out / "subtitles.srt", target_lufs=target)
 
-    def write_manifest(self, final: Path, results: list[SceneResult], lines: list[LineAudio], srt: Path, audio: Path, problems: list[str]) -> Path:
+    def write_manifest(self, final: Path, results: list[SceneResult], lines: list[LineAudio], srt: Path, audio: Path, checks: Checks) -> Path:
+        problems = failures(checks)
         info = validate.probe(final)
         video: dict[str, Any] = next((s for s in info.get("streams", []) if s.get("codec_type") == "video"), {})
         data = {
             "project": {"id": self.project.id, "title": self.project.title, "language": self.project.language},
             "output": {"path": str(final), "size_bytes": final.stat().st_size, "duration_seconds": float(info.get("format", {}).get("duration", 0.0)), "width": video.get("width"), "height": video.get("height"), "frame_rate": video.get("r_frame_rate"), "video_codec": video.get("codec_name"), "pixel_format": video.get("pix_fmt")},
-            "validation": {"passed": not problems, "problems": problems},
+            "validation": {"passed": not problems, "problems": problems, "checks": [{"check": name, "passed": passed, "detail": detail} for name, passed, detail in checks]},
             "tools": {"blender": manifest.tool_version("blender", "--version"), "ffmpeg": manifest.tool_version("ffmpeg"), "piper-tts": manifest.package_version("piper-tts"), "python": sys.version.split()[0]},
             "render": {"profile": self.profile.as_dict(), "engine": self.project.render.get("engine"), "encode": self.project.render.get("encode")},
             "scenes": [{"id": s["id"], "start": s["start"], "duration": s["duration"], "frames": s["frames"], "environment": s["environment"].get("type"), "shot": s["camera"].get("shot"), "lighting": s.get("lighting", "soft_daylight"), "transition": (s.get("transition") or {}).get("type", "cut"), "rendered": not next(r.skipped for r in results if r.id == s["id"])} for s in self.project.scenes],
@@ -318,9 +344,10 @@ class Pipeline:
         overlay_frames = self.render_overlay(cues)
         audio = self.mix(lines)
         final = self.assemble(results, audio, srt, overlay_frames)
-        problems = self.validate_output(final)
-        manifest_path = self.write_manifest(final, results, lines, srt, audio, problems)
+        checks = self.deep_check(final)
+        manifest_path = self.write_manifest(final, results, lines, srt, audio, checks)
         self.log(f"[manifest] {manifest_path}")
+        problems = failures(checks)
         if problems:
             raise PipelineError("final video failed validation:\n  - " + "\n  - ".join(problems))
         self.log(f"[done] {final}")

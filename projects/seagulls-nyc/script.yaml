@@ -1,0 +1,50 @@
+# Narration (dark-comedy disaster documentary). `at` is seconds after the start of the named scene.
+lines:
+  - id: n01
+    scene: s01_sighting
+    at: 0.4
+    text: "It starts at six in the morning. A fisherman off Brooklyn spots something strange over the Atlantic. Thousands of white dots, approaching."
+  - id: n02
+    scene: s02_dots
+    at: 0.2
+    text: "Within minutes, the dots become hundreds of thousands of seagulls. Then comes the terrifying discovery. There are one million of them. And they are heading straight for New York City."
+  - id: n03
+    scene: s04_statue
+    at: 0.3
+    text: "Eight AM. The first wave reaches Manhattan. Birds cover the Statue of Liberty, swarm the skyscrapers and fill the sky above Times Square."
+  - id: n04
+    scene: s06_times_square
+    at: 0.2
+    text: "Traffic comes to a standstill. People run for cover as the birds dive at food stalls, outdoor restaurants and rubbish bins. Central Park becomes a giant nesting ground. Police receive thousands of emergency calls. Nobody knows why it is happening."
+  - id: n05
+    scene: s09_airport
+    at: 0.3
+    text: "Midday. The city is struggling. Flights are grounded at JFK, LaGuardia and Newark. The seagulls attack anything that looks like food. Restaurants shut. Outdoor markets vanish. Rubbish collection stops."
+  - id: n06
+    scene: s11_waste
+    at: 0.3
+    text: "The biggest problem? One million birds produce an enormous amount of waste. Streets, cars, rooftops and public spaces are covered. New Yorkers are now fighting to protect their food, their homes and their businesses."
+  - id: n07
+    scene: s13_guard
+    at: 0.3
+    text: "Six PM. The National Guard arrives. Emergency shelters open. Drones and loudspeakers try to redirect the birds. But the seagulls are not behaving normally. They are becoming more aggressive around food, and helicopters struggle to operate safely."
+  - id: n08
+    scene: s16_shutdown
+    at: 0.3
+    text: "As night falls, millions of people stay indoors. New York has effectively shut down."
+  - id: n09
+    scene: s17_night
+    at: 0.3
+    text: "Two AM. The city goes quiet. But the birds do not. They gather on rooftops, bridges and streetlights, and their calls echo through Manhattan."
+  - id: n10
+    scene: s18_science
+    at: 0.3
+    text: "Scientists discover something unusual. The birds are not attacking at random. They are following an enormous trail of food waste across the city. And there is still no sign of them leaving."
+  - id: n11
+    scene: s20_aftermath
+    at: 0.3
+    text: "Six AM. Twenty-four hours later. One million seagulls. One of the busiest cities on Earth brought to a standstill. Thousands of damaged vehicles, grounded flights, and a city covered in bird waste. New York survived the first twenty-four hours."
+  - id: n12
+    scene: s21_breeding
+    at: 0.6
+    text: "But the real question is: what happens when they start breeding?"
