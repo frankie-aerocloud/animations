@@ -72,3 +72,38 @@ class FrameCompletenessTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(FFMPEG, "ffmpeg is not installed")
+class DeepCheckTests(unittest.TestCase):
+    def test_faststart_and_decode_checks(self):
+        from studio.video.validate import decode_errors, top_level_atoms
+
+        with tempfile.TemporaryDirectory() as temp:
+            slow = synth(Path(temp) / "slow.mp4")
+            fast = Path(temp) / "fast.mp4"
+            subprocess.run([FFMPEG, "-y", "-v", "error", "-i", str(slow), "-c", "copy", "-movflags", "+faststart", str(fast)], check=True)
+            self.assertLess(top_level_atoms(fast).index("moov"), top_level_atoms(fast).index("mdat"))
+            self.assertGreater(top_level_atoms(slow).index("moov"), top_level_atoms(slow).index("mdat"))
+            self.assertEqual(decode_errors(fast), [])
+            broken = Path(temp) / "broken.mp4"
+            data = fast.read_bytes()
+            broken.write_bytes(data[: len(data) // 2])
+            self.assertTrue(decode_errors(broken))
+
+    def test_frozen_picture_is_detected(self):
+        from studio.video.validate import frozen_frames
+
+        with tempfile.TemporaryDirectory() as temp:
+            still = synth(Path(temp) / "still.mp4", seconds=3.0, black=True)
+            moving = synth(Path(temp) / "moving.mp4", seconds=3.0)
+            self.assertEqual(frozen_frames(still, 3.0), [(0.0, 3.0)])  # frozen to the very end: no freeze_end logged
+            self.assertEqual(frozen_frames(moving, 3.0), [])
+
+    def test_loudness_and_silence_parsing(self):
+        from studio.video.validate import SILENCE, parse_intervals, parse_loudness
+
+        stderr = "Summary:\n  Integrated loudness:\n    I:         -14.2 LUFS\n  Loudness range:\n    LRA:         6.1 LU\n  True peak:\n    Peak:       -1.3 dBFS\n"
+        self.assertEqual(parse_loudness(stderr), {"integrated_lufs": -14.2, "range_lu": 6.1, "true_peak_dbfs": -1.3})
+        silences = "[silencedetect] silence_start: 12.5\n[silencedetect] silence_end: 15.25 | silence_duration: 2.75\n"
+        self.assertEqual(parse_intervals(silences, SILENCE), [(12.5, 15.25)])

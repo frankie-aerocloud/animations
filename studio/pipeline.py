@@ -28,6 +28,13 @@ class PipelineError(RuntimeError):
     """A step failed in a way the user has to act on."""
 
 
+Checks = list[tuple[str, bool, str]]
+
+
+def failures(checks: Checks) -> list[str]:
+    return [f"{name}: {detail}" for name, passed, detail in checks if not passed]
+
+
 @dataclass
 class SceneResult:
     id: str
@@ -294,21 +301,19 @@ class Pipeline:
         render = self.project.render
         return tuple(max(2, int(round(int(render[key]) * self.profile.scale)) // 2 * 2) for key in ("width", "height"))  # type: ignore[return-value]
 
-    def validate_output(self, path: Path) -> list[str]:
+    def deep_check(self, path: Path | None = None) -> Checks:
         width, height = self.expected_size()
-        problems = validate.validate_output(path, width, height, self.project.fps, self.project.duration)
-        if not problems:
-            black = validate.unexpected_black(path, self.allowed_black())
-            problems += [f"unexpected black frames at {start:.2f}-{end:.2f}s" for start, end in black]
-        return problems
+        target = float((self.project.audio.get("master") or {}).get("target_lufs", -14.0))
+        return validate.deep_check(path or self.final, width, height, self.project.fps, self.project.duration, self.allowed_black(), self.out / "subtitles.srt", target_lufs=target)
 
-    def write_manifest(self, final: Path, results: list[SceneResult], lines: list[LineAudio], srt: Path, audio: Path, problems: list[str]) -> Path:
+    def write_manifest(self, final: Path, results: list[SceneResult], lines: list[LineAudio], srt: Path, audio: Path, checks: Checks) -> Path:
+        problems = failures(checks)
         info = validate.probe(final)
         video: dict[str, Any] = next((s for s in info.get("streams", []) if s.get("codec_type") == "video"), {})
         data = {
             "project": {"id": self.project.id, "title": self.project.title, "language": self.project.language},
             "output": {"path": str(final), "size_bytes": final.stat().st_size, "duration_seconds": float(info.get("format", {}).get("duration", 0.0)), "width": video.get("width"), "height": video.get("height"), "frame_rate": video.get("r_frame_rate"), "video_codec": video.get("codec_name"), "pixel_format": video.get("pix_fmt")},
-            "validation": {"passed": not problems, "problems": problems},
+            "validation": {"passed": not problems, "problems": problems, "checks": [{"check": name, "passed": passed, "detail": detail} for name, passed, detail in checks]},
             "tools": {"blender": manifest.tool_version("blender", "--version"), "ffmpeg": manifest.tool_version("ffmpeg"), "piper-tts": manifest.package_version("piper-tts"), "python": sys.version.split()[0]},
             "render": {"profile": self.profile.as_dict(), "engine": self.project.render.get("engine"), "encode": self.project.render.get("encode")},
             "scenes": [{"id": s["id"], "start": s["start"], "duration": s["duration"], "frames": s["frames"], "environment": s["environment"].get("type"), "shot": s["camera"].get("shot"), "lighting": s.get("lighting", "soft_daylight"), "transition": (s.get("transition") or {}).get("type", "cut"), "rendered": not next(r.skipped for r in results if r.id == s["id"])} for s in self.project.scenes],
@@ -327,9 +332,10 @@ class Pipeline:
         overlay_frames = self.render_overlay(cues)
         audio = self.mix(lines)
         final = self.assemble(results, audio, srt, overlay_frames)
-        problems = self.validate_output(final)
-        manifest_path = self.write_manifest(final, results, lines, srt, audio, problems)
+        checks = self.deep_check(final)
+        manifest_path = self.write_manifest(final, results, lines, srt, audio, checks)
         self.log(f"[manifest] {manifest_path}")
+        problems = failures(checks)
         if problems:
             raise PipelineError("final video failed validation:\n  - " + "\n  - ".join(problems))
         self.log(f"[done] {final}")

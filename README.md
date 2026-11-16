@@ -54,7 +54,14 @@ python -m studio.cli render-scene projects/water-crisis --scene s02_tap --profil
 python -m studio.cli render projects/water-crisis --profile standard   # only scenes whose inputs changed
 python -m studio.cli assemble projects/water-crisis --profile standard # narration, subtitles, overlay, mix, MP4
 python -m studio.cli build projects/water-crisis --profile standard    # everything, then validate + manifest
+python -m studio.cli check projects/water-crisis --profile standard    # re-run every check on the finished MP4
 ```
+
+The final check decodes every video frame and audio sample, as a player does, and verifies
+resolution, frame rate, codecs, duration, matching audio and video lengths, black or frozen picture,
+loudness (EBU R128 against `audio.master.target_lufs`) and true peak, audio dropouts, the embedded
+subtitle track, that the file streams before it finishes downloading (`moov` before `mdat`), and
+YouTube Shorts limits (9:16, at most 180 s). `build` runs it and records each result in the manifest.
 
 `build` runs: validate configuration → validate assets and audio → build Blender scenes → render
 scenes → generate subtitles → render the caption overlay → mix audio → assemble with FFmpeg →
