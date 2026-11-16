@@ -62,6 +62,28 @@ class PipelineSpecTests(unittest.TestCase):
         self.assertTrue(all(cue.path.suffix == ".wav" for cue in cues))
 
 
+class ProgressTests(unittest.TestCase):
+    def test_progress_counts_only_frames_for_the_current_fingerprint(self):
+        from tests.test_video_validate import fake_png
+
+        project = load_project("projects/water-crisis")
+        pipeline = Pipeline(project, "preview", log=lambda _: None)
+        scene = project.scenes[0]
+        with tempfile.TemporaryDirectory() as temp:
+            pipeline.scenes_dir = Path(temp)
+            done, total = pipeline.progress()
+            self.assertEqual(done, 0)
+            self.assertEqual(total, sum(s["frames"] + s["handle_frames"] for s in project.scenes))
+            frames = pipeline.scene_dir(scene["id"]) / "frames"
+            frames.mkdir(parents=True)
+            for frame in range(1, 6):
+                fake_png(frames / f"frame_{frame:04d}.png")
+            (frames.parent / "scene.hash").write_text("stale", encoding="utf-8")
+            self.assertEqual(pipeline.progress()[0], 0)
+            (frames.parent / "scene.hash").write_text(pipeline.scene_hash(scene), encoding="utf-8")
+            self.assertEqual(pipeline.progress()[0], 5)
+
+
 class ResumeTests(unittest.TestCase):
     def test_interrupted_scene_render_resumes_without_discarding_frames(self):
         from tests.test_video_validate import fake_png

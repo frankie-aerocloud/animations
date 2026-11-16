@@ -122,6 +122,14 @@ def main(argv: list[str] | None = None) -> int:
         pipeline = Pipeline(project, "preview" if args.command == "preview" else args.profile, force=args.force, log=lambda message: print(message, flush=True))
         if args.command == "check":
             target = args.file or pipeline.final
+            if not target.exists():
+                if args.file:
+                    print(f"error: {target} does not exist", file=sys.stderr)
+                    return 1
+                done, total = pipeline.progress()
+                print(f"{target.name} has not been built yet: {done} of {total} scene frames rendered ({100 * done // max(1, total)}%).")
+                print(f"Build it with: python -m studio.cli build {args.project} --profile {pipeline.profile.name}")
+                return 1
             rows = pipeline.deep_check(target)
             width = max(len(name) for name, _, _ in rows)
             print(f"{target}")

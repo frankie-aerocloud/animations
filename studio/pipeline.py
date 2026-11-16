@@ -119,6 +119,18 @@ class Pipeline:
         spec = self.scene_spec(scene)
         return fingerprint({key: spec[key] for key in ("render", "profile", "style", "scene", "font")}, self._blender_sources())
 
+    def progress(self) -> tuple[int, int]:
+        """Frames already rendered for each scene's current fingerprint, and the total the film needs."""
+        done = total = 0
+        for scene in self.project.scenes:
+            count = int(scene["frames"]) + int(scene["handle_frames"])
+            total += count
+            scene_dir = self.scene_dir(str(scene["id"]))
+            hash_file = scene_dir / "scene.hash"
+            if hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == self.scene_hash(scene):
+                done += count - len(validate.missing_frames(scene_dir / "frames", count))
+        return done, total
+
     def render_scene(self, scene_id: str, still: float | None = None) -> SceneResult:
         scene = self.project.scene(scene_id)
         scene_dir = self.scene_dir(scene_id)
