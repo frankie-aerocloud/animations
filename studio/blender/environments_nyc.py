@@ -232,8 +232,8 @@ def metropolis(ctx, spec):
     coverage = float(spec.get("splats", 0.0))
     if coverage > 0:
         for _, name, roof in roofs[:18]:
-            birds.splat_area(ctx, f"splat.{name}", (roof.x, roof.y), (22.0, 18.0), int(60 * coverage), roof.z + 0.72, 1.4)
-        birds.splat_area(ctx, "splat.streets", (fx, fy), (170.0, 150.0), int(900 * coverage), 0.2, 1.1)
+            birds.splat_area(ctx, f"splat.{name}", (roof.x, roof.y), (22.0, 18.0), int(70 * coverage), roof.z + 0.72, 0.9)
+        birds.splat_area(ctx, "splat.streets", (fx, fy), (170.0, 150.0), int(900 * coverage), 0.2, 0.9)
         birds.splat_area(ctx, "splat.plaza", (fx, fy), (64.0, 48.0), int(300 * coverage), 0.2, 1.0)
     if spec.get("nests", False):
         for i in range(60):

@@ -228,7 +228,7 @@ scenes:
     duration: 6.0
     environment: {type: metropolis, focus: midtown, birds: 2, helicopters: 1, jam: true, traffic: 0}
     lighting: dusk_urgent
-    camera: {shot: tracking, from: [-340, -70, 112], to: [-300, 70, 100], look: [-160, 40, 70], look_to: [-30, 180, 76], lens: 40, fstop: 5.6, whip_in: {duration: 0.3}, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
+    camera: {shot: tracking, from: [-340, -70, 112], to: [-300, 70, 100], look: [-160, 40, 70], look_to: [-30, 180, 76], lens: 40, fstop: 5.6, shake: {strength: 1.0, start: 0.0, end: 6.0, scale: 9}}
     events:
       - {type: move, target: object:flock0, path: [[-240, -40, 60], [-120, 40, 72], [40, 210, 70]], start: 0.0, end: 6.0, ease: linear}
       - {type: move, target: object:flock1, path: [[-60, 200, 90], [-120, 60, 74], [-240, -60, 60]], start: 0.5, end: 6.0, ease: linear}
@@ -255,7 +255,7 @@ scenes:
     duration: 9.0
     environment: {type: metropolis, focus: bridge, night: true, birds: 3, roost: true, traffic: 0, jam: false}
     lighting: night_emergency
-    camera: {shot: push_in, from: [150, -600, 80], to: [300, -480, 44], look: [430, -380, 44], look_to: [420, -385, 34], lens: 36, fstop: 5.6}
+    camera: {shot: push_in, from: [290, -660, 84], to: [330, -530, 46], look: [430, -380, 44], look_to: [420, -385, 34], lens: 36, fstop: 5.6}
     captions:
       - {kind: chapter, text: "02:00 AM", sub: "The worst is yet to come", at: 0.1, until: 2.8}
       - {text: "ROOFTOPS, BRIDGES, STREETLIGHTS", at: 3.4, until: 8.4}
