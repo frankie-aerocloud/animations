@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import math
 
-from studio.assets import vehicles
-from studio.blender.primitives import box, cone, cylinder, empty, key, mesh_from_pydata, multi_box, parent, set_interp
+import bpy
+
+from studio.assets import birds, vehicles
+from studio.blender.primitives import box, cone, cylinder, empty, key, mesh_from_pydata, multi_box, parent, set_interp, text
 
 
 def statue_of_liberty(ctx, name, loc, rot=0.0, scale=1.0):
@@ -96,8 +98,10 @@ def tapered_tower(ctx, name, loc, height=330.0, lit=None):
     return body
 
 
-def suspension_bridge(ctx, name, start, end, deck_z=24.0, tower_height=84.0):
-    """Two-tower suspension bridge between two shore points (cables and hangers merged)."""
+def suspension_bridge(ctx, name, start, end, deck_z=24.0, tower_height=84.0, roost=False, lights=False):
+    """Two-tower suspension bridge between two shore points (cables and hangers merged).
+    roost=True perches gulls along the main cables and the deck rails; lights=True adds cable lamps
+    and deck lights for night shots."""
     sx, sy = start
     ex, ey = end
     length = math.hypot(ex - sx, ey - sy)
@@ -111,9 +115,11 @@ def suspension_bridge(ctx, name, start, end, deck_z=24.0, tower_height=84.0):
             boxes.append(((tx, ty, tower_height / 2), (10, 6, tower_height), 2))
         boxes.append(((tx, 0, tower_height - 8), (10, 24, 10), 2))
         boxes.append(((tx, 0, tower_height * 0.5), (10, 24, 6), 2))
-    segments = 24
+    segments = 48
+    cables = []
     for side in (-1, 1):
         points = []
+        cables.append(points)
         for i in range(segments + 1):
             t = -0.5 + i / segments
             px = t * length
@@ -124,24 +130,65 @@ def suspension_bridge(ctx, name, start, end, deck_z=24.0, tower_height=84.0):
                 u = (abs(px) - length * 0.25) / (length * 0.25 + 30)
                 pz = tower_height - (tower_height - deck_z - 2) * u
             points.append((px, side * 10.5, pz))
-        for (ax, ay, az), (bx, by, bz) in zip(points, points[1:], strict=False):
-            seg_len = math.hypot(bx - ax, bz - az)
-            boxes.append((((ax + bx) / 2, ay, (az + bz) / 2), (seg_len + 0.5, 0.7, 0.7), 1))
-            if abs(ax) < length * 0.25 or True:
-                boxes.append(((ax, ay, (az + deck_z) / 2), (0.3, 0.3, max(0.5, az - deck_z)), 1))
+        for ax, ay, az in points[::2]:
+            boxes.append(((ax, ay, (az + deck_z) / 2), (0.3, 0.3, max(0.5, az - deck_z)), 1))
     body = multi_box(ctx, name, boxes, [ctx.mat("asphalt"), steel, stone], (mid[0], mid[1], 0.0), (0, 0, angle), bevel=0.3)
+    # main cables: square tubes that follow the sag exactly (perched birds sit on their top face)
+    verts, faces, r = [], [], 0.35
+    for points in cables:
+        base = len(verts)
+        for px, py, pz in points:
+            verts += [(px, py - r, pz - r), (px, py + r, pz - r), (px, py + r, pz + r), (px, py - r, pz + r)]
+        for i in range(len(points) - 1):
+            a, b = base + 4 * i, base + 4 * (i + 1)
+            faces += [(a + k, a + (k + 1) % 4, b + (k + 1) % 4, b + k) for k in range(4)]
+    mesh_from_pydata(ctx, f"{name}.cables", verts, faces, [steel], (mid[0], mid[1], 0.0), (0, 0, angle))
+    ca, sa = math.cos(angle), math.sin(angle)
+    if lights:
+        lamps = [((px, py, pz - 0.7), (0.5, 0.5, 0.5), 0) for points in cables for px, py, pz in points[1:-1:2]]
+        multi_box(ctx, f"{name}.cable_lamps", lamps, [ctx.palette.emissive(f"{name} lamps", "lamp", 8.0)], (mid[0], mid[1], 0.0), (0, 0, angle))
+        for side in (-1, 1):
+            for k in range(-4, 5):
+                px, py = k * length / 9.0, side * 12.5
+                data = bpy.data.lights.new(f"{name}.deck_light", "POINT")
+                data.energy = 2500.0
+                data.color = (1.0, 0.86, 0.62)
+                data.shadow_soft_size = 1.0
+                light = bpy.data.objects.new(f"{name}.deck_light", data)
+                light.location = (mid[0] + px * ca - py * sa, mid[1] + px * sa + py * ca, deck_z + 6.0)
+                ctx.link(light)
+    if roost:
+        perches = []
+        for points in cables:
+            for (ax, ay, az), (bx, _, bz) in zip(points, points[1:], strict=False):
+                steps = max(1, int(math.hypot(bx - ax, bz - az) / 1.8))
+                for k in range(steps):
+                    t = k / steps
+                    pz = az + (bz - az) * t
+                    if pz > deck_z + 4 and ctx.rng.random() < 0.75:
+                        perches.append((ax + (bx - ax) * t, ay, pz + 0.35))
+        for side in (-1, 1):
+            x = -length / 2 - 28
+            while x < length / 2 + 28:
+                if ctx.rng.random() < 0.6:
+                    perches.append((x, side * 11.5, deck_z + 2.6))
+                x += 2.2
+        birds.roost(ctx, f"{name}.roost", [(mid[0] + px * ca - py * sa, mid[1] + px * sa + py * ca, pz) for px, py, pz in perches], 1.2, jitter=0.0)
     ctx.anchor(f"{name}.mid", (mid[0], mid[1], deck_z + 2))
     ctx.anchor(f"{name}.tower", (mid[0] - math.cos(angle) * length * 0.25, mid[1] - math.sin(angle) * length * 0.25, tower_height))
     ctx.objects[name] = body
     return body
 
 
-def billboard(ctx, name, loc, size=(18.0, 10.0), rot=0.0, colour=None, strength=4.0):
+def billboard(ctx, name, loc, size=(18.0, 10.0), rot=0.0, colour=None, strength=4.0, message=None):
     colours = ((1.0, 0.2, 0.3), (0.2, 0.6, 1.0), (1.0, 0.8, 0.1), (0.3, 1.0, 0.5), (1.0, 0.4, 0.9), (0.95, 0.95, 0.95))
     rgb = colour or ctx.rng.choice(colours)
     frame = box(ctx, f"{name}.frame", (size[0] + 1.0, 0.6, size[1] + 1.0), loc, ctx.mat("dark_steel"), rot=(0, 0, rot))
     panel = box(ctx, name, (size[0], 0.3, size[1]), (0, -0.4, 0), ctx.palette.emissive(f"{name} glow", rgb, strength))
     parent(panel, frame)
+    if message:
+        words = text(ctx, f"{name}.message", message, size[1] * 0.26, ctx.mat("black", roughness=0.9), (0, -0.6, 0), (math.pi / 2, 0, 0), width=size[0] * 0.88, weight=size[1] * 0.004)
+        parent(words, frame)
     ctx.tag("billboard", panel)
     return frame
 

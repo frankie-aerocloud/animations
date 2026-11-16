@@ -8,7 +8,7 @@ import random
 import bpy
 from mathutils import Vector
 
-from studio.blender.primitives import fcurves, key, set_interp
+from studio.blender.primitives import clear_keys, fcurves, key, set_interp
 from studio.core.motion import heading, polyline_length, unwrap
 
 EASE = {"in_out": ("SINE", "EASE_IN_OUT"), "in": ("QUAD", "EASE_IN"), "out": ("QUAD", "EASE_OUT"), "linear": ("LINEAR", "AUTO"), "expo_in": ("EXPO", "EASE_IN"), "expo_out": ("EXPO", "EASE_OUT")}
@@ -79,6 +79,10 @@ def show(ctx, event):
 def move(ctx, event):
     f0, f1 = _range(ctx, event)
     for obj in targets(ctx, event["target"]):
+        # the event owns the motion inside its range: drop keys an asset (e.g. a flock loop) set there
+        clear_keys(obj, "location", f0, f1)
+        if event.get("face"):
+            clear_keys(obj, "rotation_euler", f0, f1)
         points = [Vector((p[0], p[1], p[2] if len(p) > 2 else obj.location.z)) for p in event["path"]]
         total = polyline_length(points)
         travelled = 0.0

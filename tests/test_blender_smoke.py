@@ -16,7 +16,8 @@ class BlenderSmokeTest(unittest.TestCase):
         project = load_project("projects/water-crisis")
         project.render["profiles"]["smoke"] = {"scale": 0.1, "samples": 2}
         pipeline = Pipeline(project, "smoke", log=lambda _: None)
-        result = pipeline.render_scene("s02_tap", still=1.0)
+        kitchen = next(scene["id"] for scene in project.scenes if scene["environment"]["type"] == "kitchen_interior")
+        result = pipeline.render_scene(kitchen, still=1.0)
         stills = sorted(result.frames_dir.glob("frame_*.png"))
         self.assertTrue(stills, "no still produced")
         self.assertGreater(stills[-1].stat().st_size, 2000)

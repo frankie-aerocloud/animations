@@ -244,6 +244,14 @@ def fcurves(block, path=None):
     return curves
 
 
+def clear_keys(block, path, frame_start, frame_end):
+    """Delete the keyframes of `path` between two frames (inclusive) so new keys replace them."""
+    for curve in fcurves(block, path):
+        doomed = [i for i, point in enumerate(curve.keyframe_points) if frame_start <= point.co.x <= frame_end]
+        for index in reversed(doomed):
+            curve.keyframe_points.remove(curve.keyframe_points[index])
+
+
 def set_interp(block, interpolation="BEZIER", easing="AUTO", path=None, frames=None):
     for curve in fcurves(block, path):
         for point in curve.keyframe_points:

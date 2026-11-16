@@ -14,6 +14,7 @@ AVENUES = (-200, -120, -40, 40, 120, 200)
 BLOCK_X = (-160, -80, 0, 80, 160)
 STREETS = tuple(range(-680, 881, 60))
 PARK = (-120.0, 400.0, 120.0, 900.0)
+BILLBOARD_MESSAGES = ("STAY INDOORS", "HIDE YOUR FRIES", "BREAKING: GULLS", "ALL FLIGHTS CANCELLED", "DO NOT FEED THE BIRDS", "UMBRELLAS HALF PRICE", "SHELTER THIS WAY", "PIZZA $1", "COVER YOUR LUNCH")
 FOCUS_POINTS = {
     "times_square": (0.0, 70.0),
     "midtown": (0.0, 160.0),
@@ -78,6 +79,8 @@ def harbour_dawn(ctx, spec):
 
 def _manhattan_grid(ctx, spec, night, lit, focus):
     rng = ctx.rng
+    roosting = int(spec.get("birds", 0)) >= 3 or bool(spec.get("roost", False))
+    perches = []
     seed = int(spec.get("seed", 3))
     glow_pick = (lambda: rng.choice(lit)) if lit else (lambda: None)
     for x in AVENUES:
@@ -129,8 +132,9 @@ def _manhattan_grid(ctx, spec, night, lit, focus):
         landmarks.bin_(ctx, f"bin{i}", (dx, 70.0 + dy, 0.18), knocked=closed and i % 2 == 0)
     for i, (dx, dy) in enumerate(((-28, -20), (28, -20), (-28, 20), (28, 20))):
         props.lamp_post(ctx, f"ts_lamp{i}", (dx, 70.0 + dy, 0.18), 8.0, 0.0, night)
+        perches += [(dx, 70.0 + dy + arm, 8.2) for arm in (0.15, 0.6, 1.05)]
     for i, (x, y, rot, z) in enumerate(((-36, 70, math.pi / 2, 20), (-36, 70, math.pi / 2, 36), (36, 70, -math.pi / 2, 24), (36, 70, -math.pi / 2, 42), (0, 97, math.pi, 22), (-20, 97, math.pi, 40), (20, 97, math.pi, 58), (0, 43, 0.0, 26), (18, 43, 0.0, 46))):
-        landmarks.billboard(ctx, f"billboard{i}", (x, y, z), (18.0 if i % 2 else 24.0, 10.0 if i % 2 else 14.0), rot, strength=5.0 if night else 3.0)
+        landmarks.billboard(ctx, f"billboard{i}", (x, y, z), (18.0 if i % 2 else 24.0, 10.0 if i % 2 else 14.0), rot, strength=5.0 if night else 3.0, message=BILLBOARD_MESSAGES[i % len(BILLBOARD_MESSAGES)])
     # Central Park
     box(ctx, "park_lawn", (240.0, 500.0, 0.4), (0.0, 650.0, 0.0), ctx.mat("grass"), anchor="base")
     water.surface(ctx, "park_lake", (110, 70), (0.0, 640.0, 0.42), "lake", tags=("water", "lake"))
@@ -139,7 +143,7 @@ def _manhattan_grid(ctx, spec, night, lit, focus):
     vegetation.scatter_trees(ctx, "park_trees", (0.0, 650.0, 0.4), 230.0, int(spec.get("park_trees", 140)), ("round", "round", "conifer"), avoid=[(-60, 600, 60, 680), (-125, 380, 125, 420)])
     # harbour, statue, bridge, piers
     landmarks.statue_of_liberty(ctx, "statue", (-330.0, -780.0, 0.0), heading((-330.0, -780.0), (0.0, -200.0)))
-    landmarks.suspension_bridge(ctx, "bridge", (240.0, -330.0), (620.0, -430.0), 24.0, 84.0)
+    landmarks.suspension_bridge(ctx, "bridge", (240.0, -330.0), (620.0, -430.0), 24.0, 84.0, roost=roosting, lights=night)
     for i, y in enumerate((-250, -150, -50, 50, 150)):
         box(ctx, f"pier{i}", (100.0, 14.0, 2.0), (-290.0, float(y), -1.5), ctx.mat("concrete"), bevel=0.1, anchor="base")
     for i in range(10):
@@ -152,6 +156,9 @@ def _manhattan_grid(ctx, spec, night, lit, focus):
             if _in_park(x, y):
                 continue
             props.lamp_post(ctx, f"lamp{i}{j}", (x + 9.0, float(y) + 3.0, 0.02), 8.0, 0.0, night and math.hypot(x - fx, y - fy) < 500)
+            perches += [(x + 9.0, float(y) + 3.0 + arm, 8.04) for arm in (0.15, 0.6, 1.05)]
+    if roosting:
+        birds.roost(ctx, "roost.streetlights", perches, 1.0, jitter=0.0)
     return None
 
 
@@ -215,11 +222,6 @@ def metropolis(ctx, spec):
             birds.roost_area(ctx, f"roost.{name}", (roof.x, roof.y), (18.0, 14.0), 26 if level == 2 else 44, roof.z + 0.7, 1.1)
     if level >= 3 or spec.get("roost", False):
         birds.roost_area(ctx, "roost.plaza", (fx, fy), (60.0, 44.0), 120, 0.3, 1.1)
-        bridge_mid = ctx.anchors.get("bridge.mid")
-        if bridge_mid is not None:
-            birds.roost_line(ctx, "roost.cable_a", (bridge_mid.x - 95.0, bridge_mid.y + 10.5 + 25.0, 84.0), (bridge_mid.x, bridge_mid.y + 10.5, 30.0), 60, 1.2)
-            birds.roost_line(ctx, "roost.cable_b", (bridge_mid.x, bridge_mid.y - 10.5, 30.0), (bridge_mid.x + 95.0, bridge_mid.y - 10.5 - 25.0, 84.0), 60, 1.2)
-            birds.roost_line(ctx, "roost.deck", (bridge_mid.x - 160.0, bridge_mid.y + 42.0 + 11.5, 27.5), (bridge_mid.x + 160.0, bridge_mid.y - 42.0 + 11.5, 27.5), 90, 1.2)
     statue_focus = str(spec.get("focus")) == "statue"
     if statue_focus and level >= 1:
         crown = ctx.anchors["statue.crown"]
@@ -241,9 +243,12 @@ def metropolis(ctx, spec):
         for i in range(24):
             birds.nest(ctx, f"nest_close{i}", (-44.0 + rng.uniform(-14, 14), 596.0 + rng.uniform(-9, 9), 0.42), rng.randint(2, 4), bird=i % 4 != 0)
         birds.roost_area(ctx, "roost.park", (0.0, 650.0), (200.0, 420.0), 260, 0.45, 1.1)
+    altitude = float(spec.get("heli_alt", 205.0))  # above every midtown roof (max 190 m)
     for i in range(int(spec.get("helicopters", 0))):
-        heli = vehicles.helicopter(ctx, f"heli{i}", (fx - 160.0 + i * 120.0, fy - 120.0 + i * 60.0, 70.0 + i * 10.0), 0.0, searchlight=night, lit=True)
-        vehicles.drive(ctx, heli, [(fx - 160.0 + i * 120.0, fy - 120.0 + i * 60.0, 70.0 + i * 10.0), (fx + 40.0 + i * 60.0, fy + 60.0 + i * 30.0, 66.0 + i * 10.0)], 0.0, ctx.duration, z=70.0)
+        # path runs west of the spire tower at x = 0
+        start = (fx - 200.0 - i * 60.0, fy - 140.0, altitude + i * 12.0)
+        heli = vehicles.helicopter(ctx, f"heli{i}", start, 0.0, searchlight=night, lit=True)
+        vehicles.drive(ctx, heli, [start, (fx - 40.0 - i * 60.0, fy + 160.0, altitude - 4.0 + i * 12.0)], 0.0, ctx.duration, z=altitude)
     for i in range(int(spec.get("people", 0))):
         px, py = fx + rng.uniform(-28, 28), fy + rng.uniform(-20, 20)
         qx, qy = fx + rng.uniform(-28, 28), fy + rng.uniform(-20, 20)
