@@ -37,7 +37,7 @@ scenes:
     duration: 7.0
     environment: {type: metropolis, focus: harbour, birds: 2, traffic: 6, people: 0}
     lighting: soft_daylight
-    lighting_overrides: {elevation: 18, azimuth: 95, colour: [1.0, 0.86, 0.68]}
+    lighting_overrides: {elevation: 18, azimuth: 95, colour: [1.0, 0.86, 0.68], fog: 0.00025}
     camera: {shot: aerial_establish, from: [-700, -1300, 140], to: [-420, -1000, 110], look: [-200, -400, 80], look_to: [-60, -200, 120], lens: 30, fstop: 8, whip_in: {duration: 0.35}}
     captions:
       - {text: "HEADING STRAIGHT FOR NEW YORK CITY", at: 0.8, until: 6.4}
@@ -50,6 +50,7 @@ scenes:
     duration: 7.0
     environment: {type: metropolis, focus: statue, birds: 2, traffic: 4}
     lighting: soft_daylight
+    lighting_overrides: {fog: 0.0004}
     camera: {shot: orbit, centre: [-330, -780, 60], radius: 150, height: 40, angle_from: 200, angle_to: 262, look: [-330, -780, 62], lens: 35, fstop: 6, whip_in: {duration: 0.3}}
     captions:
       - {kind: chapter, text: "08:00 AM", sub: "The attack begins", at: 0.1, until: 2.8}
@@ -124,7 +125,7 @@ scenes:
     duration: 8.0
     environment: {type: airport, birds: 2}
     lighting: soft_daylight
-    lighting_overrides: {elevation: 58, azimuth: 20}
+    lighting_overrides: {elevation: 58, azimuth: 20, fog: 0.0004}
     camera: {shot: aerial_establish, from: [-430, -240, 120], to: [-230, -40, 70], look: [-60, 150, 6], look_to: [0, 330, 8], lens: 30, fstop: 8}
     captions:
       - {kind: chapter, text: "12:00 PM", sub: "New York goes into chaos", at: 0.1, until: 2.8}
@@ -282,8 +283,8 @@ scenes:
   - id: s19_more
     duration: 6.0
     environment: {type: harbour_dawn, swarms: 4, swarm_count: 3000, swarm_near: true}
-    lighting: night_emergency
-    lighting_overrides: {sun: 1.6, elevation: 28, azimuth: 70, ambient: 0.8, exposure: 0.9, zenith: [0.05, 0.08, 0.2], horizon: [0.2, 0.18, 0.3]}
+    lighting: golden_hour
+    lighting_overrides: {sun: 0.8, elevation: 2, azimuth: 92, colour: [1.0, 0.55, 0.4], horizon: [0.62, 0.36, 0.34], zenith: [0.04, 0.06, 0.16], ambient: 0.3, exposure: 0.0, fog: 0.0006}
     camera: {shot: push_in, from: [-40, -30, 14], to: [-10, 30, 8], look: [0, 500, 90], look_to: [0, 300, 60], lens: 30, fstop: 5.6}
     captions:
       - {text: "STILL NO SIGN OF THEM LEAVING", at: 0.6, until: 5.4}
@@ -296,7 +297,7 @@ scenes:
     duration: 15.6
     environment: {type: metropolis, focus: times_square, birds: 3, jam: true, closed: true, rubbish: true, splats: 1.0, guard: true, traffic: 0}
     lighting: golden_hour
-    lighting_overrides: {elevation: 6, azimuth: 95, colour: [1.0, 0.7, 0.46], horizon: [0.9, 0.66, 0.5], zenith: [0.26, 0.34, 0.6], ambient: 0.4}
+    lighting_overrides: {elevation: 6, azimuth: 95, colour: [1.0, 0.7, 0.46], horizon: [0.9, 0.66, 0.5], zenith: [0.26, 0.34, 0.6], ambient: 0.4, fog: 0.0007}
     camera: {shot: aerial_establish, from: [-260, -260, 150], to: [-120, -80, 90], look: [0, 90, 30], look_to: [0, 72, 8], lens: 30, fstop: 8}
     captions:
       - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 3.0}
