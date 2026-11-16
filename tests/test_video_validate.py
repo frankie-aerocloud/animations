@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from studio.video.validate import detect_black, frames_complete, missing_frames, validate_output
+from studio.video.validate import PNG_END, detect_black, frames_complete, missing_frames, remove_partial_frames, validate_output
 
 FFMPEG = shutil.which("ffmpeg")
 
@@ -49,17 +49,24 @@ class VideoValidationTests(unittest.TestCase):
         self.assertTrue(validate_output(Path("/nonexistent/out.mp4"), 1080, 1920, 30, 1.0))
 
 
+def fake_png(path, complete=True):
+    path.write_bytes(b"\x89PNG\r\n\x1a\n" + b"x" * 2000 + (b"\x00\x00\x00\x00" + PNG_END if complete else b""))
+    return path
+
+
 class FrameCompletenessTests(unittest.TestCase):
-    def test_missing_and_tiny_frames_are_reported(self):
+    def test_missing_tiny_and_truncated_frames_are_reported(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             for frame in (1, 2, 4):
-                (root / f"frame_{frame:04d}.png").write_bytes(b"x" * 2000)
+                fake_png(root / f"frame_{frame:04d}.png")
             (root / "frame_0003.png").write_bytes(b"x")
+            fake_png(root / "frame_0005.png", complete=False)
             self.assertEqual(missing_frames(root, 5), [3, 5])
             self.assertFalse(frames_complete(root, 5))
-            (root / "frame_0003.png").write_bytes(b"x" * 2000)
-            (root / "frame_0005.png").write_bytes(b"x" * 2000)
+            self.assertEqual([p.name for p in remove_partial_frames(root)], ["frame_0003.png", "frame_0005.png"])
+            fake_png(root / "frame_0003.png")
+            fake_png(root / "frame_0005.png")
             self.assertTrue(frames_complete(root, 5))
 
 

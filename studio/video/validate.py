@@ -11,14 +11,35 @@ from pathlib import Path
 from typing import Any
 
 BLACK = re.compile(r"black_start:(?P<start>[\d.]+)\s+black_end:(?P<end>[\d.]+)")
+PNG_END = b"IEND\xaeB`\x82"  # last 8 bytes of every complete PNG (IEND chunk type + CRC)
 
 
 def frame_path(frames_dir: Path, frame: int) -> Path:
     return frames_dir / f"frame_{frame:04d}.png"
 
 
-def missing_frames(frames_dir: Path, count: int, min_bytes: int = 1000) -> list[int]:
-    return [f for f in range(1, count + 1) if not (frame_path(frames_dir, f).exists() and frame_path(frames_dir, f).stat().st_size > min_bytes)]
+def png_complete(path: Path) -> bool:
+    """True for a fully written PNG; a render killed mid-write leaves a file without the IEND trailer."""
+    try:
+        with path.open("rb") as handle:
+            if handle.seek(0, 2) < 1000:
+                return False
+            handle.seek(-len(PNG_END), 2)
+            return handle.read() == PNG_END
+    except OSError:
+        return False
+
+
+def missing_frames(frames_dir: Path, count: int) -> list[int]:
+    return [f for f in range(1, count + 1) if not png_complete(frame_path(frames_dir, f))]
+
+
+def remove_partial_frames(frames_dir: Path) -> list[Path]:
+    """Delete truncated frames so the resumed render redraws them."""
+    partial = [path for path in sorted(frames_dir.glob("frame_*.png")) if not png_complete(path)]
+    for path in partial:
+        path.unlink()
+    return partial
 
 
 def frames_complete(frames_dir: Path, count: int) -> bool:

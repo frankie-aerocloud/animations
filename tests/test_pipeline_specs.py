@@ -1,6 +1,8 @@
 """Pipeline spec generation (no Blender or FFmpeg needed)."""
 
+import tempfile
 import unittest
+from pathlib import Path
 
 from studio.audio.subtitles import Cue
 from studio.core.project import load_project
@@ -58,6 +60,43 @@ class PipelineSpecTests(unittest.TestCase):
         self.assertTrue(cues)
         self.assertTrue(all(0 <= cue.start <= self.project.duration for cue in cues))
         self.assertTrue(all(cue.path.suffix == ".wav" for cue in cues))
+
+
+class ResumeTests(unittest.TestCase):
+    def test_interrupted_scene_render_resumes_without_discarding_frames(self):
+        from tests.test_video_validate import fake_png
+
+        project = load_project("projects/water-crisis")
+        pipeline = Pipeline(project, "preview", log=lambda _: None)
+        scene = project.scenes[1]
+        total = scene["frames"] + scene["handle_frames"]
+        with tempfile.TemporaryDirectory() as temp:
+            pipeline.scenes_dir = Path(temp)
+            frames_dir = pipeline.scene_dir(scene["id"]) / "frames"
+
+            def killed(spec, name):
+                frames_dir.mkdir(parents=True, exist_ok=True)
+                for frame in range(1, 11):
+                    fake_png(frames_dir / f"frame_{frame:04d}.png")
+                fake_png(frames_dir / "frame_0011.png", complete=False)
+                raise PipelineError("render stopped")
+
+            seen = []
+
+            def finishes(spec, name):
+                seen.append(len(list(frames_dir.glob("frame_*.png"))))
+                for frame in range(1, total + 1):
+                    path = frames_dir / f"frame_{frame:04d}.png"
+                    if not path.exists():
+                        fake_png(path)
+
+            pipeline._blender = killed
+            with self.assertRaises(PipelineError):
+                pipeline.render_scene(scene["id"])
+            pipeline._blender = finishes
+            self.assertFalse(pipeline.render_scene(scene["id"]).skipped)
+            self.assertEqual(seen, [10])  # ten good frames kept, the truncated one redrawn
+            self.assertTrue(pipeline.render_scene(scene["id"]).skipped)
 
 
 if __name__ == "__main__":

@@ -63,7 +63,10 @@ validate the MP4 → write `output/<project>/manifest-<profile>.json`.
 Every scene is fingerprinted (storyboard entry, style, render profile and the Blender-side source
 files). Re-running `render` or `build` only re-renders scenes whose fingerprint changed; `--force`
 rebuilds everything. Interrupted renders resume from the last complete frame, so a long film can be
-rendered in several sittings: run `render` as often as needed, then `assemble`.
+rendered in several sittings: run `render` as often as needed, then `assemble`. A frame cut
+short mid-write (no PNG end marker) is detected and redrawn. On macOS the CLI holds a
+`caffeinate -s` assertion while it runs, so idle or maintenance sleep does not pause Blender on
+mains power; on battery the Mac sleeps normally and the render continues when it wakes.
 
 `project.yaml` also accepts `hud_label` (clock caption), `hud_wrap: 24` (a time-of-day clock that
 rolls over at midnight; omit it for an elapsed-time clock) and `music_style` (`tense` or `quirky`).

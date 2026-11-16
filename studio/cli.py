@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -13,6 +14,14 @@ from studio.core.project import load_project, validate_project
 from studio.pipeline import Pipeline, PipelineError
 
 PROFILE_HELP = "render profile from config/render.yaml (preview, standard, high)"
+
+
+def keep_awake() -> None:
+    """macOS idle and maintenance sleep pause Blender for minutes at a time, so hold a sleep
+    assertion until this process exits. `-s` applies on mains power only; batteries drain normally."""
+    caffeinate = shutil.which("caffeinate")
+    if sys.platform == "darwin" and caffeinate:
+        subprocess.Popen([caffeinate, "-s", "-w", str(os.getpid())], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def doctor() -> int:
@@ -109,6 +118,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"removed {target}")
             return 0
         pipeline = Pipeline(project, "preview" if args.command == "preview" else args.profile, force=args.force, log=lambda message: print(message, flush=True))
+        keep_awake()
         if args.command == "storyboard":
             return storyboard(pipeline, args.stills)
         pipeline.require_valid()

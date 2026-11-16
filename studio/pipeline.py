@@ -132,13 +132,18 @@ class Pipeline:
         if frames_dir.exists() and (self.force or not unchanged):
             shutil.rmtree(frames_dir)
             (scene_dir / "clip.mp4").unlink(missing_ok=True)
+        elif frames_dir.exists():
+            validate.remove_partial_frames(frames_dir)
         scene_dir.mkdir(parents=True, exist_ok=True)
-        self.log(f"[scene] {scene_id}: rendering {total} frames ({self.profile.name})")
+        # Written before rendering: the frames in this folder belong to this fingerprint, so an
+        # interrupted render resumes from its last complete frame instead of starting over.
+        hash_file.write_text(digest, encoding="utf-8")
+        done = len(list(frames_dir.glob("frame_*.png"))) if frames_dir.exists() else 0
+        self.log(f"[scene] {scene_id}: rendering {total - done} of {total} frames ({self.profile.name})")
         self._blender(self.scene_spec(scene), f"{scene_id}-{self.profile.name}")
         missing = validate.missing_frames(frames_dir, total)
         if missing:
             raise PipelineError(f"scene {scene_id}: {len(missing)} frames missing after render (first: {missing[0]})")
-        hash_file.write_text(digest, encoding="utf-8")
         return SceneResult(scene_id, frames_dir, total, False)
 
     def render_scenes(self, scene_ids: list[str] | None = None) -> list[SceneResult]:
@@ -237,17 +242,21 @@ class Pipeline:
         digest = fingerprint({key: spec[key] for key in ("render", "profile", "style", "cards", "hud", "subtitles", "total_frames", "font")}, [REPO_ROOT / "studio" / "blender" / "overlay.py", REPO_ROOT / "studio" / "blender" / "primitives.py"])
         hash_file = self.overlay_dir / "overlay.hash"
         total = self.project.total_frames
-        if not self.force and hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == digest and validate.frames_complete(frames_dir, total):
+        unchanged = hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == digest
+        if unchanged and not self.force and validate.frames_complete(frames_dir, total):
             self.log(f"[overlay] unchanged, {total} frames already rendered")
             return frames_dir
-        if frames_dir.exists():
+        if frames_dir.exists() and (self.force or not unchanged):
             shutil.rmtree(frames_dir)
+        elif frames_dir.exists():
+            validate.remove_partial_frames(frames_dir)
+        self.overlay_dir.mkdir(parents=True, exist_ok=True)
+        hash_file.write_text(digest, encoding="utf-8")
         self.log(f"[overlay] rendering {total} caption/subtitle frames")
         self._blender(spec, f"overlay-{self.profile.name}")
         missing = validate.missing_frames(frames_dir, total)
         if missing:
             raise PipelineError(f"overlay pass left {len(missing)} frames missing")
-        hash_file.write_text(digest, encoding="utf-8")
         return frames_dir
 
     # ----- assembly -------------------------------------------------------------------
