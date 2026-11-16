@@ -1,0 +1,20 @@
+# Narration (cinematic disaster / dark comedy). `at` is seconds after the start of the named scene.
+lines:
+  - {id: n01, scene: s01_desert, at: 0.6, text: "It starts just after sunrise. A truck driver travelling through the Nevada desert spots movement on the horizon. At first, he thinks it's a dust storm."}
+  - {id: n02, scene: s03_lions, at: 0.3, text: "Then he sees the lions. Thousands of them. Millions more are emerging from the desert in every direction."}
+  - {id: n03, scene: s04_aerial, at: 0.3, text: "Within minutes, authorities confirm the unthinkable. One million lions are heading straight for Las Vegas. And they're hungry."}
+  - {id: n04, scene: s05_outskirts, at: 0.4, text: "The first lions reach the outskirts of the city. Then chaos erupts."}
+  - {id: n05, scene: s06_strip, at: 0.3, text: "Lions flood the roads, parking garages and hotel entrances. Tourists abandon rental cars."}
+  - {id: n06, scene: s07_security, at: 0.3, text: "Casino security teams barricade entrances as lions roam around the Bellagio fountains and beneath the neon lights."}
+  - {id: n07, scene: s09_buffet, at: 0.3, text: "The famous Las Vegas Strip is no longer a tourist attraction. It's a giant wildlife emergency. And the breakfast buffet is officially cancelled."}
+  - {id: n08, scene: s10_airport, at: 0.4, text: "By midday, the city is in complete lockdown. Harry Reid International Airport suspends all flights."}
+  - {id: n09, scene: s11_guard, at: 0.3, text: "The Nevada National Guard is deployed."}
+  - {id: n10, scene: s12_casino, at: 0.3, text: "Hotels move guests into secure internal areas, while emergency services struggle to reach stranded people."}
+  - {id: n11, scene: s13_suburbs, at: 0.3, text: "Lions are now roaming through shopping centres, casinos and residential neighbourhoods. Some have even climbed onto casino rooftops. Nobody can explain how one million lions appeared in the desert."}
+  - {id: n12, scene: s15_perimeter, at: 0.4, text: "As darkness falls, the situation gets worse. Military vehicles establish emergency perimeters around key areas."}
+  - {id: n13, scene: s16_helicopter, at: 0.3, text: "Police use helicopters to monitor the movement of the lions. But the sheer number of animals makes controlling the situation almost impossible."}
+  - {id: n14, scene: s17_blackout, at: 0.3, text: "Power outages hit several neighbourhoods. The bright lights of Las Vegas begin disappearing, one district at a time. For the first time in decades, the city that never sleeps is desperate for darkness."}
+  - {id: n15, scene: s18_windows, at: 0.4, text: "Across the Strip, hotel windows glow as thousands of people shelter inside. Outside, lions roam through empty streets. Their roars echo between the skyscrapers."}
+  - {id: n16, scene: s20_valley, at: 0.3, text: "Wildlife experts discover another terrifying problem. The lions are spreading out across the entire Las Vegas Valley. The city isn't surrounded by a handful of predators. It's surrounded by an army of one million."}
+  - {id: n17, scene: s22_dawn, at: 0.4, text: "One million lions. Twenty-four hours. Las Vegas has become the biggest wildlife disaster in modern history. The casinos are empty. The airports are closed. The Strip is silent."}
+  - {id: n18, scene: s24_final, at: 0.4, text: "But the military has one question. How do you take back a city, when the entire desert is full of lions? And worse... what happens when they get hungry again?"}

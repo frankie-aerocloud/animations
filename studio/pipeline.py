@@ -267,7 +267,7 @@ class Pipeline:
             "fps": self.project.fps,
             "total_frames": self.project.total_frames,
             "cards": cards,
-            "hud": {"label": str(self.project.meta.get("hud_label", "ELAPSED")), "keys": keys, "visible": visible, "subs": subs, "wrap": int(self.project.meta.get("hud_wrap") or 0)},
+            "hud": {"label": str(self.project.meta.get("hud_label", "ELAPSED")), "keys": keys, "visible": visible, "subs": subs, "wrap": int(self.project.meta.get("hud_wrap") or 0), "format": str(self.project.meta.get("hud_format", "hm"))},
             "subtitles": [{"start": cue.start, "end": cue.end, "text": cue.text} for cue in cues],
             "output": {"dir": str(self.overlay_dir), "frames_dir": str(self.overlay_dir / "frames")},
         }

@@ -1,0 +1,355 @@
+# Story clock: 06:00 start. The HUD counts DOWN the 24 hours (hours = time remaining).
+# Coordinates: metres in each environment (studio/blender/environments_vegas.py). The Strip runs along Y at
+# x = 0 (lanes x = +-5/11/17, sidewalks +-22..32); west podium fronts face east at x = -40, east at x = 40.
+x-dawn: &dawn {elevation: 6, azimuth: 95, colour: [1.0, 0.72, 0.48], horizon: [0.96, 0.68, 0.46], zenith: [0.30, 0.42, 0.70], ambient: 0.45, fog: 0.0003, fog_colour: [0.95, 0.80, 0.62]}
+x-morning: &morning {elevation: 24, azimuth: 105, fog: 0.0004}
+x-noon: &noon {fog: 0.0003}
+scenes:
+  - id: s01_desert
+    duration: 6.0
+    environment: {type: mojave, truck: true}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: aerial_establish, from: [-40, 760, 55], to: [-22, 580, 30], look: [2.6, 600, 2], look_to: [2.6, 470, 2], lens: 30, fstop: 8}
+    captions:
+      - {kind: title, text: "WHAT IF ONE MILLION LIONS ATTACKED LAS VEGAS?", at: 0.4, until: 5.6}
+    hud: {hours: 24, hours_end: 23.8, show_at: 0.4, sub: "06:00 AM"}
+    sfx: [{sound: swell, at: 0.2, gain_db: -8}]
+    music: {intensity: 0.2}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s02_dust
+    duration: 4.5
+    environment: {type: mojave, truck: true, dust: true}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: push_in, from: [-12, 470, 3.2], to: [-12, 478, 3.5], look: [500, 1400, 60], look_to: [520, 1400, 55], lens: 32, fstop: 5.6}
+    captions:
+      - {kind: chapter, text: "06:00 AM", sub: "Something is coming", at: 0.1, until: 3.0}
+    hud: {hours: 23.8, hours_end: 23.5, sub: "06:00 AM"}
+    sfx: [{sound: radio, at: 0.6, gain_db: -10}, {sound: rumble, at: 1.5, gain_db: -8}]
+    music: {intensity: 0.3}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s03_lions
+    duration: 7.0
+    environment: {type: mojave, truck: false, dust: true, hordes: 3}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: static, from: [14, 22, 1.2], look: [38, 110, 3], look_to: [30, 80, 2], lens: 32, fstop: 3.5, shake: {strength: 0.7, start: 1.5, end: 7.0, scale: 6}}
+    actors:
+      - {id: pride, kind: lion, count: 9, area: [40, 120, 50, 24], action: run, to: [5, 30], jitter: 6, stagger: 1.0, start: 0.3, speed: 9}
+    captions:
+      - {text: "THOUSANDS OF THEM", at: 1.4, until: 6.4}
+    hud: {hours: 23.5, hours_end: 23.2, sub: "06:20 AM"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: 0}, {sound: roar, at: 1.0, gain_db: 0}, {sound: roar, at: 4.0, gain_db: -3}]
+    music: {intensity: 0.5}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s04_aerial
+    duration: 8.0
+    environment: {type: mojave, truck: false, dust: true, hordes: 7, horde_size: 900}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: aerial_establish, from: [500, 1500, 480], to: [300, 1050, 360], look: [0, -200, 0], look_to: [0, -1400, 60], lens: 28, fstop: 8, whip_in: {duration: 0.3}}
+    captions:
+      - {kind: title, text: "ONE MILLION LIONS", at: 3.2, until: 7.7}
+    hud: {hours: 23.2, hours_end: 22.6, sub: "06:45 AM"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -4}, {sound: impact, at: 3.2, gain_db: 0}]
+    music: {intensity: 0.55}
+    transition: {type: fade_black, duration: 0.4}
+
+  - id: s05_outskirts
+    duration: 5.5
+    environment: {type: desert_suburb, seed: 4, traffic: 2, speed: 18}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: tracking, from: [26, -5.5, 1.8], to: [22, -5.0, 1.7], look: [-40, 0, 1.2], look_to: [-30, 0, 1.2], lens: 30, fstop: 4}
+    actors:
+      - {id: arrivals, kind: lion, count: 7, area: [-62, 0, 24, 6], action: walk, to: [-20, 0], jitter: 3, stagger: 1.5}
+      - {id: fleeing, count: 6, area: [-6, 2, 10, 6], roles: [civilian, shopper, child], action: run, to: [40, 0], jitter: 2, stagger: 1.0}
+    captions:
+      - {kind: chapter, text: "08:00 AM", sub: "The Strip is overrun", at: 0.1, until: 2.9}
+    hud: {hours: 22.0, hours_end: 21.7, sub: "08:00 AM"}
+    sfx: [{sound: crowd, at: 0.3, gain_db: -6}, {sound: roar, at: 2.6, gain_db: -4}]
+    music: {intensity: 0.55}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s06_strip
+    duration: 7.0
+    environment: {type: vegas_strip, focus: strip, lions: 1, lion_action: run, cars: true, car_count: 28}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: tracking, from: [-6, 70, 3.0], to: [-6, 95, 2.6], look: [0, 0, 1.5], look_to: [0, 25, 1.2], lens: 28, fstop: 4, shake: {strength: 0.5, start: 0.5, end: 7.0, scale: 6}}
+    actors:
+      - {id: tourists, count: 14, area: [0, 40, 36, 20], roles: [civilian, shopper, child, civilian], action: run, to: [0, 160], jitter: 6, stagger: 1.0, props: [box, bottle], prop_chance: 0.3}
+    captions:
+      - {kind: alert, text: "Lions on the Strip. Shelter in place.", at: 1.2, until: 5.6}
+    hud: {hours: 21.7, hours_end: 21.4, sub: "08:20 AM"}
+    sfx: [{sound: alert, at: 1.2, gain_db: -4}, {sound: roar, at: 2.8, gain_db: -2}, {sound: crowd, at: 0.0, gain_db: -4}, {sound: horns, at: 3.5, gain_db: -10}]
+    music: {intensity: 0.65}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s07_security
+    duration: 4.0
+    environment: {type: vegas_strip, focus: entrance, barricades: true, cars: true, car_count: 12}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: close_up, from: [-8, 222, 2.0], to: [-12, 230, 2.3], look: [-34, 248, 1.6], look_to: [-35, 250, 1.6], lens: 30, fstop: 3.5}
+    actors:
+      - {id: guards, count: 6, area: [-37, 250, 2, 30], roles: [police], action: stand, to: [0, 250]}
+      - {id: dragger, role: police, at: [-30, 238], face: 90, action: carry, prop: box}
+      - {id: stalkers, kind: lion, count: 3, area: [-16, 200, 8, 10], action: prowl, to: [-22, 236], jitter: 2, stagger: 1.0}
+    captions:
+      - {text: "CASINOS BARRICADE THEIR DOORS", at: 0.4, until: 3.8}
+    hud: {hours: 21.4, hours_end: 21.2, sub: "08:40 AM"}
+    sfx: [{sound: thud, at: 0.6, gain_db: -4}, {sound: thud, at: 1.4, gain_db: -6}]
+    music: {intensity: 0.65}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s08_fountains
+    duration: 4.5
+    environment: {type: vegas_strip, focus: fountains, cars: false}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: side_follow, from: [12, 468, 2.4], to: [12, 492, 2.6], look: [-50, 520, 9], look_to: [-50, 540, 9], lens: 26, fstop: 5.6}
+    actors:
+      - {id: prowlers, kind: lion, count: 6, area: [-27, 470, 6, 20], action: prowl, to: [-28, 540], jitter: 2, stagger: 1.2}
+    captions:
+      - {text: "LIONS ROAM THE FOUNTAINS", at: 0.3, until: 4.3}
+    hud: {hours: 21.2, hours_end: 21.0, sub: "09:00 AM"}
+    sfx: [{sound: whoosh, at: 0.0, gain_db: -8}, {sound: roar, at: 2.2, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s09_buffet
+    duration: 9.5
+    environment: {type: vegas_strip, focus: buffet, marquee: "BREAKFAST BUFFET CANCELLED", cars: true, car_count: 10}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: push_in, from: [6, 20, 2.0], to: [11, 31, 4.0], look: [27, 47, 14], look_to: [27, 49, 17.5], lens: 30, fstop: 5.6}
+    actors:
+      - {id: napper, kind: lion, male: true, at: [26.5, 44.0], face: 270, action: lie}
+      - {id: passer, kind: lion, at: [24, 6], action: prowl, path: [[24, 6], [25, 70]], start: 1.0}
+    captions:
+      - {text: "A GIANT WILDLIFE EMERGENCY", at: 0.6, until: 5.0}
+    hud: {hours: 21.0, hours_end: 20.0, sub: "09:30 AM"}
+    sfx: [{sound: thud, at: 6.4, gain_db: -2}]
+    music: {intensity: 0.45}
+    transition: {type: fade_black, duration: 0.4}
+
+  - id: s10_airport
+    duration: 7.0
+    environment: {type: desert_airport, lions: 2}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: aerial_establish, from: [-430, -240, 120], to: [-230, -40, 70], look: [-60, 150, 6], look_to: [0, 330, 8], lens: 30, fstop: 8}
+    captions:
+      - {kind: chapter, text: "12:00 PM", sub: "Vegas shuts down", at: 0.1, until: 2.9}
+      - {kind: alert, text: "All flights suspended", at: 3.2, until: 6.8}
+    hud: {hours: 18.0, hours_end: 17.6, sub: "12:00 PM"}
+    sfx: [{sound: alert, at: 3.2, gain_db: -4}, {sound: jets, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.6}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s11_guard
+    duration: 4.0
+    environment: {type: vegas_strip, focus: strip, guard: true, cars: true, car_count: 10}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: static, from: [6, -20, 1.8], look: [-12, -120, 2.5], look_to: [-12, -100, 2.5], lens: 30, fstop: 4, whip_in: {duration: 0.3}}
+    actors:
+      - {id: troops, count: 10, area: [-6, -70, 16, 12], roles: [soldier], action: walk, to: [-4, -30], jitter: 3, stagger: 1.0}
+    events:
+      - {type: move, target: object:army0, path: [[-17, -230], [-17, -110]], start: 0.0, end: 4.0, face: true}
+      - {type: move, target: object:army2, path: [[-17, -260], [-17, -140]], start: 0.0, end: 4.0, face: true}
+      - {type: move, target: object:army4, path: [[-17, -290], [-17, -170]], start: 0.0, end: 4.0, face: true}
+    captions:
+      - {text: "THE NATIONAL GUARD IS DEPLOYED", at: 0.3, until: 3.8}
+    hud: {hours: 17.6, hours_end: 17.3, sub: "12:30 PM"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -4}]
+    music: {intensity: 0.65}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s12_casino
+    duration: 7.0
+    environment: {type: casino_floor}
+    lighting: interior_day
+    camera: {shot: push_in, from: [-3, 14, 2.2], to: [-2, 8, 2.0], look: [0, -24, 1.6], look_to: [0, -26, 1.5], lens: 28, fstop: 4}
+    actors:
+      - {id: guests, count: 14, area: [0, 2, 18, 8], roles: [civilian, shopper, child, civilian], action: stand, to: [0, -24]}
+      - {id: huddled, count: 4, area: [-6, 6, 6, 3], roles: [civilian, child], action: crouch, start: 0.2, stagger: 1.0}
+      - {id: security, count: 4, area: [0, -21, 14, 2], roles: [police], action: stand, to: [0, -40]}
+      - {id: outside, kind: lion, male: true, at: [-14, -36], action: prowl, path: [[-14, -36], [14, -36]], start: 0.5, speed: 3.5}
+    captions:
+      - {text: "GUESTS MOVED TO SECURE AREAS", at: 0.4, until: 6.6}
+    hud: {hours: 17.3, hours_end: 16.6, sub: "01:00 PM"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -12}, {sound: roar, at: 3.4, gain_db: -12}]
+    music: {intensity: 0.5}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s13_suburbs
+    duration: 5.5
+    environment: {type: desert_suburb, seed: 6, traffic: 0}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: aerial_establish, from: [-55, -42, 16], to: [-26, -32, 13], look: [-12, 5, 1], look_to: [8, 8, 1], lens: 30, fstop: 5.6}
+    actors:
+      - {id: roamers, kind: lion, count: 8, area: [-40, 0, 30, 8], action: walk, to: [20, 2], jitter: 6, stagger: 2.0}
+      - {id: yard, kind: lion, count: 3, area: [-28, 12, 8, 4], action: idle, to: [-28, 0]}
+    captions:
+      - {text: "LIONS IN THE NEIGHBOURHOODS", at: 0.3, until: 5.2}
+    hud: {hours: 16.6, hours_end: 15.8, sub: "02:00 PM"}
+    sfx: [{sound: roar, at: 1.5, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s14_rooftops
+    duration: 6.0
+    environment: {type: vegas_strip, focus: rooftops, rooftops: true, lions: 1, closed: true}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: aerial_establish, from: [-5, -150, 45], to: [-20, -95, 38], look: [-58, -40, 16], look_to: [-58, -10, 16], lens: 35, fstop: 5.6}
+    captions:
+      - {text: "EVEN THE CASINO ROOFTOPS", at: 0.3, until: 5.7}
+    hud: {hours: 15.8, hours_end: 14.5, sub: "03:00 PM"}
+    sfx: [{sound: roar, at: 2.2, gain_db: -4}]
+    music: {intensity: 0.65}
+    transition: {type: fade_black, duration: 0.4}
+
+  - id: s15_perimeter
+    duration: 8.5
+    environment: {type: vegas_strip, focus: strip, perimeter: true, dusk: true, cars: false}
+    lighting: dusk_urgent
+    lighting_overrides: {fog: 0.0004}
+    camera: {shot: push_in, from: [6, 20, 3.6], to: [4, 8, 3.1], look: [0, -60, 1.2], look_to: [0, -70, 1.0], lens: 30, fstop: 4}
+    actors:
+      - {id: approach, kind: lion, count: 12, area: [0, -120, 40, 20], action: prowl, to: [0, -55], jitter: 8, stagger: 2.0, roar_chance: 0.25}
+      - {id: line, count: 8, area: [0, -18, 40, 2], roles: [soldier], action: stand, to: [0, -80]}
+    captions:
+      - {kind: chapter, text: "06:00 PM", sub: "The human counterattack", at: 0.1, until: 2.9}
+      - {kind: alert, text: "Curfew in effect. Stay indoors.", at: 3.2, until: 8.0}
+    hud: {hours: 12.0, hours_end: 11.5, sub: "06:00 PM"}
+    sfx: [{sound: alert, at: 3.2, gain_db: -4}, {sound: siren, at: 0.5, gain_db: -10}, {sound: radio, at: 6.0, gain_db: -8}]
+    music: {intensity: 0.75}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s16_helicopter
+    duration: 8.5
+    environment: {type: vegas_strip, focus: strip, night: true, lions: 2, helicopters: 1, heli_path: [[-10, -250, 70], [-10, 200, 70]], cars: true, car_count: 18}
+    lighting: night_emergency
+    camera: {shot: tracking, from: [-40, -330, 92], to: [-40, 120, 92], look: [-10, -250, 62], look_to: [-10, 200, 62], lens: 32, fstop: 5.6, shake: {strength: 0.6, start: 0.0, end: 8.5, scale: 9}}
+    captions:
+      - {text: "POLICE HELICOPTERS TRACK THE LIONS", at: 0.4, until: 8.0}
+    hud: {hours: 11.5, hours_end: 10.8, sub: "07:00 PM"}
+    sfx: [{sound: helicopter, at: 0.0, gain_db: 0}, {sound: roar, at: 4.5, gain_db: -8}]
+    music: {intensity: 0.8}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s17_blackout
+    duration: 12.0
+    environment: {type: vegas_strip, focus: valley, night: true, lions: 0, cars: false}
+    lighting: night_emergency
+    camera: {shot: aerial_establish, from: [-1500, -2200, 700], to: [-1250, -1850, 620], look: [0, 0, 0], look_to: [0, 100, 0], lens: 30, fstop: 8}
+    events:
+      - {type: blackout, target: [tag:district_2, tag:district_4, tag:district_0, tag:district_5, tag:district_1, tag:district_3], start: 2.0, end: 10.0, shuffle: false}
+    captions:
+      - {text: "THE LIGHTS GO OUT, DISTRICT BY DISTRICT", at: 0.5, until: 11.4}
+    hud: {hours: 10.8, hours_end: 7.0, sub: "08:00 TO 11:00 PM"}
+    sfx: [{sound: thud, at: 2.0, gain_db: -6}, {sound: thud, at: 3.6, gain_db: -6}, {sound: thud, at: 5.2, gain_db: -6}, {sound: thud, at: 6.8, gain_db: -6}, {sound: thud, at: 8.4, gain_db: -6}, {sound: thud, at: 10.0, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: fade_black, duration: 0.6}
+
+  - id: s18_windows
+    duration: 5.0
+    environment: {type: vegas_strip, focus: entrance, night: true, districts_dark: true, lions: 1, lion_action: prowl, cars: true, car_count: 10}
+    lighting: night_emergency
+    camera: {shot: reveal, from: [-80, 200, 20], to: [-82, 208, 85], look: [-175, 240, 40], look_to: [-175, 240, 110], lens: 30, fstop: 5.6}
+    captions:
+      - {kind: chapter, text: "02:00 AM", sub: "The city goes silent", at: 0.1, until: 3.0}
+    hud: {hours: 4.0, hours_end: 3.8, sub: "02:00 AM"}
+    sfx: [{sound: swell, at: 0.3, gain_db: -10}]
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s19_roar
+    duration: 5.5
+    environment: {type: vegas_strip, focus: strip, night: true, districts_dark: true, cars: true, car_count: 8}
+    lighting: night_emergency
+    camera: {shot: push_in, from: [-3, 2.5, 0.9], to: [-3.5, 4.0, 1.0], look: [-4, 10, 1.5], look_to: [-4, 10, 1.7], lens: 30, fstop: 2.8}
+    actors:
+      - {id: king, kind: lion, male: true, scale: 1.15, at: [-4, 10], face: 180, action: idle, roar_at: 1.2, hold: 1.4}
+      - {id: shadows, kind: lion, count: 4, area: [6, 40, 20, 20], action: prowl, to: [6, 80], stagger: 1.0}
+    captions:
+      - {text: "THEIR ROARS ECHO BETWEEN THE TOWERS", at: 2.9, until: 5.3}
+    hud: {hours: 3.8, hours_end: 3.5, sub: "02:20 AM"}
+    sfx: [{sound: roar, at: 1.2, gain_db: 4}]
+    music: {intensity: 0.5}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s20_valley
+    duration: 6.5
+    environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, valley_hordes: 5, cars: false}
+    lighting: night_emergency
+    camera: {shot: aerial_establish, from: [900, -1500, 320], to: [700, -1180, 270], look: [300, -700, 0], look_to: [200, -600, 0], lens: 30, fstop: 8}
+    captions:
+      - {text: "SPREADING ACROSS THE VALLEY", at: 0.3, until: 6.2}
+    hud: {hours: 3.5, hours_end: 2.4, sub: "03:00 AM"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -6}]
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s21_eyes
+    duration: 6.5
+    environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, eyes: true, eye_count: 3000, cars: false}
+    lighting: night_emergency
+    camera: {shot: push_in, from: [0, -1520, 10], to: [0, -1490, 26], look: [0, -2600, 1], look_to: [0, -2500, 6], lens: 30, fstop: 8}
+    captions:
+      - {kind: title, text: "AN ARMY OF ONE MILLION", at: 2.4, until: 6.4}
+    hud: {hours: 2.4, hours_end: 0.25, sub: "04:00 AM"}
+    sfx: [{sound: heartbeat, at: 0.0, gain_db: -2}, {sound: impact, at: 2.4, gain_db: 0}]
+    music: {intensity: 0.9}
+    transition: {type: fade_white, duration: 0.5}
+
+  - id: s22_dawn
+    duration: 6.5
+    environment: {type: vegas_strip, focus: strip, lions: 3, closed: true, fountains: false, cars: true, car_count: 26}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: aerial_establish, from: [120, -500, 160], to: [60, -300, 120], look: [0, 0, 20], look_to: [0, 100, 10], lens: 30, fstop: 8}
+    captions:
+      - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 3.0}
+    hud: {hours: 0.25, hours_end: 0.0, sub: "06:00 AM"}
+    sfx: [{sound: tick, at: 1.0, gain_db: 2}, {sound: tick, at: 2.0, gain_db: 2}, {sound: tick, at: 3.0, gain_db: 2}, {sound: swell, at: 3.5, gain_db: -6}]
+    music: {intensity: 0.7}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s23_empty
+    duration: 6.0
+    environment: {type: casino_floor}
+    lighting: interior_day
+    lighting_overrides: {ambient: 0.5, exposure: -0.5}
+    camera: {shot: push_in, from: [0.6, -16, 1.2], to: [0.5, -14, 1.25], look: [0, 10, 1.3], look_to: [0, 8, 1.3], lens: 30, fstop: 3.5}
+    actors:
+      - {id: visitor, kind: lion, male: true, at: [0, 18], action: walk, path: [[0, 18], [0, -6]], start: 0.2, speed: 1.4}
+    captions:
+      - {text: "THE CASINOS ARE EMPTY", at: 0.4, until: 5.8}
+    hud: {hours: 0.0, hours_end: 0.0, sub: "06:00 AM"}
+    sfx: [{sound: roar, at: 3.6, gain_db: -10}]
+    music: {intensity: 0.5}
+    transition: {type: dissolve, duration: 0.5}
+
+  - id: s24_final
+    duration: 12.0
+    environment: {type: vegas_strip, focus: rooftops, rooftops: true, lions: 1, closed: true, fountains: false, cars: true, car_count: 18}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: push_in, from: [-24, -62, 21], to: [-33, -50, 19], look: [-50, -40, 18], look_to: [-49, -40, 18.6], lens: 30, fstop: 4}
+    actors:
+      - {id: ruler, kind: lion, male: true, scale: 1.1, at: [-50, -40, 16.0], face: 90, action: idle, roar_at: 3.0, hold: 1.6}
+    captions:
+      - {kind: title, text: "WHAT HAPPENS WHEN THEY GET HUNGRY AGAIN?", at: 6.5, until: 12.0}
+    hud: {hours: 0.0, hours_end: 0.0, sub: "A HYPOTHETICAL SCENARIO"}
+    sfx: [{sound: roar, at: 3.0, gain_db: 2}, {sound: impact, at: 6.5, gain_db: 0}]
+    music: {intensity: 0.85}
+    transition: {type: cut, duration: 0.0}

@@ -336,3 +336,68 @@ def splat(duration: float = 0.35) -> list[float]:
 
 
 SOUNDS.update({"gulls": gulls, "flapping": flapping, "drone_buzz": drone_buzz, "loudspeaker": loudspeaker, "jets": jets, "splat": splat})
+
+
+def _bandpass(samples: list[float], freq: float, q: float) -> list[float]:
+    w = math.tau * freq / RATE
+    alpha = math.sin(w) / (2.0 * q)
+    a0, a1, a2 = 1.0 + alpha, -2.0 * math.cos(w), 1.0 - alpha
+    out, x1, x2, y1, y2 = [], 0.0, 0.0, 0.0, 0.0
+    for x in samples:
+        y = (alpha * x - alpha * x2 - a1 * y1 - a2 * y2) / a0
+        x2, x1, y2, y1 = x1, x, y1, y
+        out.append(y)
+    return out
+
+
+def roar(duration: float = 2.4) -> list[float]:
+    """Big-cat roar: a rough, falling growl through two vocal-tract resonances, soft-clipped."""
+    n = int(duration * RATE)
+    rng = random.Random(31)
+    noise = _noise(n, 32)
+    source, phase = [], 0.0
+    for i in range(n):
+        t = i / RATE
+        f0 = 92.0 + 34.0 * math.sin(math.pi * min(1.0, t / duration)) + 7.0 * math.sin(math.tau * 9.0 * t) + rng.uniform(-5.0, 5.0)
+        phase += math.tau * f0 / RATE
+        saw = sum(math.sin(phase * k) / k for k in range(1, 10))
+        source.append(saw * 0.7 + noise[i] * 0.6)
+    voiced = [a + b * 0.8 for a, b in zip(_bandpass(source, 420.0, 2.0), _bandpass(source, 1050.0, 3.0), strict=False)]
+    chest = _lowpass(source, lambda t: 0.04)
+    out = []
+    for i in range(n):
+        t = i / RATE
+        env = min(1.0, t / 0.16) * (1.0 if t < duration * 0.5 else max(0.0, 1.0 - (t - duration * 0.5) / (duration * 0.5)) ** 1.5)
+        out.append(math.tanh((voiced[i] * 2.5 + chest[i] * 2.0) * 1.8) * env)
+    return out
+
+
+def alert(duration: float = 2.6) -> list[float]:
+    """Broadcast-style attention chime (three falling bell tones, twice). Deliberately not the EAS tone."""
+    n = int(duration * RATE)
+    out = [0.0] * n
+    for repeat in (0.0, 1.25):
+        for k, freq in enumerate((988.0, 784.0, 523.0)):
+            start = int((repeat + k * 0.3) * RATE)
+            for i in range(start, min(n, start + int(1.0 * RATE))):
+                t = (i - start) / RATE
+                bell = math.sin(math.tau * freq * t) + 0.4 * math.sin(math.tau * freq * 2.76 * t) + 0.2 * math.sin(math.tau * freq * 5.4 * t)
+                out[i] += bell * math.exp(-t * 4.5) * 0.35
+    return out
+
+
+def radio(duration: float = 1.6) -> list[float]:
+    """Radio static burst with crackle and a squelch tail."""
+    n = int(duration * RATE)
+    rng = random.Random(33)
+    hiss = _bandpass(_noise(n, 34), 1800.0, 0.8)
+    out = []
+    for i, s in enumerate(hiss):
+        t = i / RATE
+        crackle = rng.uniform(-1.0, 1.0) if rng.random() < 0.002 else 0.0
+        squelch = math.sin(math.tau * 1100.0 * t) * 0.25 if t > duration - 0.18 else 0.0
+        out.append((s * 3.0 + crackle) * min(1.0, t / 0.02) + squelch)
+    return out
+
+
+SOUNDS.update({"roar": roar, "alert": alert, "radio": radio})

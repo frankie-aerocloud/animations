@@ -2,6 +2,7 @@
 
 CORE = "studio.blender.environments"
 NYC = "studio.blender.environments_nyc"
+VEGAS = "studio.blender.environments_vegas"
 # environment type -> module that builds it; the Blender entry point imports only that module,
 # so a scene's recorded code dependencies never include other productions' environments
 ENVIRONMENTS = {
@@ -20,6 +21,11 @@ ENVIRONMENTS = {
     "harbour_dawn": NYC,
     "metropolis": NYC,
     "airport": NYC,
+    "mojave": VEGAS,
+    "vegas_strip": VEGAS,
+    "casino_floor": VEGAS,
+    "desert_airport": VEGAS,
+    "desert_suburb": VEGAS,
 }
 SHOTS = (
     "aerial_establish",
@@ -72,6 +78,8 @@ ACTIONS = (
     "scatter",
 )
 EVENTS = ("water_level", "hide", "show", "move", "spin", "flicker", "flash", "scale", "deplete", "sun", "blackout")
-SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat")
+SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat", "roar", "alert", "radio")
 PROPS = ("jerrycan", "bottle", "bucket", "box", "pan")
-CARD_KINDS = ("title", "caption", "chapter")
+CARD_KINDS = ("title", "caption", "chapter", "alert")
+ACTOR_KINDS = ("person", "lion")
+LION_ACTIONS = ("walk", "prowl", "run", "idle", "roar", "lie")

@@ -167,14 +167,20 @@ def validate_project(project: Project) -> list[str]:
             if not isinstance(actor, dict) or not actor.get("id"):
                 errors.append(f"{label}: every actor needs an id")
                 continue
-            if actor.get("role", "civilian") not in catalogue.ROLES:
-                errors.append(f"{label}: actor {actor['id']} role must be one of {', '.join(catalogue.ROLES)}")
-            roles = actor.get("roles") or []
-            for role in roles:
-                if role not in catalogue.ROLES:
-                    errors.append(f"{label}: actor {actor['id']} roles contains unknown role {role!r}")
-            if actor.get("action", "idle") not in catalogue.ACTIONS:
-                errors.append(f"{label}: actor {actor['id']} action must be one of {', '.join(catalogue.ACTIONS)}")
+            kind = actor.get("kind", "person")
+            if kind not in catalogue.ACTOR_KINDS:
+                errors.append(f"{label}: actor {actor['id']} kind must be one of {', '.join(catalogue.ACTOR_KINDS)}")
+            elif kind == "lion":
+                if actor.get("action", "walk") not in catalogue.LION_ACTIONS:
+                    errors.append(f"{label}: lion {actor['id']} action must be one of {', '.join(catalogue.LION_ACTIONS)}")
+            else:
+                if actor.get("role", "civilian") not in catalogue.ROLES:
+                    errors.append(f"{label}: actor {actor['id']} role must be one of {', '.join(catalogue.ROLES)}")
+                for role in actor.get("roles") or []:
+                    if role not in catalogue.ROLES:
+                        errors.append(f"{label}: actor {actor['id']} roles contains unknown role {role!r}")
+                if actor.get("action", "idle") not in catalogue.ACTIONS:
+                    errors.append(f"{label}: actor {actor['id']} action must be one of {', '.join(catalogue.ACTIONS)}")
             if actor.get("prop") and actor.get("prop") not in catalogue.PROPS:
                 errors.append(f"{label}: actor {actor['id']} prop must be one of {', '.join(catalogue.PROPS)}")
             for time_key in ("start", "end"):

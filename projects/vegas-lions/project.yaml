@@ -1,0 +1,15 @@
+id: vegas-lions
+title: "What If One Million Lions Attacked Las Vegas?"
+language: en-GB
+hud_label: "COUNTDOWN"
+hud_format: hms        # HH:MM:SS so the seconds spin as the 24 hours compress
+music_style: epic      # string ostinato, brass swells and timpani over the tension pad
+premise: >
+  Cinematic disaster mockumentary. A hypothetical one million lions emerge from the Mojave at sunrise and
+  overrun Las Vegas; the film follows the next twenty-four hours.
+render: {}
+assets: assets/manifest.yaml
+audio:
+  narration_dir: audio/narration
+  music_file: null
+  sfx_dir: audio/sfx

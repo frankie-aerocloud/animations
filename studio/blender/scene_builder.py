@@ -66,7 +66,12 @@ def main():
     lighting.apply(ctx, scene_spec.get("lighting", "soft_daylight"), scene_spec.get("lighting_overrides"), fog_extent=fog_extent)
     environments.build(ctx, env)
     for actor_spec in scene_spec.get("actors") or []:
-        characters.spawn(ctx, actor_spec)
+        if actor_spec.get("kind") == "lion":
+            from studio.assets import lions  # imported only by scenes with lions, keeping other scenes' dependencies unchanged
+
+            lions.spawn(ctx, actor_spec)
+        else:
+            characters.spawn(ctx, actor_spec)
     animation.apply_events(ctx, scene_spec.get("events") or [])
     camera.setup(ctx, scene_spec["camera"])
     scene.frame_set(1)
