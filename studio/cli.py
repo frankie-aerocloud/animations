@@ -98,6 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     project_command("render", "render every scene whose inputs changed")
     project_command("assemble", "narration, subtitles, overlay, audio mix, FFmpeg assembly, validation and manifest")
     project_command("build", "the complete pipeline")
+    project_command("adopt", "after a code change that does not affect this film, mark its rendered frames as current instead of re-rendering")
     check = project_command("check", "play the finished MP4 end to end and run every technical check")
     check.add_argument("--file", type=Path, help="check this MP4 instead of the profile's output")
     clean = sub.add_parser("clean", help="delete generated output for a project")
@@ -148,6 +149,10 @@ def main(argv: list[str] | None = None) -> int:
             for scene_id in args.scene:
                 result = pipeline.render_scene(scene_id, still=args.still)
                 print(f"{scene_id}: {result.frames} frame(s) in {result.frames_dir}")
+            return 0
+        if args.command == "adopt":
+            adopted = pipeline.adopt()
+            print(f"{len(adopted)} of {len(project.scenes)} scenes marked current for profile {pipeline.profile.name}")
             return 0
         if args.command == "render":
             for result in pipeline.render_scenes():

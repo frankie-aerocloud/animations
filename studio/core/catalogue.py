@@ -1,22 +1,26 @@
 """Names shared by configuration validation (venv Python) and the Blender-side builders."""
 
-ENVIRONMENTS = (
-    "coastal_city",
-    "residential_street",
-    "kitchen_interior",
-    "supermarket_interior",
-    "distribution_point",
-    "hospital_exterior",
-    "farm",
-    "industrial",
-    "reservoir",
-    "port",
-    "desert",
-    "highway",
-    "harbour_dawn",
-    "metropolis",
-    "airport",
-)
+CORE = "studio.blender.environments"
+NYC = "studio.blender.environments_nyc"
+# environment type -> module that builds it; the Blender entry point imports only that module,
+# so a scene's recorded code dependencies never include other productions' environments
+ENVIRONMENTS = {
+    "coastal_city": CORE,
+    "residential_street": CORE,
+    "kitchen_interior": CORE,
+    "supermarket_interior": CORE,
+    "distribution_point": CORE,
+    "hospital_exterior": CORE,
+    "farm": CORE,
+    "industrial": CORE,
+    "reservoir": CORE,
+    "port": CORE,
+    "desert": CORE,
+    "highway": CORE,
+    "harbour_dawn": NYC,
+    "metropolis": NYC,
+    "airport": NYC,
+}
 SHOTS = (
     "aerial_establish",
     "push_in",

@@ -9,7 +9,6 @@ from studio.assets import buildings, props, terrain, vegetation, vehicles, water
 from studio.assets import characters
 from studio.blender import lighting
 from studio.blender.primitives import box, cylinder, empty, ico, multi_box, parent
-from studio.core import catalogue
 
 FOG_EXTENT = {
     "coastal_city": (900, 900, 220),
@@ -638,11 +637,6 @@ BUILDERS = {
     "desert": desert,
     "highway": highway,
 }
-from studio.blender import environments_nyc  # noqa: E402
-
-BUILDERS.update(environments_nyc.BUILDERS)
-FOG_EXTENT.update(environments_nyc.FOG_EXTENT)
-assert set(BUILDERS) == set(catalogue.ENVIRONMENTS), "environment catalogue and builders differ"
 
 
 def build(ctx, spec):

@@ -3,6 +3,7 @@ assemble with FFmpeg, validate the MP4 and write the manifest."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
@@ -16,7 +17,8 @@ from studio.audio import mixer, music, narration, sfx, subtitles
 from studio.audio.narration import LineAudio
 from studio.audio.subtitles import Cue
 from studio.core.configuration import OUTPUT_DIR, REPO_ROOT, RenderProfile
-from studio.core.hashing import fingerprint, source_files
+from studio.core import catalogue
+from studio.core.hashing import fingerprint
 from studio.core.project import Project, validate_project
 from studio.video import assemble, manifest, validate
 
@@ -92,9 +94,6 @@ class Pipeline:
             raise PipelineError(f"Blender failed for {name} (exit {code}); full log: {log_path}\n{tail}")
         return log_path
 
-    def _blender_sources(self) -> list[Path]:
-        return source_files(REPO_ROOT / "studio" / "blender", REPO_ROOT / "studio" / "assets", REPO_ROOT / "studio" / "core")
-
     def scene_dir(self, scene_id: str) -> Path:
         return self.scenes_dir / scene_id / self.profile.name
 
@@ -110,14 +109,33 @@ class Pipeline:
             "profile": self.profile.as_dict(),
             "style": self.project.style,
             "scene": scene,
+            "environment_module": catalogue.ENVIRONMENTS[scene["environment"]["type"]],
             "output": {"dir": str(scene_dir), "frames_dir": str(frames_dir)},
             "still": still,
             "save_blend": bool(self.project.render.get("save_blend", True)),
         }
 
     def scene_hash(self, scene: dict[str, Any]) -> str:
+        """Fingerprint of everything a scene's frames depend on except code (see deps_current)."""
         spec = self.scene_spec(scene)
-        return fingerprint({key: spec[key] for key in ("render", "profile", "style", "scene", "font")}, self._blender_sources())
+        return fingerprint({key: spec[key] for key in ("render", "profile", "style", "scene", "font")})
+
+    @staticmethod
+    def deps_current(scene_dir: Path) -> bool:
+        """True when every code file the scene imported when it was rendered is unchanged."""
+        deps_file = scene_dir / "deps.json"
+        if not deps_file.exists():
+            return False
+        for relative, digest in json.loads(deps_file.read_text(encoding="utf-8")).items():
+            path = REPO_ROOT / relative
+            if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                return False
+        return True
+
+    def scene_current(self, scene: dict[str, Any]) -> bool:
+        scene_dir = self.scene_dir(str(scene["id"]))
+        hash_file = scene_dir / "scene.hash"
+        return hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == self.scene_hash(scene) and self.deps_current(scene_dir)
 
     def progress(self) -> tuple[int, int]:
         """Frames already rendered for each scene's current fingerprint, and the total the film needs."""
@@ -125,10 +143,8 @@ class Pipeline:
         for scene in self.project.scenes:
             count = int(scene["frames"]) + int(scene["handle_frames"])
             total += count
-            scene_dir = self.scene_dir(str(scene["id"]))
-            hash_file = scene_dir / "scene.hash"
-            if hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == self.scene_hash(scene):
-                done += count - len(validate.missing_frames(scene_dir / "frames", count))
+            if self.scene_current(scene):
+                done += count - len(validate.missing_frames(self.scene_dir(str(scene["id"])) / "frames", count))
         return done, total
 
     def render_scene(self, scene_id: str, still: float | None = None) -> SceneResult:
@@ -144,13 +160,14 @@ class Pipeline:
             self.log(f"[scene] {scene_id}: still at {still:.2f}s (frame {frame})")
             self._blender(spec, f"{scene_id}-{self.profile.name}-still")
             return SceneResult(scene_id, scene_dir / "stills", 1, False)
-        unchanged = hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == digest
+        unchanged = self.scene_current(scene)
         if unchanged and not self.force and validate.frames_complete(frames_dir, total):
             self.log(f"[scene] {scene_id}: unchanged, {total} frames already rendered")
             return SceneResult(scene_id, frames_dir, total, True)
         if frames_dir.exists() and (self.force or not unchanged):
             shutil.rmtree(frames_dir)
             (scene_dir / "clip.mp4").unlink(missing_ok=True)
+            (scene_dir / "deps.json").unlink(missing_ok=True)
         elif frames_dir.exists():
             validate.remove_partial_frames(frames_dir)
         scene_dir.mkdir(parents=True, exist_ok=True)
@@ -255,10 +272,37 @@ class Pipeline:
             "output": {"dir": str(self.overlay_dir), "frames_dir": str(self.overlay_dir / "frames")},
         }
 
+    def overlay_digest(self, spec: dict[str, Any]) -> str:
+        code = [REPO_ROOT / "studio" / "blender" / name for name in ("overlay.py", "primitives.py", "rendering.py", "scene_builder.py")]
+        return fingerprint({key: spec[key] for key in ("render", "profile", "style", "cards", "hud", "subtitles", "total_frames", "font")}, code)
+
+    def adopt(self) -> list[str]:
+        """Mark complete frames as current after a code change that does not affect this film. Each
+        scene is built in Blender without rendering to record its code dependencies."""
+        adopted: list[str] = []
+        for scene in self.project.scenes:
+            scene_id = str(scene["id"])
+            scene_dir = self.scene_dir(scene_id)
+            if not validate.frames_complete(scene_dir / "frames", int(scene["frames"]) + int(scene["handle_frames"])):
+                self.log(f"[adopt] {scene_id}: frames incomplete, left to render")
+                continue
+            spec = self.scene_spec(scene)
+            spec["deps_only"] = True
+            self._blender(spec, f"{scene_id}-{self.profile.name}-deps")
+            (scene_dir / "scene.hash").write_text(self.scene_hash(scene), encoding="utf-8")
+            adopted.append(scene_id)
+            self.log(f"[adopt] {scene_id}: frames marked current")
+        cues, _ = self.subtitles(self.narration())
+        spec = self.overlay_spec(cues)
+        if validate.frames_complete(self.overlay_dir / "frames", self.project.total_frames):
+            (self.overlay_dir / "overlay.hash").write_text(self.overlay_digest(spec), encoding="utf-8")
+            self.log("[adopt] overlay: frames marked current")
+        return adopted
+
     def render_overlay(self, cues: list[Cue]) -> Path:
         spec = self.overlay_spec(cues)
         frames_dir = self.overlay_dir / "frames"
-        digest = fingerprint({key: spec[key] for key in ("render", "profile", "style", "cards", "hud", "subtitles", "total_frames", "font")}, [REPO_ROOT / "studio" / "blender" / "overlay.py", REPO_ROOT / "studio" / "blender" / "primitives.py"])
+        digest = self.overlay_digest(spec)
         hash_file = self.overlay_dir / "overlay.hash"
         total = self.project.total_frames
         unchanged = hash_file.exists() and hash_file.read_text(encoding="utf-8").strip() == digest
@@ -285,7 +329,8 @@ class Pipeline:
             scene_dir = self.scene_dir(result.id)
             clip = scene_dir / "clip.mp4"
             stamp = scene_dir / "clip.hash"
-            digest = (scene_dir / "scene.hash").read_text(encoding="utf-8").strip() if (scene_dir / "scene.hash").exists() else ""
+            state = [scene_dir / "scene.hash", scene_dir / "deps.json"]
+            digest = hashlib.sha256(b"".join(path.read_bytes() for path in state if path.exists())).hexdigest()
             if not (clip.exists() and stamp.exists() and stamp.read_text(encoding="utf-8") == digest):
                 self.log(f"[clip] encoding {result.id}")
                 assemble.encode_clip(result.frames_dir, self.project.fps, result.frames, clip)

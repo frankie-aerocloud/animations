@@ -23,7 +23,7 @@ class Overlay:
         self.scene = bpy.context.scene
         self.scene.frame_start = 1
         self.scene.frame_end = int(spec["total_frames"])
-        profile = _Profile(spec["profile"])
+        profile = rendering.Profile(spec["profile"])
         rendering.configure(self.scene, spec["render"], profile)
         self.scene.render.film_transparent = True
         self.scene.render.image_settings.color_mode = "RGBA"
@@ -183,12 +183,6 @@ class Overlay:
     def render(self):
         frames_dir = Path(self.spec["output"]["frames_dir"])
         return rendering.render(self.scene, frames_dir)
-
-
-class _Profile:
-    def __init__(self, data):
-        for name, value in data.items():
-            setattr(self, name, value)
 
 
 def _interpolate(keys, t):

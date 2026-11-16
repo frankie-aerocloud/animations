@@ -67,9 +67,13 @@ YouTube Shorts limits (9:16, at most 180 s). `build` runs it and records each re
 scenes → generate subtitles → render the caption overlay → mix audio → assemble with FFmpeg →
 validate the MP4 → write `output/<project>/manifest-<profile>.json`.
 
-Every scene is fingerprinted (storyboard entry, style, render profile and the Blender-side source
-files). Re-running `render` or `build` only re-renders scenes whose fingerprint changed; `--force`
-rebuilds everything. Interrupted renders resume from the last complete frame, so a long film can be
+Every scene is fingerprinted from its storyboard entry, style and render profile, and records the
+code files it actually imported (`deps.json`, with content hashes). Re-running `render` or `build`
+only re-renders a scene when its fingerprint changed or one of its own code files changed, so adding a
+new production's environments never invalidates another film. Each environment family is a separate
+module (`studio/core/catalogue.py` maps environment types to modules) and is imported only by the
+scenes that use it. `--force` rebuilds everything; `adopt` marks existing frames as current after a
+code change you know does not affect that film. Interrupted renders resume from the last complete frame, so a long film can be
 rendered in several sittings: run `render` as often as needed, then `assemble`. A frame cut
 short mid-write (no PNG end marker) is detected and redrawn. On macOS the CLI holds a
 `caffeinate -s` assertion while it runs, so idle or maintenance sleep does not pause Blender on
