@@ -1,0 +1,34 @@
+# Narration in the brief's wording, a little brisker (length_scale 0.85) so the film fits 180 s.
+# Seven sentences are on-screen captions instead (see the storyboard). `at` is seconds after the start of the named scene.
+lines:
+  - {id: n01, scene: s01_rain, at: 0.80, text: "Monday. 7:30 AM. London wakes up to heavy rain."}
+  - {id: n02, scene: s02_commute, at: 0.15, text: "Commuters squeeze onto packed trains. Cars crawl through traffic. Nobody pays much attention."}
+  - {id: n03, scene: s03_midnight, at: 0.30, text: "But by midnight, something unusual happens. The rain hasn't stopped."}
+  - {id: n04, scene: s04_mornings, at: 0.20, text: "The following morning, it is still raining. And the morning after that."}
+  - {id: n05, scene: s05_system, at: 0.30, text: "Weather forecasters have no explanation. A persistent weather system has become trapped over southern England. London is about to experience the wettest year in its history."}
+  - {id: n06, scene: s06_park, at: 0.70, text: "Two weeks later, the ground is completely saturated."}
+  - {id: n07, scene: s07_drains, at: 0.20, text: "Road drains struggle to cope. Water collects beneath railway bridges, floods basements and spills into residential streets."}
+  - {id: n08, scene: s09_basements, at: 0.20, text: "Parts of the city experience repeated surface-water flooding."}
+  - {id: n09, scene: s10_station, at: 0.20, text: "The Underground begins experiencing serious disruption. Stations close temporarily as water enters vulnerable areas."}
+  - {id: n10, scene: s11_sandbags, at: 0.20, text: "Londoners start buying sandbags, waterproof clothing and portable pumps. But the rain keeps coming."}
+  - {id: n11, scene: s12_closures, at: 0.70, text: "Six weeks. Several Underground stations are repeatedly closed due to flooding and electrical safety problems."}
+  - {id: n12, scene: s13_diverted, at: 0.20, text: "Road closures become routine. Buses are diverted."}
+  - {id: n13, scene: s14_sewage, at: 0.20, text: "Sewers struggle with the additional water, increasing the risk of untreated wastewater entering rivers."}
+  - {id: n14, scene: s15_shops, at: 0.20, text: "Businesses in flood-prone areas begin shutting down."}
+  - {id: n15, scene: s16_parliament, at: 0.20, text: "And for the first time, the government begins discussing emergency relocation for vulnerable communities."}
+  - {id: n16, scene: s17_mould, at: 0.70, text: "Four months. Persistent damp is destroying homes. Black mould spreads through poorly ventilated buildings."}
+  - {id: n17, scene: s18_works, at: 0.20, text: "Construction projects stop."}
+  - {id: n18, scene: s19_substation, at: 0.20, text: "Power equipment in vulnerable locations suffers water damage."}
+  - {id: n19, scene: s20_hospital, at: 0.20, text: "Hospitals face growing pressure from respiratory problems, injuries and displaced residents."}
+  - {id: n20, scene: s21_barrier, at: 0.20, text: "The Thames catchment is also experiencing severe flooding, placing additional pressure on London's river defences. The government declares a major national emergency."}
+  - {id: n21, scene: s22_evacuation, at: 0.70, text: "Eight months. Thousands of homes are uninhabitable. Some neighbourhoods have effectively become evacuation zones."}
+  - {id: n22, scene: s23_shelter, at: 0.20, text: "The housing system is overwhelmed. Temporary accommodation is running out."}
+  - {id: n23, scene: s24_exodus, at: 0.20, text: "Transport infrastructure needs extensive repairs. People who can afford to leave London have already gone."}
+  - {id: n24, scene: s25_window, at: 0.20, text: "Those who remain are exhausted. Children have spent most of a year without normal outdoor activities."}
+  - {id: n25, scene: s26_barely, at: 0.30, text: "The city is still functioning. But barely."}
+  - {id: n26, scene: s27_break, at: 0.80, text: "One year. At 6 AM, something incredible happens. The clouds break."}
+  - {id: n27, scene: s27_break, at: 6.36, text: "For the first time in 365 days, sunlight hits Westminster."}
+  - {id: n28, scene: s28_outside, at: 0.20, text: "People step outside. Some are crying. Others simply stand there, looking at the sky."}
+  - {id: n29, scene: s29_damage, at: 0.20, text: "But the celebration doesn't last. Thousands of buildings need structural repairs. Contaminated floodwater remains in some areas."}
+  - {id: n30, scene: s30_rebuild, at: 0.20, text: "The economic damage runs into billions. London hasn't disappeared beneath the water. Something worse has happened. An entire city has spent a year slowly falling apart. And now the enormous task of rebuilding begins."}
+  - {id: n31, scene: s31_final, at: 0.30, text: "365 days of rain. 365 days of survival. One question remains: Could London ever be the same again?"}

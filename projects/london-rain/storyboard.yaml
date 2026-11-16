@@ -1,0 +1,401 @@
+# 365 Days Underwater: recognisable London slowly becoming unliveable, never a drowned city.
+# Coordinates: metres in each environment (studio/blender/environments_london.py). Streets run along Y
+# (UK traffic keeps left: northbound lane x < 0). Westminster: Elizabeth Tower at (-122, -280), the
+# river runs north at x = 30 there. hud values are day numbers (project hud_format: day).
+x-rain-day: &rain_day {sun: 1.1, elevation: 52, azimuth: -30, colour: [0.86, 0.90, 1.0], zenith: [0.30, 0.33, 0.37], horizon: [0.52, 0.55, 0.58], ambient: 0.8, fog: 0.0045, fog_colour: [0.56, 0.59, 0.63], exposure: -0.05}
+x-rain-dark: &rain_dark {sun: 0.7, elevation: 40, azimuth: -30, colour: [0.80, 0.86, 1.0], zenith: [0.20, 0.22, 0.26], horizon: [0.40, 0.42, 0.45], ambient: 0.6, fog: 0.005, fog_colour: [0.40, 0.42, 0.46], exposure: 0.05}
+x-rain-dusk: &rain_dusk {sun: 0.8, elevation: 6, azimuth: -110, colour: [0.95, 0.62, 0.45], zenith: [0.10, 0.12, 0.20], horizon: [0.45, 0.32, 0.30], ambient: 0.45, fog: 0.004, fog_colour: [0.32, 0.28, 0.30], exposure: 0.2}
+x-rain-night: &rain_night {sun: 0.25, elevation: 40, azimuth: 60, colour: [0.55, 0.62, 0.85], zenith: [0.015, 0.02, 0.035], horizon: [0.06, 0.06, 0.08], ambient: 0.3, fog: 0.004, fog_colour: [0.12, 0.12, 0.15], exposure: 0.5}
+x-aerial-rain: &aerial_rain {sun: 1.0, elevation: 45, azimuth: -30, colour: [0.86, 0.90, 1.0], zenith: [0.28, 0.31, 0.35], horizon: [0.50, 0.53, 0.56], ambient: 0.75, fog: 0.0007, fog_colour: [0.50, 0.53, 0.57], exposure: 0.0}
+x-indoor-grey: &indoor_grey {sun: 0.6, elevation: 30, azimuth: 0, colour: [0.85, 0.90, 1.0], zenith: [0.45, 0.48, 0.52], horizon: [0.55, 0.57, 0.60], ambient: 0.35, exposure: -0.15}
+x-dawn: &dawn {sun: 0.4, elevation: 5, azimuth: 100, colour: [1.0, 0.70, 0.45], zenith: [0.25, 0.40, 0.70], horizon: [0.98, 0.72, 0.50], ambient: 0.5, fog: 0.0006, fog_colour: [0.95, 0.80, 0.66], exposure: 0.0}
+x-after: &after {sun: 3.6, elevation: 14, azimuth: 105, colour: [1.0, 0.85, 0.66], zenith: [0.28, 0.45, 0.78], horizon: [0.85, 0.78, 0.66], ambient: 0.6, fog: 0.0004, fog_colour: [0.90, 0.86, 0.80], exposure: -0.1}
+scenes:
+  # ----- DAY 1 -----------------------------------------------------------------------------------
+  - id: s01_rain
+    duration: 4.48
+    environment: {type: london_aerial, clouds: 1.0, cloud_base: 430, shaft_count: 22}
+    lighting: overcast
+    lighting_overrides: *aerial_rain
+    camera: {shot: aerial_establish, from: [-900, -1500, 300], to: [-820, -1400, 285], look: [-122, -280, 40], look_to: [-100, -260, 40], lens: 30, fstop: 8}
+    captions:
+      - {kind: title, text: "365 DAYS UNDERWATER", at: 0.2, until: 4.3}
+      - {text: "THE LONDON DISASTER", at: 0.5, until: 4.3}
+    hud: {hours: 1, hours_end: 1, show_at: 0.4, sub: "MONDAY 7:30 AM"}
+    sfx: [{sound: thunder, at: 0.3, gain_db: -2}]
+    music: {intensity: 0.25, rain: 0.9}
+    transition: {type: dissolve, duration: 0.3}
+
+  - id: s02_commute
+    duration: 5.11
+    environment: {type: london_street, kind: high_street, buses: 2, bus_at: [[-2.6, -50], [2.6, 25]], traffic: 8, walkers: 34, walkers_y: -18, walkers_span: 44, walkers_clear: [-6.6, -31, 3.0], rain_at: [-5.8, -32.8], puddles: 60, viaduct: true, viaduct_y: 62}
+    lighting: overcast
+    lighting_overrides: *rain_day
+    camera: {shot: tracking, from: [-5.8, -35, 1.7], to: [-5.8, -30.5, 1.7], look: [0, 20, 3.0], look_to: [0, 24, 3.0], lens: 30, fstop: 4}
+    hud: {hours: 1, hours_end: 1, sub: "MONDAY 7:30 AM"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -8}, {sound: horns, at: 2.2, gain_db: -12}]
+    music: {intensity: 0.3, rain: 0.9}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s03_midnight
+    duration: 4.49
+    environment: {type: london_street, kind: high_street, night: true, buses: 1, bus_at: [[2.6, 40]], traffic: 2, walkers: 3, walkers_y: -10, rain_at: [0.6, -40.5], rain_heavy: 1.2, puddles: 70}
+    lighting: night_emergency
+    lighting_overrides: *rain_night
+    camera: {shot: push_in, from: [0.6, -42, 1.2], to: [0.6, -39, 1.25], look: [0, 10, 3.0], look_to: [0, 12, 3.2], lens: 30, fstop: 4}
+    hud: {hours: 1, hours_end: 1, sub: "MIDNIGHT"}
+    sfx: [{sound: rumble, at: 0.6, gain_db: -8}]
+    music: {intensity: 0.3, rain: 1.0}
+    transition: {type: dissolve, duration: 0.3}
+
+  - id: s04_mornings
+    duration: 3.87
+    environment: {type: london_interior, rain_at: [0, 13]}
+    lighting: interior_day
+    lighting_overrides: *indoor_grey
+    camera: {shot: push_in, from: [0.9, 1.0, 1.5], to: [0.4, 2.4, 1.55], look: [0, 5.5, 1.45], look_to: [0, 5.5, 1.45], lens: 26, fstop: 4}
+    hud: {hours: 2, hours_end: 3.99, sub: "TUESDAY, WEDNESDAY"}
+    music: {intensity: 0.3, rain: 0.8}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s05_system
+    duration: 8.86
+    environment: {type: london_aerial, clouds: 0.0, system: true, system_radius: 3200, system_base: 800, rain: false}
+    lighting: overcast
+    lighting_overrides: {sun: 3.2, elevation: 30, azimuth: -40, colour: [1.0, 0.96, 0.9], zenith: [0.10, 0.20, 0.42], horizon: [0.45, 0.55, 0.70], ambient: 0.6, fog: 0.0, exposure: -0.2}
+    camera: {shot: push_in, from: [0, -1500, 4100], to: [0, -1300, 3600], look: [0, 0, 0], look_to: [0, 0, 0], lens: 30, fstop: 11}
+    captions:
+      - {kind: title, text: "THE WETTEST YEAR IN LONDON'S HISTORY", at: 5.6, until: 8.7}
+    hud: {hours: 4, hours_end: 4, sub: "A STALLED WEATHER SYSTEM"}
+    sfx: [{sound: riser, at: 4.6, gain_db: -6}, {sound: impact, at: 5.6, gain_db: -4}]
+    music: {intensity: 0.45, rain: 0.3}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- DAY 14 ----------------------------------------------------------------------------------
+  - id: s06_park
+    duration: 4.25
+    environment: {type: london_park, walkers: 4, puddles: 110, rain_at: [-28.5, -38.0]}
+    lighting: overcast
+    lighting_overrides: *rain_day
+    camera: {shot: push_in, from: [-30, -40, 1.3], to: [-27, -36, 1.2], look: [10, 10, 0.4], look_to: [10, 10, 0.4], lens: 26, fstop: 6}
+    captions:
+      - {kind: chapter, text: "DAY 14", sub: "The first warning signs", at: 0.1, until: 2.5}
+      - {text: "NOWHERE FOR THE WATER TO GO", at: 2.2, until: 4.2}
+    hud: {hours: 14, hours_end: 14, show_at: 2.4, sub: "TWO WEEKS"}
+    sfx: [{sound: whoosh, at: 0.0, gain_db: -10}]
+    music: {intensity: 0.4, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s07_drains
+    duration: 2.30
+    environment: {type: london_street, kind: residential, drains: true, traffic: 1, buses: 0, walkers: 0, parked: 8, rain_at: [-2.8, 9.3], puddles: 80}
+    lighting: overcast
+    lighting_overrides: *rain_day
+    camera: {shot: push_in, from: [-2.6, 9.0, 0.7], to: [-2.9, 9.6, 0.6], look: [-4.75, 12, 0.0], look_to: [-4.75, 12, 0.0], lens: 30, fstop: 3}
+    hud: {hours: 14, hours_end: 14, sub: "TWO WEEKS"}
+    sfx: [{sound: drip, at: 0.3, gain_db: -6}, {sound: drip, at: 1.1, gain_db: -8}]
+    music: {intensity: 0.4, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s08_underpass
+    duration: 4.52
+    environment: {type: london_street, kind: residential, viaduct: true, viaduct_y: 30, underpass: 0.15, stuck_car: true, drains: true, traffic: 0, buses: 0, walkers: 0, parked: 10, rain_at: [0.7, 2.5], puddles: 70, train_start: 0.5}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: push_in, from: [0.8, 0, 4.2], to: [0.6, 5, 3.8], look: [0, 30, 0.8], look_to: [0, 30, 0.8], lens: 30, fstop: 5}
+    events:
+      - {type: water_level, target: tag:underpass, delta: 0.45, start: 0.0, end: 4.5, ease: out}
+    hud: {hours: 15, hours_end: 15, sub: "TWO WEEKS"}
+    sfx: [{sound: rumble, at: 0.6, gain_db: -10}]
+    music: {intensity: 0.45, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s09_basements
+    duration: 3.30
+    environment: {type: london_street, kind: residential, lightwells: true, lightwell_level: -1.2, flood: 0.06, sandbags: true, sandbag_doors: 18, traffic: 0, buses: 0, walkers: 0, parked: 6, rain_at: [7.0, -6.4, 0]}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: push_in, from: [6.9, -7.2, 2.5], to: [7.0, -5.6, 2.3], look: [8.6, -2.0, -0.9], look_to: [8.6, -1.0, -0.9], lens: 24, fstop: 4}
+    events:
+      - {type: water_level, target: tag:lightwell, delta: 0.85, start: 0.0, end: 3.3, ease: out}
+    hud: {hours: 16, hours_end: 16, sub: "SURFACE WATER"}
+    music: {intensity: 0.45, rain: 1.0}
+    transition: {type: whip, duration: 0.3}
+
+  - id: s10_station
+    duration: 7.00
+    environment: {type: london_street, kind: high_street, station: true, station_y: -20, station_closed: true, station_water: true, walkers: 18, walkers_y: -24, walkers_span: 30, walkers_clear: [-6.3, -31, 1.4], traffic: 4, buses: 1, rain_at: [-6.4, -31.0], puddles: 60}
+    lighting: overcast
+    lighting_overrides: *rain_day
+    camera: {shot: push_in, from: [-6.6, -33, 1.7], to: [-6.2, -29, 1.75], look: [9, -20, 3.2], look_to: [9, -20, 3.0], lens: 30, fstop: 5}
+    hud: {hours: 19, hours_end: 19, sub: "THREE WEEKS"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -10}, {sound: alarm, at: 1.2, gain_db: -16}]
+    music: {intensity: 0.45, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s11_sandbags
+    duration: 6.00
+    environment: {type: london_street, kind: high_street, sandbags: true, pumps: 3, walkers: 20, walkers_y: 6, walkers_span: 34, walkers_clear: [-6.6, 17, 1.4], traffic: 3, buses: 1, rain_at: [-6.5, 17.0], puddles: 70}
+    lighting: overcast
+    lighting_overrides: *rain_day
+    camera: {shot: tracking, from: [-6.6, 19, 1.6], to: [-6.5, 15, 1.6], look: [-9.5, -6, 0.9], look_to: [-9.5, -9, 0.9], lens: 28, fstop: 4}
+    hud: {hours: 21, hours_end: 21, sub: "THREE WEEKS"}
+    music: {intensity: 0.5, rain: 1.0}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- DAY 45 ----------------------------------------------------------------------------------
+  - id: s12_closures
+    duration: 6.59
+    environment: {type: london_street, kind: mixed, station: true, station_y: -20, station_closed: true, station_water: true, tape: true, road_closed: true, road_closed_y: -8, walkers: 6, walkers_y: -30, traffic: 2, buses: 0, rain_at: [2.8, -28.5], puddles: 70, night: true}
+    lighting: dusk_urgent
+    lighting_overrides: *rain_dusk
+    camera: {shot: push_in, from: [2.4, -30, 1.6], to: [3.2, -27, 1.7], look: [9, -20, 2.8], look_to: [9, -20, 2.6], lens: 30, fstop: 4}
+    captions:
+      - {kind: chapter, text: "DAY 45", sub: "The city starts failing", at: 0.1, until: 2.5}
+    hud: {hours: 45, hours_end: 45, show_at: 2.4, sub: "SIX WEEKS"}
+    sfx: [{sound: siren, at: 1.0, gain_db: -12}]
+    music: {intensity: 0.55, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s13_diverted
+    duration: 3.29
+    environment: {type: london_street, kind: high_street, road_closed: true, road_closed_y: 25, diverted: true, buses: 1, bus_at: [[2.6, 62]], traffic: 0, flood: 0.1, walkers: 4, walkers_y: 30, rain_at: [2.5, 12.2], puddles: 60}
+    lighting: overcast
+    lighting_overrides: *rain_day
+    camera: {shot: push_in, from: [2.6, 11, 1.9], to: [2.3, 13.5, 1.9], look: [-0.5, 60, 2.6], look_to: [-0.5, 60, 2.6], lens: 30, fstop: 5}
+    captions:
+      - {text: "COMMUTING BECOMES A DAILY GAMBLE", at: 1.0, until: 3.2}
+    hud: {hours: 47, hours_end: 47, sub: "SIX WEEKS"}
+    sfx: [{sound: horns, at: 0.4, gain_db: -10}]
+    music: {intensity: 0.55, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s14_sewage
+    duration: 5.35
+    environment: {type: thames, outfall: true, outfall_y: 0, river_level: -2.0, rain_at: [14.0, -9.5, -2], boats: 1}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: push_in, from: [16, -12, -0.6], to: [12, -7, -0.8], look: [0, 0, -1.0], look_to: [0, 0, -1.0], lens: 30, fstop: 5}
+    hud: {hours: 52, hours_end: 52, sub: "SEVEN WEEKS"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.5, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s15_shops
+    duration: 3.44
+    environment: {type: london_street, kind: high_street, shutters: 0.8, flood: 0.05, walkers: 4, walkers_y: 14, traffic: 1, buses: 0, rain_at: [-6.6, 2.5], puddles: 70}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: tracking, from: [-6.6, 0, 1.7], to: [-6.6, 5, 1.7], look: [-9.5, 20, 2.0], look_to: [-9.5, 25, 2.0], lens: 28, fstop: 4}
+    captions:
+      - {text: "THOUSANDS OF INSURANCE CLAIMS", at: 0.9, until: 3.4}
+    hud: {hours: 58, hours_end: 58, sub: "EIGHT WEEKS"}
+    music: {intensity: 0.55, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s16_parliament
+    duration: 5.78
+    environment: {type: westminster, night: true, clouds: 1.0, cloud_base: 300, buses: 3, traffic: 6, rain_at: [30.0, -258.5], reach: 0.6}
+    lighting: night_emergency
+    lighting_overrides: *rain_night
+    camera: {shot: push_in, from: [40, -258, 9.5], to: [20, -259, 9.8], look: [-122, -285, 52], look_to: [-122, -285, 56], lens: 30, fstop: 8}
+    hud: {hours: 60, hours_end: 60, sub: "TWO MONTHS"}
+    sfx: [{sound: rumble, at: 1.0, gain_db: -10}]
+    music: {intensity: 0.5, rain: 1.0}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- DAY 120 ---------------------------------------------------------------------------------
+  - id: s17_mould
+    duration: 6.55
+    environment: {type: london_interior, mould: 1.0, buckets: true, rain_at: [0, 13]}
+    lighting: interior_day
+    lighting_overrides: *indoor_grey
+    camera: {shot: push_in, from: [1.7, 1.0, 1.7], to: [1.2, 1.9, 1.85], look: [-0.4, 4.6, 2.0], look_to: [-0.6, 4.6, 2.1], lens: 24, fstop: 4}
+    events:
+      - {type: scale, target: tag:mould, from: [0.12, 0.12, 0.12], to: [1.0, 1.0, 1.0], start: 0.3, end: 6.3, ease: in_out}
+    captions:
+      - {kind: chapter, text: "DAY 120", sub: "London under pressure", at: 0.1, until: 2.5}
+      - {text: "MUCH BIGGER THAN FLOODED STREETS", at: 2.7, until: 6.4}
+    hud: {hours: 120, hours_end: 120, show_at: 2.4, sub: "FOUR MONTHS"}
+    sfx: [{sound: drip, at: 0.8, gain_db: -6}, {sound: drip, at: 2.4, gain_db: -6}, {sound: drip, at: 4.0, gain_db: -6}, {sound: drip, at: 5.6, gain_db: -6}]
+    music: {intensity: 0.55, rain: 0.8}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s18_works
+    duration: 2.43
+    environment: {type: london_works, rain_at: [-5.2, -21.0]}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: push_in, from: [-6, -22, 7], to: [-4.5, -20, 6.8], look: [28, 18, 1.0], look_to: [28, 18, 1.0], lens: 26, fstop: 6}
+    captions:
+      - {text: "WAREHOUSES AND DEPOTS DISRUPTED", at: 0.2, until: 2.4}
+    hud: {hours: 123, hours_end: 123, sub: "FOUR MONTHS"}
+    music: {intensity: 0.6, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s19_substation
+    duration: 3.24
+    environment: {type: london_works, kind: substation, night: true, rain_at: [-5.2, -7.0]}
+    lighting: night_emergency
+    lighting_overrides: *rain_night
+    camera: {shot: push_in, from: [-6, -8, 4.6], to: [-4.5, -6, 4.4], look: [8, 10, 1.5], look_to: [8, 10, 1.5], lens: 30, fstop: 6}
+    events:
+      - {type: flicker, target: tag:spark, start: 0.8, end: 2.2, rate: 7, strength: 3000}
+      - {type: flash, at: 0.9, amount: 1.6}
+      - {type: blackout, target: [tag:window_lights], start: 1.6, end: 2.4, shuffle: false}
+      - {type: blackout, target: [tag:street_lamps, tag:street_lights], start: 1.8, end: 2.6}
+    hud: {hours: 126, hours_end: 126, sub: "FOUR MONTHS"}
+    sfx: [{sound: impact, at: 0.9, gain_db: -2}, {sound: thud, at: 2.0, gain_db: -6}]
+    music: {intensity: 0.65, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s20_hospital
+    duration: 5.75
+    environment: {type: london_hospital, walkers: 10, rain_at: [-11.0, -1.2]}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: push_in, from: [-12, -3, 1.8], to: [-10, 0.5, 1.8], look: [0, 14, 2.6], look_to: [0, 14, 2.6], lens: 28, fstop: 5}
+    events:
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 5.8, rate: 3, strength: 25}
+    hud: {hours: 131, hours_end: 131, sub: "FOUR MONTHS"}
+    sfx: [{sound: siren, at: 0.4, gain_db: -10}]
+    music: {intensity: 0.65, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s21_barrier
+    duration: 9.52
+    environment: {type: thames, barrier: true, river_level: -0.6, rain_at: [39.0, -61.0, 0], rain_heavy: 1.2}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: aerial_establish, from: [30, -70, 24], to: [48, -52, 20], look: [230, 10, 8], look_to: [230, 10, 8], lens: 26, fstop: 8}
+    captions:
+      - {kind: alert, text: "Major national emergency declared.", at: 6.6, until: 9.4}
+    hud: {hours: 140, hours_end: 140, sub: "FIVE MONTHS"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -8}, {sound: alert, at: 6.6, gain_db: -4}]
+    music: {intensity: 0.75, rain: 1.0}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- DAY 240 ---------------------------------------------------------------------------------
+  - id: s22_evacuation
+    duration: 6.33
+    environment: {type: london_street, kind: residential, boarded: 0.7, tape: true, evacuation: true, to_let: 0.3, damp: 0.6, flood: 0.08, debris: true, traffic: 0, buses: 0, walkers: 0, parked: 4, rain_at: [-2.0, -6.0]}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: tracking, from: [-2, -9, 1.7], to: [-2, -3, 1.7], look: [9, -3, 3.2], look_to: [9, 3, 3.2], lens: 26, fstop: 5}
+    actors:
+      - {id: officers, count: 2, area: [0, -14, 4, 2], roles: [police], action: stand}
+    captions:
+      - {kind: chapter, text: "DAY 240", sub: "The breakdown", at: 0.1, until: 2.5}
+    hud: {hours: 240, hours_end: 240, show_at: 2.4, sub: "EIGHT MONTHS"}
+    sfx: [{sound: radio, at: 3.0, gain_db: -12}]
+    music: {intensity: 0.7, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s23_shelter
+    duration: 3.85
+    environment: {type: sports_hall}
+    lighting: interior_day
+    lighting_overrides: {sun: 0.4, ambient: 0.4, exposure: 0.0}
+    camera: {shot: push_in, from: [-19, -11, 3.5], to: [-18, -10, 3.3], look: [0, 2, 0.8], look_to: [0, 2, 0.8], lens: 24, fstop: 6}
+    hud: {hours: 244, hours_end: 244, sub: "EIGHT MONTHS"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -14}]
+    music: {intensity: 0.65, rain: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s24_exodus
+    duration: 5.85
+    environment: {type: london_street, kind: high_street, sinkhole: true, sinkhole_y: 2, sinkhole_size: 1.5, to_let: 0.6, shutters: 0.7, traffic: 9, traffic_lane: north, traffic_speed: 4, buses: 0, walkers: 3, rain_at: [3.2, -20.0], puddles: 60}
+    lighting: overcast
+    lighting_overrides: *rain_dark
+    camera: {shot: push_in, from: [3.4, -22, 2.4], to: [3.0, -18, 2.3], look: [0, 6, 0.6], look_to: [0, 8, 0.6], lens: 28, fstop: 5}
+    captions:
+      - {text: "BUSINESSES CLOSED FOR GOOD", at: 2.6, until: 5.7}
+    hud: {hours: 251, hours_end: 251, sub: "EIGHT MONTHS"}
+    music: {intensity: 0.7, rain: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s25_window
+    duration: 5.17
+    environment: {type: london_interior, mould: 0.7, child: true, adult: true, rain_at: [0, 13]}
+    lighting: interior_day
+    lighting_overrides: *indoor_grey
+    camera: {shot: push_in, from: [1.2, 1.6, 1.25], to: [0.8, 2.3, 1.2], look: [0.1, 4.6, 1.2], look_to: [0.1, 4.6, 1.2], lens: 26, fstop: 3}
+    hud: {hours: 258, hours_end: 258, sub: "EIGHT MONTHS"}
+    sfx: [{sound: drip, at: 1.4, gain_db: -8}]
+    music: {intensity: 0.6, rain: 0.8}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s26_barely
+    duration: 3.43
+    environment: {type: london_aerial, night: true, clouds: 1.0, cloud_base: 430, dark_districts: 0.45, reach: 0.8}
+    lighting: night_emergency
+    lighting_overrides: *rain_night
+    camera: {shot: aerial_establish, from: [-900, -1600, 320], to: [-860, -1540, 310], look: [0, -200, 0], look_to: [0, -180, 0], lens: 30, fstop: 8}
+    hud: {hours: 300, hours_end: 300, sub: "TEN MONTHS"}
+    music: {intensity: 0.6, rain: 1.0}
+    transition: {type: fade_black, duration: 0.6}
+
+  # ----- DAY 365 ---------------------------------------------------------------------------------
+  - id: s27_break
+    duration: 10.92
+    environment: {type: westminster, clouds: 1.0, cloud_base: 380, cloud_colour: cloud_dawn, part: [1.2, 8.0], part_distance: 1600, shafts: false, rain: false, buses: 2, traffic: 4, reach: 0.6, clock_lit: true}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: push_in, from: [60, -334, 10], to: [42, -318, 12], look: [-122, -280, 70], look_to: [-122, -280, 76], lens: 30, fstop: 8}
+    events:
+      - {type: sun, energy: 4.5, start: 3.0, end: 7.5}
+    captions:
+      - {kind: chapter, text: "DAY 365", sub: "The rain finally stops", at: 0.1, until: 2.6}
+    hud: {hours: 365, hours_end: 365, show_at: 2.4, sub: "6:00 AM"}
+    sfx: [{sound: swell, at: 2.2, gain_db: -4}, {sound: birds, at: 5.0, gain_db: -6}]
+    music: {intensity: 0.2, rain: 0.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s28_outside
+    duration: 5.22
+    environment: {type: london_street, kind: residential, rain: false, flood: 0.0, traffic: 0, buses: 0, walkers: 0, parked: 10, puddles: 80}
+    lighting: soft_daylight
+    lighting_overrides: *after
+    camera: {shot: push_in, from: [1.6, -16, 1.6], to: [1.2, -12, 1.6], look: [-6, 6, 2.6], look_to: [-6, 8, 3.0], lens: 28, fstop: 4}
+    actors:
+      - {id: neighbours, count: 7, area: [-5.6, -4, 1.2, 10], roles: [civilian, child, shopper], action: look_around}
+      - {id: further, count: 6, area: [-6.0, 14, 1.4, 14], roles: [civilian, shopper], action: look_around}
+    hud: {hours: 365, hours_end: 365, sub: "6:05 AM"}
+    sfx: [{sound: birds, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.35, rain: 0.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s29_damage
+    duration: 7.70
+    environment: {type: london_street, kind: residential, rain: false, scaffolding: 3, scaffold_y: 2, boarded: 0.4, damp: 0.7, debris: true, sandbags: true, sandbag_doors: 10, flood: 0.03, traffic: 0, buses: 0, walkers: 0, parked: 4, puddles: 60, tape: true}
+    lighting: soft_daylight
+    lighting_overrides: *after
+    camera: {shot: tracking, from: [-2.6, 32, 2.2], to: [-2.6, 24, 2.1], look: [-9, 8, 3.0], look_to: [-9, 0, 3.0], lens: 28, fstop: 5}
+    captions:
+      - {text: "MONTHS OF TRANSPORT REPAIRS", at: 4.0, until: 7.6}
+    hud: {hours: 365, hours_end: 365, sub: "THE CLEAN-UP"}
+    music: {intensity: 0.45, rain: 0.0}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s30_rebuild
+    duration: 12.12
+    environment: {type: london_aerial, clouds: 0.35, cloud_base: 700, cloud_colour: cloud_white, cloud_hole: [-122, -280, 2200], rain: false, shafts: false, cranes: 6, crane_spin: true, flood_pools: 14}
+    lighting: golden_hour
+    lighting_overrides: *after
+    camera: {shot: aerial_establish, from: [-650, -1250, 360], to: [-480, -1020, 320], look: [-122, -280, 40], look_to: [0, 0, 30], lens: 30, fstop: 8}
+    hud: {hours: 365, hours_end: 365, sub: "REBUILDING BEGINS"}
+    music: {intensity: 0.6, rain: 0.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s31_final
+    duration: 10.56
+    environment: {type: westminster, clouds: 0.35, cloud_base: 700, cloud_colour: cloud_white, cloud_hole: [-122, -280, 1800], rain: false, shafts: false, buses: 2, traffic: 5, reach: 0.6, people: 8, people_action: idle}
+    lighting: golden_hour
+    lighting_overrides: *after
+    camera: {shot: push_in, from: [-30, -262, 9.5], to: [-52, -266, 11], look: [-122, -280, 62], look_to: [-122, -280, 68], lens: 30, fstop: 8}
+    captions:
+      - {kind: title, text: "COULD LONDON EVER BE THE SAME AGAIN?", at: 5.6, until: 10.5}
+    hud: {hours: 365, hours_end: 365, sub: "A HYPOTHETICAL SCENARIO"}
+    sfx: [{sound: impact, at: 5.6, gain_db: -4}]
+    music: {intensity: 0.75, rain: 0.0}
+    transition: {type: cut, duration: 0.0}

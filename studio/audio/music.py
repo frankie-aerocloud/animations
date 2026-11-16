@@ -116,7 +116,7 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
             if rain_rng.random() < 0.0035:
                 drop = rain_rng.uniform(0.4, 1.0)
             drop *= 0.93
-            rain = ((hiss[0] - hiss[1]) * 0.55 + drop * rain_rng.uniform(-1.0, 1.0) * 0.5) * level * 0.32
+            rain = ((hiss[0] - hiss[1]) * 0.55 + drop * rain_rng.uniform(-1.0, 1.0) * 0.5) * level * 0.55
         value = pad + pulse + shimmer + riser + pluck + epic + rain
         fade = min(1.0, t / 1.5, max(0.0, (total - t) / 3.0))
         samples.append(int(max(-1.0, min(1.0, value * fade)) * 32767))
