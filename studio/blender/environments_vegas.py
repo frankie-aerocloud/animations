@@ -12,7 +12,7 @@ from mathutils import Vector
 
 from studio.assets import buildings, landmarks, lions, props, terrain, vegetation, vehicles, water
 from studio.blender import environments, environments_nyc, lighting
-from studio.blender.primitives import box, cone, cylinder, grid, ico, key, mesh_from_pydata, multi_box, set_interp
+from studio.blender.primitives import box, cone, cylinder, grid, ico, key, mesh_from_pydata, multi_box, parent, set_interp
 
 FOCUS = {"strip": (0.0, 0.0), "fountains": (-60.0, 520.0), "entrance": (-48.0, 250.0), "buffet": (48.0, -20.0), "garage": (95.0, -360.0), "rooftops": (-120.0, 120.0), "valley": (0.0, 0.0), "north": (0.0, 600.0)}
 MARQUEES = ("BUFFET", "SHOWS NIGHTLY", "JACKPOTS", "OPEN 24 HOURS", "POOL PARTY", "MAGIC SHOW")
@@ -133,6 +133,7 @@ def dust_cloud(ctx, name, centre, length=900.0, height=60.0, drift=(0.0, 0.0), c
         puff.location.y += drift[1]
         key(puff, "location", ctx.frames)
         set_interp(puff, "LINEAR")
+        puff.visible_shadow = False  # hard-edged puff shadows read as solid objects
         ctx.tag("dust", puff)
         puffs.append(puff)
     return puffs
@@ -181,11 +182,14 @@ def mojave(ctx, spec):
     if spec.get("dust"):
         dust_cloud(ctx, "dust", (900.0, 1500.0), 1600.0, 70.0, drift=(-120.0, -260.0))
     radius = float(spec.get("horde_radius", 900.0))
-    for i in range(int(spec.get("hordes", 0))):
-        a = math.radians(rng.uniform(40, 140))
+    count = int(spec.get("hordes", 0))
+    for i in range(count):
+        a = math.radians(40.0 + 100.0 * (i + 0.5) / count)  # evenly spread on the arc so shots can be framed
         start = (radius * math.cos(a) * 1.6, radius * math.sin(a))
         target = (start[0] * 0.25, start[1] * 0.25 - 900.0)
-        lions.horde(ctx, f"horde{i}", int(spec.get("horde_size", 700)), start, (220.0, 120.0), path=[start, target], groups=8, speed=12.0)
+        horde = lions.horde(ctx, f"horde{i}", int(spec.get("horde_size", 700)), start, (220.0, 120.0), path=[start, target], groups=8, speed=12.0)
+        for puff in dust_cloud(ctx, f"horde{i}.dust", (0.0, -160.0), 200.0, 34.0, count=5):
+            parent(puff, horde)  # keyed in horde space, so the plume trails behind the pack
     ridge_count = int(spec.get("ridge", 0))
     if ridge_count:
         lions.spawn(ctx, {"id": "pride", "count": ridge_count, "area": (60.0, 230.0, 60.0, 30.0), "action": "run", "to": [10.0, 60.0], "jitter": 10.0, "stagger": 1.2, "start": float(spec.get("ridge_start", 0.5)), "speed": 9.0})
@@ -329,7 +333,7 @@ def valley(ctx, districts=6, night=False, radius=(450.0, 1700.0)):
     """Suburban grid around the Strip split into districts; each district shares one lit-window material."""
     rng = ctx.rng
     for k in range(districts):
-        glow = ctx.palette.make(f"district {k} windows", (1.0, 0.72, 0.38), 0.6, 0.0, 2.2 if night else 0.0)
+        glow = ctx.palette.make(f"district {k} windows", (1.0, 0.72, 0.38), 0.6, 0.0, 6.0 if night else 0.0)
         ctx.tag(f"district_{k}", glow)
         houses = []
         a0, a1 = math.tau * k / districts, math.tau * (k + 1) / districts
@@ -341,6 +345,12 @@ def valley(ctx, districts=6, night=False, radius=(450.0, 1700.0)):
                 continue
             w, d, h = rng.uniform(10, 16), rng.uniform(9, 13), rng.uniform(4, 7)
             houses += [((hx, hy, h / 2), (w, d, h), 0), ((hx, hy, h + 0.6), (w + 1, d + 1, 1.2), 1), ((hx, hy - d / 2 - 0.05, h * 0.45), (w * 0.5, 0.15, 1.2), 2)]
+        for _ in range(140):
+            a = rng.uniform(a0, a1)
+            r = rng.uniform(*radius)
+            lx, ly = r * math.cos(a), r * math.sin(a)
+            if not (abs(lx) < 330 and abs(ly) < 950):
+                houses.append(((lx, ly, 6.0), (5.0, 5.0, 1.2), 2))
         multi_box(ctx, f"district{k}", houses, [ctx.mat(rng.choice(("cream", "sand", "plaster"))), ctx.mat("terracotta"), glow])
         for i in range(6):
             a = rng.uniform(a0, a1)
@@ -418,7 +428,7 @@ def vegas_strip(ctx, spec):
         for i in range(14):
             props.barrier(ctx, f"perimeter{i}", (-24.0 + i * 3.6, fy - 30.0, 0.08), 0.0)
         for i, x in enumerate((-30.0, -10.0, 10.0, 30.0)):  # behind the barrier line, aimed out at the approach
-            floodlight(ctx, f"flood{i}", (x, fy - 22.0, 0.08), (x * 0.5, fy - 110.0, 0.0), night or bool(spec.get("dusk")))
+            floodlight(ctx, f"flood{i}", (x, fy - 22.0, 0.08), (x * 0.4, fy - 85.0, 0.0), night or bool(spec.get("dusk")))
         for i, (x, y) in enumerate(((-30.0, fy - 6.0), (-30.0, fy + 8.0), (30.0, fy - 6.0), (30.0, fy + 8.0))):
             landmarks.army_truck(ctx, f"perimeter_truck{i}", (x, y, 0.08), 0.0, lit=night)
     for i in range(int(spec.get("helicopters", 0))):
@@ -443,13 +453,13 @@ def vegas_strip(ctx, spec):
         lions.resting(ctx, "rooftop_lions", points, 1.0)
     for i in range(int(spec.get("valley_hordes", 0))):
         a = math.tau * i / max(1, int(spec.get("valley_hordes", 0))) + 0.3
-        start, end_point = (2300.0 * math.cos(a), 2300.0 * math.sin(a)), (900.0 * math.cos(a), 900.0 * math.sin(a))
+        start, end_point = (1550.0 * math.cos(a), 1550.0 * math.sin(a)), (900.0 * math.cos(a), 900.0 * math.sin(a))  # already in the suburbs
         lions.horde(ctx, f"valley_horde{i}", 600, start, (260.0, 160.0), path=[start, end_point], groups=6, speed=12.0, eyes=night)
     if night and spec.get("eyes"):
         pts = []
         for _ in range(int(spec.get("eye_count", 2600))):
             a = rng.uniform(0, math.tau)
-            r = rng.uniform(1700, 2600)
+            r = 1690.0 + rng.random() ** 1.8 * 900.0  # densest near the city edge
             pts.append((r * math.cos(a), r * math.sin(a), 1.1))
         lions.eyes(ctx, "eyes", pts, float(spec.get("eye_strength", 40.0)), float(spec.get("eye_size", 0.3)))
     for name, (ax, ay) in FOCUS.items():
@@ -464,7 +474,7 @@ def floodlight(ctx, name, loc, target, on=True):
     multi_box(ctx, name, [((0, 0, 4.5), (0.4, 0.4, 9.0), 0), ((0, 0, 9.2), (2.4, 0.6, 1.2), 1), ((0, 0, 0.6), (2.6, 2.0, 1.2), 0)], [ctx.mat("dark_steel"), ctx.palette.emissive(f"{name} lamp", (1.0, 0.97, 0.9), 12.0 if on else 0.0)], (x, y, z))
     if on:
         data = bpy.data.lights.new(f"{name}.spot", "SPOT")
-        data.energy = 60000.0
+        data.energy = 200000.0
         data.spot_size = math.radians(70)
         data.spot_blend = 0.4
         light = bpy.data.objects.new(f"{name}.spot", data)

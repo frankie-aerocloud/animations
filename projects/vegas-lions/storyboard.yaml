@@ -48,10 +48,10 @@ scenes:
 
   - id: s04_aerial
     duration: 8.0
-    environment: {type: mojave, truck: false, dust: true, hordes: 7, horde_size: 900}
+    environment: {type: mojave, truck: false, dust: true, hordes: 7, horde_size: 1600}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: aerial_establish, from: [500, 1500, 480], to: [300, 1050, 360], look: [0, -200, 0], look_to: [0, -1400, 60], lens: 28, fstop: 8, whip_in: {duration: 0.3}}
+    camera: {shot: aerial_establish, from: [1450, 330, 420], to: [1420, 345, 405], look: [-200, 950, 0], look_to: [-240, 930, 0], lens: 26, fstop: 8, whip_in: {duration: 0.3}}
     captions:
       - {kind: title, text: "ONE MILLION LIONS", at: 3.2, until: 7.7}
     hud: {hours: 23.2, hours_end: 22.6, sub: "06:45 AM"}
@@ -223,7 +223,7 @@ scenes:
     environment: {type: vegas_strip, focus: strip, perimeter: true, dusk: true, cars: false}
     lighting: dusk_urgent
     lighting_overrides: {fog: 0.0004}
-    camera: {shot: push_in, from: [6, 22, 7.5], to: [4, 12, 6.5], look: [0, -60, 1.0], look_to: [0, -70, 1.0], lens: 30, fstop: 4}
+    camera: {shot: push_in, from: [3, -8, 3.2], to: [2.5, -12, 3.0], look: [0, -80, 1.2], look_to: [0, -75, 1.2], lens: 50, fstop: 4}
     actors:
       - {id: approach, kind: lion, count: 12, area: [0, -120, 40, 20], action: prowl, to: [0, -55], jitter: 8, stagger: 2.0, roar_chance: 0.25}
       - {id: line, count: 8, area: [0, -18, 40, 2], roles: [soldier], action: stand, to: [0, -80]}
@@ -292,7 +292,7 @@ scenes:
     duration: 6.5
     environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, valley_hordes: 5, cars: false}
     lighting: night_emergency
-    camera: {shot: aerial_establish, from: [700, -1150, 140], to: [600, -980, 110], look: [300, -600, 0], look_to: [250, -550, 0], lens: 30, fstop: 8}
+    camera: {shot: aerial_establish, from: [1150, -1700, 90], to: [1120, -1650, 80], look: [700, -1000, 0], look_to: [680, -960, 0], lens: 30, fstop: 8}
     captions:
       - {text: "SPREADING ACROSS THE VALLEY", at: 0.3, until: 6.2}
     hud: {hours: 3.5, hours_end: 2.4, sub: "03:00 AM"}
@@ -302,9 +302,9 @@ scenes:
 
   - id: s21_eyes
     duration: 6.5
-    environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, eyes: true, eye_count: 3600, eye_size: 0.5, eye_strength: 60, cars: false}
+    environment: {type: vegas_strip, focus: valley, night: true, districts_dark: true, eyes: true, eye_count: 16000, eye_size: 0.35, eye_strength: 20, cars: false}
     lighting: night_emergency
-    camera: {shot: push_in, from: [0, -1520, 10], to: [0, -1490, 26], look: [0, -2600, 1], look_to: [0, -2500, 6], lens: 30, fstop: 8}
+    camera: {shot: push_in, from: [0, -1655, 6], to: [0, -1640, 18], look: [0, -2200, -50], look_to: [0, -2100, -40], lens: 30, fstop: 8}
     captions:
       - {kind: title, text: "AN ARMY OF ONE MILLION", at: 2.4, until: 6.4}
     hud: {hours: 2.4, hours_end: 0.25, sub: "04:00 AM"}
@@ -345,9 +345,9 @@ scenes:
     environment: {type: vegas_strip, focus: rooftops, rooftops: true, lions: 1, closed: true, fountains: false, cars: true, car_count: 18}
     lighting: golden_hour
     lighting_overrides: *dawn
-    camera: {shot: push_in, from: [-38, -52, 18.6], to: [-43, -47, 18.3], look: [-50, -40, 17.6], look_to: [-49.5, -40, 18.0], lens: 32, fstop: 4}
+    camera: {shot: push_in, from: [-43, -41.2, 16.6], to: [-45, -40.8, 16.7], look: [-50, -40, 17.6], look_to: [-50, -40, 17.8], lens: 32, fstop: 4}
     actors:
-      - {id: ruler, kind: lion, male: true, scale: 1.1, at: [-50, -40, 16.0], face: 90, action: idle, roar_at: 3.0, hold: 1.6}
+      - {id: ruler, kind: lion, male: true, scale: 1.1, at: [-50, -40, 16.0], face: 270, action: idle, roar_at: 3.0, hold: 1.6}
     captions:
       - {kind: title, text: "WHAT HAPPENS WHEN THEY GET HUNGRY AGAIN?", at: 6.5, until: 12.0}
     hud: {hours: 0.0, hours_end: 0.0, sub: "A HYPOTHETICAL SCENARIO"}

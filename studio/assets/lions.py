@@ -232,7 +232,7 @@ def horde(ctx, name, count, centre, extent=(160.0, 80.0), path=None, start=0.0, 
         gx, gy = rng.uniform(-w * 0.35, w * 0.35), rng.uniform(-d * 0.35, d * 0.35)
         boxes = []
         for _ in range(per):
-            lx, ly, ls = gx + rng.uniform(-w * 0.15, w * 0.15), gy + rng.uniform(-d * 0.15, d * 0.15), rng.uniform(0.85, 1.1)
+            lx, ly, ls = gx + rng.gauss(0.0, w * 0.08), gy + rng.gauss(0.0, d * 0.08), rng.uniform(0.85, 1.1)  # round packs, not rectangles
             boxes += _silhouette(lx, ly, 0.0, rng.random() < 0.4, ls)
             if eyes:
                 boxes += [((lx + side * 0.3 * ls, ly + 1.22 * ls, 1.25 * ls), (0.32 * ls, 0.1, 0.24 * ls), 2) for side in (-1, 1)]
