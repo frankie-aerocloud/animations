@@ -6,7 +6,7 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-Two productions ship with the repository:
+Three productions ship with the repository:
 
 - **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
   hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
@@ -16,8 +16,13 @@ Two productions ship with the repository:
   disaster mockumentary in twenty-one shots over 168 seconds, from a dawn sighting off Brooklyn to
   the Statue of Liberty under birds, a Times Square stampede, grounded airliners, the National Guard,
   a night roost on the bridge and a dawn ending on "What happens when they start breeding?".
+- **"What If One Million Lions Attacked Las Vegas?"** (`projects/vegas-lions`): a cinematic disaster
+  mockumentary in twenty-four shots over 163 seconds under a running 24-hour countdown, from a quiet
+  Mojave sunrise to hordes crossing the desert, lions on the Strip, emergency alerts, a military
+  perimeter, a district-by-district blackout and an army of eyes in the dark, ending at dawn on a
+  rooftop roar and "What happens when they get hungry again?".
 
-Both are built from the same pipeline; only the YAML files and the environments they call differ.
+All three are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -80,7 +85,9 @@ short mid-write (no PNG end marker) is detected and redrawn. On macOS the CLI ho
 mains power; on battery the Mac sleeps normally and the render continues when it wakes.
 
 `project.yaml` also accepts `hud_label` (clock caption), `hud_wrap: 24` (a time-of-day clock that
-rolls over at midnight; omit it for an elapsed-time clock) and `music_style` (`tense` or `quirky`).
+rolls over at midnight; omit it for an elapsed-time clock), `hud_format: hms` (hours, minutes and
+seconds; the default is hours and minutes) and `music_style` (`tense`, `quirky`, or `epic` for a
+string ostinato, brass swells and timpani).
 
 Outputs live under `output/<project>/`: `scenes/<scene>/<profile>/` (frames, `.blend`, `clip.mp4`),
 `overlay/<profile>/frames/`, `audio/` (narration per line, procedural score, effects, final mix),
@@ -147,13 +154,22 @@ transition. Environments: `coastal_city` (variants `normal`, `crisis`, `fire`, `
 (`studio/assets/birds.py`) provides rigged flapping flocks, merged distant swarms, perched roosts,
 nests, droppings and dives; `studio/assets/landmarks.py` provides the statue, spire and tapered
 towers, the suspension bridge, billboards, food carts, cafe tables, bins, rubbish, airliners,
-drones, army trucks, loudspeaker vans and police cars. Character roles: civilian, shopper, child,
+drones, army trucks, loudspeaker vans and police cars. The Las Vegas set is in
+`studio/blender/environments_vegas.py`: `mojave` (`truck`, `dust`, `hordes`, `horde_size`,
+`horde_radius`, `ridge`, `skyline`), `vegas_strip` (`focus`, `night`, `dusk`, `lions` 0-3,
+`lion_action`, `cars`, `car_count`, `abandoned`, `barricades`, `guard`, `perimeter`, `helicopters`,
+`heli_path`, `rooftops`, `valley_hordes`, `districts`, `districts_dark`, `eyes`, `eye_count`,
+`eye_size`, `eye_strength`, `fountains`, `closed`, `marquee`), `casino_floor`, `desert_airport`
+(`lions`) and `desert_suburb` (the residential street's flags). The lion library
+(`studio/assets/lions.py`) provides rigged lions (actors with `kind: lion` and actions walk, prowl,
+run, idle, roar, lie), merged hordes with dust plumes and eye-shine, resting prides and fields of
+eyes. Character roles: civilian, shopper, child,
 nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
 look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
 movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit
-windows and lamps). Caption kinds: `title`, `caption` and `chapter` (large hour card with an
-optional `sub` line). The full vocabulary is in `studio/core/catalogue.py`, and `validate` rejects
-anything outside it.
+windows and lamps). Caption kinds: `title`, `caption`, `chapter` (large hour card with an
+optional `sub` line) and `alert` (red emergency-alert banner). The full vocabulary is in
+`studio/core/catalogue.py`, and `validate` rejects anything outside it.
 
 Coordinates are metres in each environment's world space; every builder in
 `studio/blender/environments.py` documents its layout and registers named anchors (`anchor:plaza`)
