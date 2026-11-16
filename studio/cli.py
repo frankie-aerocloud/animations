@@ -133,6 +133,9 @@ def main(argv: list[str] | None = None) -> int:
             rows = pipeline.deep_check(target)
             width = max(len(name) for name, _, _ in rows)
             print(f"{target}")
+            done, total = pipeline.progress()
+            if not args.file and done < total:
+                print(f"  note: this file predates the current storyboard ({done} of {total} frames rendered for it); run build to replace it")
             for name, passed, detail in rows:
                 print(f"  {'PASS' if passed else 'FAIL'}  {name.ljust(width)}  {detail}")
             print("FAILED:\n  " + "\n  ".join(failures(rows)) if failures(rows) else "all checks passed")
