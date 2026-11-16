@@ -1,5 +1,7 @@
 """Pipeline spec generation (no Blender or FFmpeg needed)."""
 
+import hashlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -36,6 +38,14 @@ class PipelineSpecTests(unittest.TestCase):
         scene["camera"]["lens"] = 999
         self.assertNotEqual(before, self.pipeline.scene_hash(scene))
 
+    def test_caption_styling_does_not_invalidate_scene_frames(self):
+        scene = self.project.scenes[0]
+        before = self.pipeline.scene_hash(scene)
+        self.project.style["overlay"]["subtitle"]["size"] = 0.5
+        self.assertEqual(before, self.pipeline.scene_hash(scene))
+        self.project.style["palette"]["sand"] = [0, 0, 0]
+        self.assertNotEqual(before, self.pipeline.scene_hash(scene))
+
     def test_overlay_spec_uses_absolute_times_and_merges_hud_windows(self):
         cues = [Cue(0.5, 2.0, "Hello"), Cue(2.1, 3.0, "World")]
         spec = self.pipeline.overlay_spec(cues)
@@ -62,6 +72,37 @@ class PipelineSpecTests(unittest.TestCase):
         self.assertTrue(all(cue.path.suffix == ".wav" for cue in cues))
 
 
+def write_deps(scene_dir, relative="studio/core/motion.py", digest=None):
+    path = Path(__file__).resolve().parents[1] / relative
+    scene_dir.mkdir(parents=True, exist_ok=True)
+    (scene_dir / "deps.json").write_text(json.dumps({relative: digest or hashlib.sha256(path.read_bytes()).hexdigest()}), encoding="utf-8")
+
+
+class DependencyTests(unittest.TestCase):
+    def test_scene_hash_ignores_code_and_deps_track_imported_files(self):
+        project = load_project("projects/water-crisis")
+        pipeline = Pipeline(project, "preview", log=lambda _: None)
+        with tempfile.TemporaryDirectory() as temp:
+            scene_dir = Path(temp)
+            self.assertFalse(pipeline.deps_current(scene_dir))
+            write_deps(scene_dir)
+            self.assertTrue(pipeline.deps_current(scene_dir))
+            write_deps(scene_dir, digest="0" * 64)
+            self.assertFalse(pipeline.deps_current(scene_dir))
+            write_deps(scene_dir, relative="studio/core/missing.py", digest="0" * 64)
+            self.assertFalse(pipeline.deps_current(scene_dir))
+
+    def test_every_environment_maps_to_a_module_that_builds_it(self):
+        from studio.core import catalogue
+
+        root = Path(__file__).resolve().parents[1]
+        for env_type, module in catalogue.ENVIRONMENTS.items():
+            source = (root / (module.replace(".", "/") + ".py")).read_text(encoding="utf-8")
+            self.assertIn(f"def {env_type}(", source, f"{module} does not define {env_type}")
+            self.assertIn(f'"{env_type}": {env_type}', source, f"{module} does not register {env_type}")
+            self.assertIn("def build(ctx, spec):", source)
+
+
 class ProgressTests(unittest.TestCase):
     def test_progress_counts_only_frames_for_the_current_fingerprint(self):
         from tests.test_video_validate import fake_png
@@ -81,6 +122,8 @@ class ProgressTests(unittest.TestCase):
             (frames.parent / "scene.hash").write_text("stale", encoding="utf-8")
             self.assertEqual(pipeline.progress()[0], 0)
             (frames.parent / "scene.hash").write_text(pipeline.scene_hash(scene), encoding="utf-8")
+            self.assertEqual(pipeline.progress()[0], 0)  # no record of the code it was rendered with
+            write_deps(frames.parent)
             self.assertEqual(pipeline.progress()[0], 5)
 
 
@@ -97,6 +140,7 @@ class ResumeTests(unittest.TestCase):
             frames_dir = pipeline.scene_dir(scene["id"]) / "frames"
 
             def killed(spec, name):
+                write_deps(frames_dir.parent)  # Blender records dependencies before drawing frames
                 frames_dir.mkdir(parents=True, exist_ok=True)
                 for frame in range(1, 11):
                     fake_png(frames_dir / f"frame_{frame:04d}.png")
@@ -107,6 +151,7 @@ class ResumeTests(unittest.TestCase):
 
             def finishes(spec, name):
                 seen.append(len(list(frames_dir.glob("frame_*.png"))))
+                write_deps(frames_dir.parent)
                 for frame in range(1, total + 1):
                     path = frames_dir / f"frame_{frame:04d}.png"
                     if not path.exists():

@@ -7,6 +7,14 @@ from pathlib import Path
 import bpy
 
 
+class Profile:
+    """Render profile values from the JSON spec as attributes (profile.samples, profile.scale, ...)."""
+
+    def __init__(self, data):
+        for name, value in data.items():
+            setattr(self, name, value)
+
+
 def configure(scene, render, profile):
     engines = {item.identifier for item in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items}
     wanted = "CYCLES" if render.get("engine") == "cycles" else "BLENDER_EEVEE"

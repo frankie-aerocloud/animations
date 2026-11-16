@@ -1,5 +1,6 @@
 import copy
 import unittest
+from pathlib import Path
 
 from studio.core.project import load_project, validate_project
 
@@ -70,9 +71,28 @@ class ProjectValidationTests(unittest.TestCase):
         self.project.scenes[0]["captions"].append({"text": "   ", "at": 0, "until": 1})
         self.assertProblem("captions need text")
 
+    def test_lion_actors_are_validated_against_lion_actions(self):
+        self.project.scenes[0].setdefault("actors", []).append({"id": "leo", "kind": "lion", "action": "prowl"})
+        self.assertEqual(validate_project(self.project), [])
+        self.project.scenes[0]["actors"].append({"id": "bad", "kind": "lion", "action": "point"})
+        self.assertProblem("lion bad action")
+        self.project.scenes[0]["actors"].append({"id": "odd", "kind": "dragon"})
+        self.assertProblem("kind must be one of")
+
     def test_unknown_sfx(self):
         self.project.scenes[0]["sfx"].append({"sound": "explosion", "at": 1})
         self.assertProblem("sfx sound")
+
+
+class ShippedProjectsTests(unittest.TestCase):
+    def test_every_shipped_project_is_valid_and_short_form(self):
+        for project_dir in sorted(Path("projects").iterdir()):
+            if not (project_dir / "storyboard.yaml").exists():
+                continue  # e.g. the legacy projects/world-runs-out-of-water from the first attempt
+            with self.subTest(project=project_dir.name):
+                project = load_project(project_dir)
+                self.assertEqual(validate_project(project), [])
+                self.assertTrue(90.0 <= project.duration <= 180.0, project.duration)
 
 
 if __name__ == "__main__":

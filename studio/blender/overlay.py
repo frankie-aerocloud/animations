@@ -23,7 +23,7 @@ class Overlay:
         self.scene = bpy.context.scene
         self.scene.frame_start = 1
         self.scene.frame_end = int(spec["total_frames"])
-        profile = _Profile(spec["profile"])
+        profile = rendering.Profile(spec["profile"])
         rendering.configure(self.scene, spec["render"], profile)
         self.scene.render.film_transparent = True
         self.scene.render.image_settings.color_mode = "RGBA"
@@ -126,6 +126,9 @@ class Overlay:
         chapters = self.style.get("chapter", titles)
         for i, card in enumerate(self.spec.get("cards", [])):
             kind = card.get("kind", "caption")
+            if kind == "alert":
+                self.alert(i, card, safe)
+                continue
             cfg = {"title": titles, "chapter": chapters}.get(kind, captions)
             body = card["text"] if kind == "title" else card["text"].upper()
             y = float(card.get("y", cfg["y"]))
@@ -137,6 +140,17 @@ class Overlay:
             self.visible(sockets, card["start"], card["end"], pop=objects if kind in ("title", "chapter") else None)
         self.hud()
         self.subtitles()
+
+    def alert(self, i, card, safe):
+        """Emergency-broadcast banner: red plate, small header, message in capitals."""
+        cfg = self.style["alert"]
+        y = float(card.get("y", cfg["y"]))
+        size = float(cfg["size"])
+        message, message_sockets = self.card(f"alert{i}", card["text"].upper(), size, tuple(cfg["colour"]), 0.0, y - size * 0.4, width=safe - 0.04, weight=float(cfg.get("weight", 0.0)), shadow=0.0)
+        header, header_sockets = self.card(f"alert{i}.header", str(card.get("sub") or cfg.get("header", "EMERGENCY ALERT")).upper(), float(cfg["header_size"]), tuple(cfg["colour"]), 0.0, y + size * 0.9, width=safe, weight=0.0008, tracking=1.3, shadow=0.0)
+        _, height = self.dimensions(message[-1])
+        plate, plate_sockets = self.plate(f"alert{i}.plate", 0.0, y + size * 0.15, safe + 0.06, height + size * 2.6, tuple(cfg["plate"]), float(cfg["plate_alpha"]))
+        self.visible(message_sockets + header_sockets + plate_sockets, card["start"], card["end"], fade=0.08, pop=[*message, *header, plate])
 
     def hud(self):
         hud = self.spec.get("hud") or {}
@@ -154,14 +168,19 @@ class Overlay:
         clock_curves = [obj.data for obj in clock_objs]
         fps = self.fps
         wrap = int(hud.get("wrap") or 0)
+        seconds = hud.get("format") == "hms"
 
         def update_clock(scene):
             t = (scene.frame_current - 1) / fps
             hours = _interpolate(keys, t)
-            total_minutes = int(round(hours * 60.0))
-            if wrap:
-                total_minutes %= wrap * 60
-            body = f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
+            if seconds:
+                total = int(hours * 3600.0)
+                body = f"{total // 3600:02d}:{total // 60 % 60:02d}:{total % 60:02d}"
+            else:
+                total_minutes = int(round(hours * 60.0))
+                if wrap:
+                    total_minutes %= wrap * 60
+                body = f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
             for curve in clock_curves:
                 curve.body = body
 
@@ -183,12 +202,6 @@ class Overlay:
     def render(self):
         frames_dir = Path(self.spec["output"]["frames_dir"])
         return rendering.render(self.scene, frames_dir)
-
-
-class _Profile:
-    def __init__(self, data):
-        for name, value in data.items():
-            setattr(self, name, value)
 
 
 def _interpolate(keys, t):

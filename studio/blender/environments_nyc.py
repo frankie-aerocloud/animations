@@ -320,3 +320,7 @@ def airport(ctx, spec):
 
 BUILDERS = {"harbour_dawn": harbour_dawn, "metropolis": metropolis, "airport": airport}
 FOG_EXTENT = {"harbour_dawn": (3000, 3000, 300), "metropolis": (2400, 3200, 420), "airport": (2600, 2200, 260)}
+
+
+def build(ctx, spec):
+    return BUILDERS[spec["type"]](ctx, spec)
