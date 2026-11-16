@@ -214,6 +214,8 @@ def validate_project(project: Project) -> list[str]:
         music = scene.get("music", {})
         if music and (not isinstance(music, dict) or not _number(music.get("intensity", 0.5))):
             errors.append(f"{label}: music.intensity must be a number")
+        elif music and not (_number(music.get("rain", 0.0)) and 0.0 <= float(music.get("rain", 0.0)) <= 1.0):
+            errors.append(f"{label}: music.rain must be a number from 0 to 1")
     # narration script
     line_ids: set[str] = set()
     starts: list[tuple[float, str]] = []

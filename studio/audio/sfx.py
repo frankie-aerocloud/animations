@@ -401,3 +401,48 @@ def radio(duration: float = 1.6) -> list[float]:
 
 
 SOUNDS.update({"roar": roar, "alert": alert, "radio": radio})
+
+
+def thunder(duration: float = 5.0) -> list[float]:
+    """A close crack that rolls away into a long low rumble."""
+    n = int(duration * RATE)
+    crack = _lowpass(_noise(n, 31), lambda t: 0.6)
+    roll = _lowpass(_lowpass(_noise(n, 32), lambda t: 0.012), lambda t: 0.03)
+    rng = random.Random(33)
+    swells = [(rng.uniform(0.2, duration * 0.7), rng.uniform(0.4, 1.2)) for _ in range(5)]
+    out = []
+    for i in range(n):
+        t = i / RATE
+        value = crack[i] * math.exp(-t * 14.0) * 0.9
+        envelope = min(1.0, t / 0.15) * math.exp(-t * 0.55)
+        for start, width in swells:
+            envelope += 0.5 * math.exp(-(((t - start) / width) ** 2)) * math.exp(-t * 0.4)
+        out.append(value + roll[i] * 9.0 * envelope)
+    return out
+
+
+def birds(duration: float = 5.0) -> list[float]:
+    """Dawn chorus: scattered chirps and short warbles, fading in."""
+    n = int(duration * RATE)
+    rng = random.Random(41)
+    calls = []
+    for _ in range(26):
+        start = rng.uniform(0.0, duration - 0.4)
+        notes = rng.randint(1, 4)
+        base = rng.uniform(2600.0, 5200.0)
+        for k in range(notes):
+            calls.append((start + k * rng.uniform(0.08, 0.14), rng.uniform(0.05, 0.12), base * rng.uniform(0.9, 1.25), rng.uniform(-0.5, 0.5), rng.uniform(0.3, 1.0)))
+    out = []
+    for i in range(n):
+        t = i / RATE
+        value = 0.0
+        for start, length, freq, bend, gain in calls:
+            if start <= t < start + length:
+                u = (t - start) / length
+                f = freq * (1.0 + bend * u)
+                value += math.sin(math.tau * f * t) * math.sin(math.pi * u) * gain * 0.35
+        out.append(value * min(1.0, t / 1.2))
+    return out
+
+
+SOUNDS.update({"thunder": thunder, "birds": birds})
