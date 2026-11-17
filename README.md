@@ -6,7 +6,7 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-Six productions ship with the repository:
+Seven productions ship with the repository:
 
 - **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
   hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
@@ -37,8 +37,14 @@ Six productions ship with the repository:
   halls fall silent; volunteers clear beaches, an Indonesian waterway, an Indian storm drain and
   British rivers; industry and households rethink packaging; the ocean's plastic is still there at
   night; and production restarts at sunrise, changed.
+- **"The Month America Ditched McDonald's"** (`projects/burger-boycott`): a hypothetical 30-day
+  economic experiment under a day counter, in fifty-four shots over 179 seconds. Drive-throughs
+  empty, franchise owners cut hours and count the days, suppliers redirect produce, rival chains
+  and independent diners fill up, families cook at home, and when the boycott ends the queues
+  return, but not all of them; it closes on whether America got healthier or just switched
+  chains. The chains on screen are generic colour schemes and plain words, never real logos.
 
-All six are built from the same pipeline; only the YAML files and the environments they call differ.
+All seven are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -216,7 +222,16 @@ bags, products, recycling, refill, store or control; `stop_at`, `stopped`, `rest
 supermarket, refill, restaurant, lab, hospital_store, press, council, studio or kitchen).
 `studio/assets/plastic.py` holds production lines whose belts, rolls and presses run, halt and
 restart, litter on land and water, sacks and bales, beach huts, stilt houses, wooden boats, a river
-boom, a sea turtle and fish. Character roles: civilian, shopper, child,
+boom, a sea turtle and fish. The fast-food film's set is in `studio/blender/environments_fastfood.py`:
+`burger_strip` (per-chain `queue`, `parked` and `walkers`; `traffic`, `passers`, `night`, `lit`,
+`giant_dim`, `lights_on_at`, `promo`, `billboards`, `celebrate`, `staff_outside`),
+`burger_interior` (`kind` giant, rival, office, kitchen, dock, diner or cafe; `customers`, `staff`,
+`wiping`, `table_trays`, `counter_trays`, `counter_nuggets`, `running`, `crossed`, `struck`,
+`chart`), `food_home` (`kind` kitchen, dinner, backyard or fridge), `food_supply` (`kind`
+warehouse, yard or farm; `leaving`), `tv_studio`, `main_street` (`busy`, `walkers`, `queue`) and
+`town_aerial`. `studio/assets/fastfood.py` holds the generic restaurants with drive-through lanes
+and menu boards, food and kitchen kit, pallets, produce, balloons, billboards and a franchise
+office's paperwork. Character roles: civilian, shopper, child,
 nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
 look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
 movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit

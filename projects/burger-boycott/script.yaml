@@ -1,0 +1,62 @@
+# Narration in the brief's wording at length_scale 0.85 with noise_w 0, plus the closing question the brief asked for. `at` is seconds after the start of the named scene.
+lines:
+  - {id: m01, scene: c01_first, at: 1.00, text: "It starts on the first of the month."}
+  - {id: m02, scene: c01_first, at: 2.78, text: "Eight million? No."}
+  - {id: m03, scene: c01_first, at: 4.29, text: "An entire nation makes an extraordinary decision."}
+  - {id: m04, scene: c02_stop, at: 0.15, text: "Americans stop eating McDonald's."}
+  - {id: m05a, scene: c03_bigmacs, at: 0.15, text: "No Big Macs."}
+  - {id: m05b, scene: c04_nuggets, at: 0.15, text: "No McNuggets."}
+  - {id: m05c, scene: c05_fries, at: 0.15, text: "No fries."}
+  - {id: m05d, scene: c06_muffins, at: 0.15, text: "No breakfast McMuffins."}
+  - {id: m06, scene: c07_drive, at: 0.15, text: "Every drive-through suddenly has fewer cars."}
+  - {id: m07, scene: c08_elsewhere, at: 0.15, text: "Millions of people who normally grab fast food without thinking are forced to find somewhere else to eat."}
+  - {id: m08, scene: c09_notice, at: 0.15, text: "And McDonald's is about to notice."}
+  - {id: m09, scene: c10_empty, at: 0.80, text: "Three days in, the drive-throughs are practically empty."}
+  - {id: m10, scene: c11_struggling, at: 0.15, text: "Restaurants that normally serve hundreds of customers a day are struggling to stay busy."}
+  - {id: m11, scene: c12_hours, at: 0.15, text: "Franchise owners begin cutting staff hours."}
+  - {id: m12a, scene: c13_deliveries, at: 0.15, text: "Food deliveries are reduced."}
+  - {id: m12b, scene: c14_unused, at: 0.15, text: "Fresh ingredients are going unused."}
+  - {id: m13, scene: c15_celebrating, at: 0.15, text: "Meanwhile, competitors like Burger King, Wendy's and Taco Bell are celebrating."}
+  - {id: m14, scene: c16_doors, at: 0.15, text: "Millions of hungry customers are walking through their doors instead."}
+  - {id: m15, scene: c17_destination, at: 0.15, text: "America hasn't stopped eating fast food."}
+  - {id: m16, scene: c17_destination, at: 2.46, text: "It's simply changed the destination."}
+  - {id: m17, scene: c18_interesting, at: 0.80, text: "One week later, something interesting happens."}
+  - {id: m18, scene: c19_diners, at: 0.15, text: "Independent diners, local burger restaurants and family-owned cafés begin seeing more customers."}
+  - {id: m19, scene: c20_home, at: 0.15, text: "Some Americans start cooking at home."}
+  - {id: m20, scene: c21_discover, at: 0.15, text: "Others discover restaurants in their own neighbourhoods that they've never visited before."}
+  - {id: m21, scene: c22_homemade, at: 0.15, text: "Families experiment with homemade burgers, fresh ingredients and cheaper meals."}
+  - {id: m22, scene: c23_saving, at: 0.15, text: "For some households, the experiment is saving money."}
+  - {id: m23, scene: c24_convenience, at: 0.15, text: "For others, the biggest surprise is discovering how much they relied on convenience."}
+  - {id: m24, scene: c25_losing, at: 0.15, text: "But McDonald's is losing an enormous amount of business."}
+  - {id: m25, scene: c26_supply, at: 0.80, text: "Two weeks."}
+  - {id: m26, scene: c26_supply, at: 1.69, text: "The consequences are spreading through the supply chain."}
+  - {id: m27, scene: c27_rent, at: 0.15, text: "Franchise owners are worried about rent, wages and operating costs."}
+  - {id: m28, scene: c28_orders, at: 0.15, text: "Food suppliers face reduced orders."}
+  - {id: m29, scene: c29_redirect, at: 0.15, text: "Some farms and food distributors begin redirecting produce and ingredients to other buyers."}
+  - {id: m30, scene: c30_promos, at: 0.15, text: "McDonald's launches promotions and advertising campaigns to win customers back."}
+  - {id: m31, scene: c31_biting, at: 0.15, text: "But Americans aren't biting."}
+  - {id: m32, scene: c32_doors, at: 0.15, text: "For the first time in a long time, the world's most recognisable fast-food brand is struggling to get people through its doors."}
+  - {id: m33, scene: c33_routines, at: 0.80, text: "Three weeks in."}
+  - {id: m34, scene: c33_routines, at: 1.95, text: "Millions of people have established new eating routines."}
+  - {id: m35a, scene: c34_cooking, at: 0.15, text: "Some are cooking more."}
+  - {id: m35b, scene: c35_local, at: 0.15, text: "Others are supporting local businesses."}
+  - {id: m36, scene: c36_rivals, at: 0.15, text: "Some people are eating at rival fast-food chains, proving that avoiding McDonald's doesn't automatically mean eating healthier."}
+  - {id: m37, scene: c37_experts, at: 0.15, text: "Nutrition experts remind everyone that what replaces the Big Mac matters more than simply removing it."}
+  - {id: m38, scene: c38_desperate, at: 0.15, text: "Meanwhile, McDonald's franchise operators are desperate for the month to end."}
+  - {id: m39, scene: c39_survived, at: 0.80, text: "One month later."}
+  - {id: m40, scene: c39_survived, at: 1.97, text: "McDonald's has survived, but the financial damage is significant."}
+  - {id: m41a, scene: c40_revenue, at: 0.15, text: "Franchisees have lost revenue."}
+  - {id: m41b, scene: c41_shifts, at: 0.15, text: "Workers have missed shifts."}
+  - {id: m41c, scene: c42_suppliers, at: 0.15, text: "Suppliers have had to adjust."}
+  - {id: m42, scene: c43_loyal, at: 0.15, text: "Some independent restaurants have gained loyal new customers."}
+  - {id: m43, scene: c44_habit, at: 0.15, text: "And millions of Americans have discovered that skipping one familiar habit isn't as difficult as they imagined."}
+  - {id: m44, scene: c45_midnight, at: 0.15, text: "Then midnight arrives."}
+  - {id: m45, scene: c46_ends, at: 0.15, text: "The boycott officially ends."}
+  - {id: m46, scene: c47_queues, at: 0.15, text: "The next morning, drive-through queues begin returning."}
+  - {id: m47, scene: c48_not_everyone, at: 0.15, text: "But not everyone comes back."}
+  - {id: m48a, scene: c49_alternatives, at: 0.15, text: "Some customers have found better alternatives."}
+  - {id: m48b, scene: c50_home, at: 0.15, text: "Others have decided to keep cooking at home."}
+  - {id: m49, scene: c51_thirty, at: 0.15, text: "30 days. One country. One fast-food giant."}
+  - {id: m50, scene: c52_burgers, at: 0.15, text: "America didn't stop eating burgers."}
+  - {id: m51, scene: c53_choice, at: 0.15, text: "It simply discovered that it had a choice."}
+  - {id: m52, scene: c54_question, at: 0.15, text: "So did Americans actually get healthier? Or did they just switch to Burger King?"}

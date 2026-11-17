@@ -6,6 +6,7 @@ VEGAS = "studio.blender.environments_vegas"
 LONDON = "studio.blender.environments_london"
 LA = "studio.blender.environments_la"
 PLASTIC = "studio.blender.environments_plastic"
+FASTFOOD = "studio.blender.environments_fastfood"
 # environment type -> module that builds it; the Blender entry point imports only that module,
 # so a scene's recorded code dependencies never include other productions' environments
 ENVIRONMENTS = {
@@ -53,6 +54,13 @@ ENVIRONMENTS = {
     "drain": PLASTIC,
     "ocean": PLASTIC,
     "plastic_interior": PLASTIC,
+    "burger_strip": FASTFOOD,
+    "burger_interior": FASTFOOD,
+    "food_home": FASTFOOD,
+    "food_supply": FASTFOOD,
+    "tv_studio": FASTFOOD,
+    "main_street": FASTFOOD,
+    "town_aerial": FASTFOOD,
 }
 SHOTS = (
     "aerial_establish",
