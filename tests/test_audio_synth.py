@@ -25,6 +25,20 @@ class AudioSynthTests(unittest.TestCase):
                 self.assertEqual(handle.getnframes(), 10000)
                 self.assertEqual(handle.getframerate(), 8000)
 
+    def test_rain_bed_is_opt_in_and_audible(self):
+        def score(rain):
+            music = [{"intensity": 0.4}, {"intensity": 0.4}]
+            if rain is not None:
+                for entry in music:
+                    entry["rain"] = rain
+            scenes = [{"duration": 0.5, "music": music[0]}, {"duration": 0.5, "music": music[1]}]
+            with tempfile.TemporaryDirectory() as temp:
+                return render_score(scenes, Path(temp) / "score.wav", sample_rate=8000).read_bytes()
+
+        # films without rain render byte for byte as before; a rain level changes the score
+        self.assertEqual(score(None), score(0.0))
+        self.assertNotEqual(score(None), score(0.8))
+
 
 if __name__ == "__main__":
     unittest.main()

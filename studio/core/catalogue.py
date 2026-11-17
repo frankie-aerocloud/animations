@@ -3,6 +3,7 @@
 CORE = "studio.blender.environments"
 NYC = "studio.blender.environments_nyc"
 VEGAS = "studio.blender.environments_vegas"
+LONDON = "studio.blender.environments_london"
 # environment type -> module that builds it; the Blender entry point imports only that module,
 # so a scene's recorded code dependencies never include other productions' environments
 ENVIRONMENTS = {
@@ -26,6 +27,15 @@ ENVIRONMENTS = {
     "casino_floor": VEGAS,
     "desert_airport": VEGAS,
     "desert_suburb": VEGAS,
+    "london_street": LONDON,
+    "london_park": LONDON,
+    "london_aerial": LONDON,
+    "westminster": LONDON,
+    "thames": LONDON,
+    "london_interior": LONDON,
+    "sports_hall": LONDON,
+    "london_works": LONDON,
+    "london_hospital": LONDON,
 }
 SHOTS = (
     "aerial_establish",
@@ -78,7 +88,7 @@ ACTIONS = (
     "scatter",
 )
 EVENTS = ("water_level", "hide", "show", "move", "spin", "flicker", "flash", "scale", "deplete", "sun", "blackout")
-SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat", "roar", "alert", "radio")
+SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat", "roar", "alert", "radio", "thunder", "birds")
 PROPS = ("jerrycan", "bottle", "bucket", "box", "pan")
 CARD_KINDS = ("title", "caption", "chapter", "alert")
 ACTOR_KINDS = ("person", "lion")

@@ -79,6 +79,10 @@ class ProjectValidationTests(unittest.TestCase):
         self.project.scenes[0]["actors"].append({"id": "odd", "kind": "dragon"})
         self.assertProblem("kind must be one of")
 
+    def test_rain_level_must_be_between_zero_and_one(self):
+        self.project.scenes[0]["music"] = {"intensity": 0.5, "rain": 1.5}
+        self.assertProblem("music.rain")
+
     def test_unknown_sfx(self):
         self.project.scenes[0]["sfx"].append({"sound": "explosion", "at": 1})
         self.assertProblem("sfx sound")

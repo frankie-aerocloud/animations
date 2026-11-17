@@ -169,11 +169,14 @@ class Overlay:
         fps = self.fps
         wrap = int(hud.get("wrap") or 0)
         seconds = hud.get("format") == "hms"
+        days = hud.get("format") == "day"  # the HUD values are day numbers: DAY 1, DAY 2, ...
 
         def update_clock(scene):
             t = (scene.frame_current - 1) / fps
             hours = _interpolate(keys, t)
-            if seconds:
+            if days:
+                body = f"DAY {max(1, int(hours + 1e-6))}"
+            elif seconds:
                 total = int(hours * 3600.0)
                 body = f"{total // 3600:02d}:{total // 60 % 60:02d}:{total % 60:02d}"
             else:

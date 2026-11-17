@@ -16,13 +16,16 @@ ROOTS = (55.0, 87.31, 98.0, 82.41, 73.42, 87.31, 82.41, 65.41, 55.0, 98.0, 82.41
 
 def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RATE, seed: int = 1, style: str = "tense") -> Path:
     """Write a mono WAV covering the whole timeline. style 'quirky' adds a staccato plucked arpeggio;
-    'epic' adds a string ostinato, brass swells at each scene and timpani hits."""
+    'epic' adds a string ostinato, brass swells at each scene and timpani hits. A scene's
+    `music.rain` (0-1) adds a rain bed that crossfades between scenes; it defaults to 0."""
     plan = []
+    rain_levels = []
     cursor = 0.0
     for index, scene in enumerate(scenes):
         duration = float(scene.get("duration") or 0.0)
         intensity = float((scene.get("music") or {}).get("intensity", 0.4))
         plan.append((cursor, cursor + duration, intensity, ROOTS[index % len(ROOTS)]))
+        rain_levels.append(float((scene.get("music") or {}).get("rain", 0.0)))
         cursor += duration
     total = cursor
     n = int(total * sample_rate)
@@ -33,6 +36,9 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
     pulse_phase = 0.0
     last_beat = -10.0
     noise_state = 0.0
+    rain_rng = random.Random(seed + 101)  # separate stream: films without rain render exactly as before
+    hiss = [0.0, 0.0]
+    drop = 0.0
     scene_index = 0
     for i in range(n):
         t = i / sample_rate
@@ -98,7 +104,20 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
             ramp = 1.0 - remaining / 1.8
             noise_state += (rng.uniform(-1.0, 1.0) - noise_state) * (0.02 + 0.3 * ramp)
             riser = noise_state * ramp * ramp * 0.5 * next_intensity
-        value = pad + pulse + shimmer + riser + pluck + epic
+        # rain: band-limited hiss plus sparse drops, crossfading over 0.8 s at each cut
+        rain = 0.0
+        level = rain_levels[scene_index]
+        if scene_index and t - start < 0.8:
+            level = rain_levels[scene_index - 1] + (level - rain_levels[scene_index - 1]) * (t - start) / 0.8
+        if level > 0.0:
+            white = rain_rng.uniform(-1.0, 1.0)
+            hiss[0] += 0.55 * (white - hiss[0])
+            hiss[1] += 0.25 * (hiss[0] - hiss[1])
+            if rain_rng.random() < 0.0035:
+                drop = rain_rng.uniform(0.4, 1.0)
+            drop *= 0.93
+            rain = ((hiss[0] - hiss[1]) * 0.55 + drop * rain_rng.uniform(-1.0, 1.0) * 0.5) * level * 0.55
+        value = pad + pulse + shimmer + riser + pluck + epic + rain
         fade = min(1.0, t / 1.5, max(0.0, (total - t) / 3.0))
         samples.append(int(max(-1.0, min(1.0, value * fade)) * 32767))
     path.parent.mkdir(parents=True, exist_ok=True)

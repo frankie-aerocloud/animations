@@ -6,7 +6,7 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-Three productions ship with the repository:
+Four productions ship with the repository:
 
 - **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
   hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
@@ -21,8 +21,14 @@ Three productions ship with the repository:
   Mojave sunrise to hordes crossing the desert, lions on the Strip, emergency alerts, a military
   perimeter, a district-by-district blackout and an army of eyes in the dark, ending at dawn on a
   rooftop roar and "What happens when they get hungry again?".
+- **"365 Days Underwater: The London Disaster"** (`projects/london-rain`): a slow-burn hypothetical in
+  thirty-one shots over 177 seconds, counting the days as it rains on London for a year. The city is
+  never drowned: recognisable London (red buses and phone boxes, terraces, the Underground,
+  Westminster, the Thames Barrier) slowly becomes unliveable, from flooded underpasses and basements
+  to black mould, a sparking substation and evacuation zones, until the clouds break over
+  Westminster and the film ends on "Could London ever be the same again?".
 
-All three are built from the same pipeline; only the YAML files and the environments they call differ.
+All four are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -86,8 +92,10 @@ mains power; on battery the Mac sleeps normally and the render continues when it
 
 `project.yaml` also accepts `hud_label` (clock caption), `hud_wrap: 24` (a time-of-day clock that
 rolls over at midnight; omit it for an elapsed-time clock), `hud_format: hms` (hours, minutes and
-seconds; the default is hours and minutes) and `music_style` (`tense`, `quirky`, or `epic` for a
-string ostinato, brass swells and timpani).
+seconds; `day` shows a day counter, DAY 14, with day numbers as the hud values; the default is
+hours and minutes) and `music_style` (`tense`, `quirky`, or `epic` for a string ostinato, brass
+swells and timpani). A scene's `music.rain` (0 to 1) adds a rain bed to the score that crossfades at
+each cut, and `audio.narration.length_scale` speeds the voice up (below 1) or slows it down.
 
 Outputs live under `output/<project>/`: `scenes/<scene>/<profile>/` (frames, `.blend`, `clip.mp4`),
 `overlay/<profile>/frames/`, `audio/` (narration per line, procedural score, effects, final mix),
@@ -135,8 +143,8 @@ A project is three YAML files plus optional audio:
 - `storyboard.yaml`: one entry per shot with `environment` (type + parameters), `lighting` preset
   (and `lighting_overrides`), `camera` (shot behaviour and coordinates), `actors` (single or crowds
   with `count`/`area`), `events` (water levels, visibility, movement, spin, flicker, flash, scale,
-  depletion, sun), `captions`, `hud` (elapsed-time clock keys), `sfx` cues, `music.intensity` and
-  the outgoing `transition`.
+  depletion, sun), `captions`, `hud` (elapsed-time clock keys), `sfx` cues, `music` (`intensity`
+  and an optional `rain` level) and the outgoing `transition`.
 - `script.yaml`: narration lines anchored to a scene and an offset; subtitles are generated from them
   and timed against the rendered narration.
 
@@ -163,7 +171,19 @@ drones, army trucks, loudspeaker vans and police cars. The Las Vegas set is in
 (`lions`) and `desert_suburb` (the residential street's flags). The lion library
 (`studio/assets/lions.py`) provides rigged lions (actors with `kind: lion` and actions walk, prowl,
 run, idle, roar, lie), merged hordes with dust plumes and eye-shine, resting prides and fields of
-eyes. Character roles: civilian, shopper, child,
+eyes. The London set is in `studio/blender/environments_london.py`: `london_street` (`kind`
+high_street, residential or mixed; `night`, `rain`, `rain_at`, `puddles`, `flood`, `lightwells`,
+`drains`, `buses`, `bus_at`, `diverted`, `traffic`, `traffic_lane`, `walkers`, `sandbags`, `pumps`,
+`shutters`, `boarded`, `to_let`, `damp`, `tape`, `evacuation`, `road_closed`, `scaffolding`,
+`sinkhole`, `debris`, `viaduct` with a train and a flooding underpass, `station`), `london_park`,
+`london_aerial` and `westminster` (the Thames, Westminster, the Eye, St Paul's and the Shard; `night`,
+`clouds`, `cloud_base`, `cloud_hole`, `part` for the clouds breaking, `system` for the weather system
+seen from above, `dark_districts`, `cranes`, `flood_pools`), `thames` (`outfall`, `barrier`),
+`london_interior` (`mould`, `buckets`, `child`, `adult`), `sports_hall`, `london_works` (a stalled
+building site, or `kind: substation`) and `london_hospital`. `studio/assets/london.py` holds the
+terraces, shops, buses, cabs, phone and pillar boxes, the landmarks and the flood props;
+`studio/assets/weather.py` the looping rain, puddles, cloud decks, rain shafts and the cyclone; and
+`studio/assets/meshes.py` builds very large merged meshes in linear time. Character roles: civilian, shopper, child,
 nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
 look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
 movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit

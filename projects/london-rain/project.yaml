@@ -1,0 +1,98 @@
+id: london-rain
+title: "365 Days Underwater: The London Disaster"
+language: en-GB
+hud_label: "LONDON"
+hud_format: day        # the clock shows DAY n; storyboard hud values are day numbers
+music_style: tense
+premise: >
+  Hypothetical slow-burn disaster. A weather system stalls over southern England and it rains on London
+  for a year. The city is never drowned: recognisable London slowly becomes unliveable, one closed
+  station, flooded basement and mouldy flat at a time.
+render: {}
+assets: assets/manifest.yaml
+audio:
+  narration_dir: audio/narration
+  music_file: null
+  sfx_dir: audio/sfx
+  narration: {length_scale: 0.85}   # the script runs ~3 minutes at a natural pace; this keeps the film under 180 s
+  music: {gain_db: -13}             # the rain bed carries this film; louder than the default -16
+style:
+  palette:                         # production colours (linear RGB); merged over config/style.yaml
+    london_brick: [0.42, 0.30, 0.17]
+    red_brick: [0.36, 0.09, 0.05]
+    stucco: [0.78, 0.74, 0.64]
+    sash_white: [0.82, 0.82, 0.80]
+    glass_dark: [0.03, 0.04, 0.05]
+    slate: [0.07, 0.08, 0.10]
+    door_red: [0.42, 0.03, 0.03]
+    door_blue: [0.03, 0.07, 0.25]
+    door_green: [0.03, 0.15, 0.07]
+    door_black: [0.015, 0.015, 0.015]
+    plywood: [0.52, 0.36, 0.18]
+    shutter_grey: [0.30, 0.31, 0.32]
+    damp_stain: [0.12, 0.11, 0.08]
+    fascia_green: [0.02, 0.18, 0.08]
+    fascia_navy: [0.02, 0.05, 0.18]
+    fascia_red: [0.45, 0.02, 0.02]
+    fascia_black: [0.02, 0.02, 0.02]
+    fascia_teal: [0.02, 0.22, 0.22]
+    fascia_plum: [0.20, 0.03, 0.12]
+    sign_cream: [0.85, 0.78, 0.55]
+    bus_red: [0.55, 0.012, 0.01]
+    blind_amber: [1.0, 0.62, 0.12]
+    cab_black: [0.012, 0.012, 0.014]
+    tarmac_wet: [0.022, 0.023, 0.026]
+    pavement_wet: [0.16, 0.16, 0.16]
+    line_yellow: [0.85, 0.62, 0.05]
+    bus_lane: [0.25, 0.03, 0.03]
+    umbrella_black: [0.012, 0.012, 0.014]
+    umbrella_navy: [0.02, 0.04, 0.14]
+    umbrella_tartan: [0.30, 0.04, 0.05]
+    coat_beige: [0.45, 0.36, 0.22]
+    coat_olive: [0.12, 0.13, 0.06]
+    coat_grey: [0.15, 0.15, 0.16]
+    sandbag: [0.42, 0.34, 0.20]
+    barrier_red: [0.55, 0.02, 0.02]
+    tape_blue: [0.02, 0.05, 0.45]
+    scaffold: [0.40, 0.41, 0.43]
+    netting: [0.10, 0.20, 0.45]
+    crane_yellow: [0.85, 0.52, 0.02]
+    viaduct_brick: [0.30, 0.17, 0.10]
+    train_white: [0.80, 0.80, 0.82]
+    oxblood: [0.30, 0.025, 0.02]
+    westminster_stone: [0.56, 0.44, 0.26]
+    westminster_shade: [0.40, 0.31, 0.18]
+    gilt: [0.80, 0.55, 0.16]
+    spire_slate: [0.06, 0.07, 0.09]
+    clock_face: [0.88, 0.84, 0.66]
+    eye_white: [0.80, 0.82, 0.85]
+    shard_glass: [0.35, 0.45, 0.55]
+    portland_stone: [0.70, 0.66, 0.56]
+    lead_grey: [0.25, 0.27, 0.29]
+    bridge_green: [0.04, 0.20, 0.10]
+    barrier_steel: [0.75, 0.77, 0.80]
+    transformer_grey: [0.55, 0.60, 0.55]
+    mould: [0.012, 0.016, 0.010]
+    flood_brown: [0.32, 0.22, 0.11]
+    puddle: [0.03, 0.035, 0.045]
+    park_grass: [0.05, 0.13, 0.03]
+    silt: [0.22, 0.16, 0.09]
+    cloud_dark: [0.12, 0.13, 0.15]
+    cloud_light: [0.42, 0.44, 0.48]
+    rain_shaft: [0.30, 0.32, 0.36]
+    thames: [0.10, 0.09, 0.06]
+    wallpaper: [0.55, 0.48, 0.36]
+    floor_wood: [0.30, 0.18, 0.08]
+    sofa: [0.10, 0.16, 0.24]
+    ceiling: [0.80, 0.80, 0.78]
+    camp_bed: [0.10, 0.16, 0.07]
+    blanket_1: [0.35, 0.10, 0.08]
+    blanket_2: [0.08, 0.15, 0.30]
+    blanket_3: [0.30, 0.30, 0.28]
+    gym_floor: [0.45, 0.30, 0.14]
+    court_line: [0.85, 0.75, 0.10]
+    hoarding: [0.04, 0.18, 0.10]
+    portakabin: [0.70, 0.70, 0.66]
+    city_ground: [0.09, 0.09, 0.09]
+    cloud_dawn: [0.62, 0.48, 0.47]
+    cloud_white: [0.80, 0.80, 0.82]
