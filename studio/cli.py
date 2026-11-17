@@ -95,8 +95,10 @@ def main(argv: list[str] | None = None) -> int:
     one = project_command("render-scene", "render one or more scenes")
     one.add_argument("--scene", action="append", required=True, help="scene id (repeatable)")
     one.add_argument("--still", type=float, help="render a single frame at this time (seconds) instead of the animation")
+    one.add_argument("--encode-clip", action="store_true", help="encode each rendered scene as an intermediate MP4")
     project_command("render", "render every scene whose inputs changed")
-    project_command("assemble", "narration, subtitles, overlay, audio mix, FFmpeg assembly, validation and manifest")
+    assemble_command = project_command("assemble", "narration, subtitles, overlay, audio mix, FFmpeg assembly, validation and manifest")
+    assemble_command.add_argument("--from-clips", action="store_true", help="assemble verified intermediate clips without restoring scene PNG frames")
     project_command("build", "the complete pipeline")
     project_command("adopt", "after a code change that does not affect this film, mark its rendered frames as current instead of re-rendering")
     check = project_command("check", "play the finished MP4 end to end and run every technical check")
@@ -146,9 +148,15 @@ def main(argv: list[str] | None = None) -> int:
             return storyboard(pipeline, args.stills)
         pipeline.require_valid()
         if args.command == "render-scene":
+            if args.encode_clip and args.still is not None:
+                raise PipelineError("--encode-clip cannot be combined with --still")
             for scene_id in args.scene:
                 result = pipeline.render_scene(scene_id, still=args.still)
-                print(f"{scene_id}: {result.frames} frame(s) in {result.frames_dir}")
+                if args.encode_clip:
+                    clip = pipeline.clips([result])[0]
+                    print(f"{scene_id}: {result.frames} frame(s), clip {clip}")
+                else:
+                    print(f"{scene_id}: {result.frames} frame(s) in {result.frames_dir}")
             return 0
         if args.command == "adopt":
             adopted = pipeline.adopt()
@@ -160,7 +168,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command in ("assemble", "preview", "build"):
             if args.command == "assemble":
-                results = pipeline.render_scenes()  # verifies every scene is rendered (cached ones are instant)
+                # A distributed render restores compact, fingerprinted clips instead of many GB of PNGs.
+                results = pipeline.results_from_clips() if args.from_clips else pipeline.render_scenes()
                 lines = pipeline.narration()
                 cues, srt = pipeline.subtitles(lines)
                 overlay_frames = pipeline.render_overlay(cues)

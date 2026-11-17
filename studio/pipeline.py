@@ -325,14 +325,46 @@ class Pipeline:
         return frames_dir
 
     # ----- assembly -------------------------------------------------------------------
+    @staticmethod
+    def _clip_digest(scene_dir: Path) -> str:
+        state = [scene_dir / "scene.hash", scene_dir / "deps.json"]
+        return hashlib.sha256(b"".join(path.read_bytes() for path in state if path.exists())).hexdigest()
+
+    def results_from_clips(self) -> list[SceneResult]:
+        """Load portable scene clips after checking their render and code fingerprints.
+
+        Distributed render jobs use this path so the assembly job does not need to transfer or
+        restore the much larger PNG frame sequences.
+        """
+        results: list[SceneResult] = []
+        problems: list[str] = []
+        for scene in self.project.scenes:
+            scene_id = str(scene["id"])
+            scene_dir = self.scene_dir(scene_id)
+            clip = scene_dir / "clip.mp4"
+            stamp = scene_dir / "clip.hash"
+            if not self.scene_current(scene):
+                problems.append(f"{scene_id}: scene.hash or deps.json is missing or stale")
+                continue
+            if not clip.is_file() or clip.stat().st_size == 0:
+                problems.append(f"{scene_id}: clip.mp4 is missing or empty")
+                continue
+            if not stamp.is_file() or stamp.read_text(encoding="utf-8").strip() != self._clip_digest(scene_dir):
+                problems.append(f"{scene_id}: clip.hash is missing or stale")
+                continue
+            frames = int(scene["frames"]) + int(scene["handle_frames"])
+            results.append(SceneResult(scene_id, scene_dir / "frames", frames, True, clip))
+        if problems:
+            raise PipelineError("distributed scene clips are incomplete:\n  - " + "\n  - ".join(problems))
+        return results
+
     def clips(self, results: list[SceneResult]) -> list[Path]:
         clips: list[Path] = []
         for result in results:
             scene_dir = self.scene_dir(result.id)
             clip = scene_dir / "clip.mp4"
             stamp = scene_dir / "clip.hash"
-            state = [scene_dir / "scene.hash", scene_dir / "deps.json"]
-            digest = hashlib.sha256(b"".join(path.read_bytes() for path in state if path.exists())).hexdigest()
+            digest = self._clip_digest(scene_dir)
             if not (clip.exists() and stamp.exists() and stamp.read_text(encoding="utf-8") == digest):
                 self.log(f"[clip] encoding {result.id}")
                 assemble.encode_clip(result.frames_dir, self.project.fps, result.frames, clip)
