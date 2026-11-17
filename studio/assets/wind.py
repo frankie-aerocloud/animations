@@ -33,11 +33,13 @@ def _loop(obj, frames, offset):
         curve.modifiers.new("CYCLES")
 
 
-def debris(ctx, name, centre, extent=(60.0, 40.0, 14.0), count=400, speed=55.0, clusters=12, sizes=(0.15, 1.2), kinds=DEBRIS, start=0.0, tumble=1.5, lift=0.0):
+def debris(ctx, name, centre, extent=(60.0, 40.0, 14.0), count=400, speed=55.0, clusters=12, sizes=(0.15, 1.2), kinds=DEBRIS, start=0.0, tumble=1.5, lift=0.0, clear=0.0):
     """A storm of tumbling debris crossing a box around centre = (x, y, ground z), blowing toward -X.
     Pieces are grouped into compact clusters; each cluster tumbles about its own centre while it
     races across the box and wraps around at the far edge (make the box wider than the shot), with
-    staggered phases so the stream never thins out."""
+    staggered phases so the stream never thins out. With the camera at centre, `clear` keeps the
+    clusters that many metres either side of its line, drifting away from it, so no piece fills the
+    lens for a frame (that read as a flash)."""
     rng = ctx.rng
     cx, cy, cz = centre
     w, d, h = extent
@@ -46,6 +48,9 @@ def debris(ctx, name, centre, extent=(60.0, 40.0, 14.0), count=400, speed=55.0, 
     per = max(1, count // clusters)
     for c in range(clusters):
         y, z = cy + rng.uniform(-d / 2, d / 2), cz + rng.uniform(1.0, h)
+        side = 1.0 if y >= cy else -1.0
+        if abs(y - cy) < clear:
+            y = cy + side * (clear + rng.uniform(0.0, 3.0))
         boxes = []
         for _ in range(per):
             s = rng.uniform(*sizes)
@@ -57,7 +62,8 @@ def debris(ctx, name, centre, extent=(60.0, 40.0, 14.0), count=400, speed=55.0, 
         period = max(2, round(w / speed * ctx.fps * rng.uniform(0.85, 1.15)))
         phase = round(c / clusters * period)
         key(obj, "location", 1 - phase, (cx + w / 2, y, z))
-        key(obj, "location", 1 - phase + period, (cx - w / 2, y + rng.uniform(-4, 4), z + lift))
+        drift = side * rng.uniform(0, 4) if clear else rng.uniform(-4, 4)
+        key(obj, "location", 1 - phase + period, (cx - w / 2, y + drift, z + lift))
         set_interp(obj, "LINEAR", path="location")
         for curve in fcurves(obj, "location"):
             curve.modifiers.new("CYCLES")
@@ -72,14 +78,18 @@ def debris(ctx, name, centre, extent=(60.0, 40.0, 14.0), count=400, speed=55.0, 
     return objs
 
 
-def streaks(ctx, name, centre, extent=(80.0, 50.0, 20.0), count=900, speed=90.0, colour="dust", strength=0.0, alpha=0.35, length=(3.0, 9.0), start=0.0):
-    """Thin horizontal dust streaks racing downwind: the wind made visible."""
+def streaks(ctx, name, centre, extent=(80.0, 50.0, 20.0), count=900, speed=90.0, colour="dust", strength=0.0, alpha=0.35, length=(3.0, 9.0), start=0.0, clear=0.0):
+    """Thin horizontal dust streaks racing downwind: the wind made visible. With the camera at
+    centre, `clear` keeps them that many metres either side of its line (one through the lens fills
+    the frame)."""
     rng = ctx.rng
     cx, cy, cz = centre
     w, d, h = extent
     boxes = []
     for _ in range(count):
         x, y, z = rng.uniform(-w / 2, w / 2), rng.uniform(-d / 2, d / 2), rng.uniform(0.2, h)
+        if abs(y) < clear:
+            y = (clear + rng.uniform(0.0, 1.0)) * (1.0 if y >= 0 else -1.0)
         size = (rng.uniform(*length), 0.025, 0.025)
         for copy in (0.0, 1.0):
             boxes.append(((x + copy * w, y, z), size, 0))
@@ -203,14 +213,17 @@ def plume(ctx, name, base, height=220.0, drift=(600.0, 0.0), colour="smoke_light
     return objs
 
 
-def embers(ctx, name, centre, extent=(50.0, 30.0, 18.0), count=500, speed=30.0, start=0.0):
-    """Glowing embers streaming downwind from fires."""
+def embers(ctx, name, centre, extent=(50.0, 30.0, 18.0), count=500, speed=30.0, start=0.0, clear_y=None):
+    """Glowing embers streaming downwind from fires. clear_y keeps the line y = clear_y (where the
+    camera stands) free of embers, so none crosses the lens as a frame-filling flash."""
     rng = ctx.rng
     cx, cy, cz = centre
     w, d, h = extent
     boxes = []
     for _ in range(count):
         x, y, z = rng.uniform(-w / 2, w / 2), rng.uniform(-d / 2, d / 2), rng.uniform(0.5, h)
+        if clear_y is not None and abs(cy + y - clear_y) < 2.5:
+            continue
         s = rng.uniform(0.09, 0.18)  # smaller specks twinkle in and out between pixels
         for copy in (0.0, 1.0):
             boxes.append(((x + copy * w, y, z), (s, s, s), 0))

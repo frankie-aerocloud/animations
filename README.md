@@ -208,7 +208,8 @@ terraces, shops, buses, cabs, phone and pillar boxes, the landmarks and the floo
 `studio/assets/weather.py` the looping rain, puddles, cloud decks, rain shafts and the cyclone; and
 `studio/assets/meshes.py` builds very large merged meshes in linear time. The Los Angeles set is in
 `studio/blender/environments_la.py`: `la_street` (`kind` boulevard or residential; `wind`, `gust_at`,
-`wind_at`, `uproot`, `thrown`, `roofs`, `ripped`, `burst_at`, `poles_down`, `lights_torn`,
+`wind_at` (the camera's x, y: flying debris, dust and embers keep clear of that line, as anything
+crossing the lens fills the frame for a frame), `uproot`, `thrown`, `roofs`, `ripped`, `burst_at`, `poles_down`, `lights_torn`,
 `collapse`, `fires`, `night`, `blackout`, `aftermath`, `crews`, `people`), `la_downtown` (`shatter`,
 `broken`), `la_freeway` (`thrown`, `truck_over`, `helicopter`), `la_hills`, `la_airport` (`slew`),
 `la_pier` (`waves`, `wheel_spin`), `la_interior` (`kind` living, office, garage, hallway, apartment

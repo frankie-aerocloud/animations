@@ -41,8 +41,8 @@ def _storm(ctx, spec, default_at=(0.0, 0.0, 0.0), extent=(90.0, 60.0, 16.0)):
     centre = (float(at[0]), float(at[1]), float(at[2]) if len(at) > 2 else 0.0)
     start = float(spec.get("gust_at", 0.0))
     night = bool(spec.get("night"))
-    wind.debris(ctx, "debris", centre, extent, int(420 * level * float(spec.get("debris", 1.0))), speed=40.0 + 30.0 * level, clusters=14, start=start)
-    wind.streaks(ctx, "streaks", centre, (extent[0] * 1.3, extent[1], extent[2] + 6.0), int(1100 * level), speed=70.0 + 50.0 * level, colour="dust_night" if night else "dust", alpha=0.25 if night else 0.35, start=start)
+    wind.debris(ctx, "debris", centre, extent, int(420 * level * float(spec.get("debris", 1.0))), speed=40.0 + 30.0 * level, clusters=14, start=start, clear=8.0)
+    wind.streaks(ctx, "streaks", centre, (extent[0] * 1.3, extent[1], extent[2] + 6.0), int(1100 * level), speed=70.0 + 50.0 * level, colour="dust_night" if night else "dust", alpha=0.25 if night else 0.35, start=start, clear=1.5)
 
 
 def _people(ctx, name, count, area, action="walk", roles=ROLES, run_dir=(0.0, 1.0), start=0.0, face=None):
@@ -174,7 +174,8 @@ def la_street(ctx, spec):
         fy = rng.uniform(-60, 60)
         la.wind_fire(ctx, f"fire{i}", (fx, fy, 0.5), size=rng.uniform(4.0, 7.0))
         if level > 0:
-            wind.embers(ctx, f"embers{i}", (fx - 20.0, fy, 0.0), (60.0, 18.0, 16.0), 260, start=0.0)
+            camera = spec.get("wind_at")
+            wind.embers(ctx, f"embers{i}", (fx - 20.0, fy, 0.0), (60.0, 18.0, 16.0), 260, start=0.0, clear_y=float(camera[1]) if camera else None)
     _storm(ctx, spec)
     ctx.anchor("street", (0.0, 0.0, 2.0))
     return None
