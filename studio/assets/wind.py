@@ -211,7 +211,7 @@ def embers(ctx, name, centre, extent=(50.0, 30.0, 18.0), count=500, speed=30.0, 
     boxes = []
     for _ in range(count):
         x, y, z = rng.uniform(-w / 2, w / 2), rng.uniform(-d / 2, d / 2), rng.uniform(0.5, h)
-        s = rng.uniform(0.05, 0.16)
+        s = rng.uniform(0.09, 0.18)  # smaller specks twinkle in and out between pixels
         for copy in (0.0, 1.0):
             boxes.append(((x + copy * w, y, z), (s, s, s), 0))
     glow = ctx.palette.emissive(f"{name} glow", "ember", 2.5)  # brighter saturates to white

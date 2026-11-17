@@ -318,8 +318,8 @@ def plastic_factory(ctx, spec):
         _maintenance(ctx)
     _workers(ctx, spec, kind)
     if spec.get("dust"):
-        motes = [((rng.uniform(-30, 30), rng.uniform(-15, 15), rng.uniform(1.0, h - 2.0)), (0.03, 0.03, 0.03), 0) for _ in range(600)]
-        dust = merged_boxes(ctx, "dust", motes, [ctx.palette.emissive("dust glint", "dust_glint", 2.0)])
+        motes = [((rng.uniform(-30, 30), rng.uniform(-15, 15), rng.uniform(1.0, h - 2.0)), (0.07, 0.07, 0.07), 0) for _ in range(300)]
+        dust = merged_boxes(ctx, "dust", motes, [ctx.palette.emissive("dust glint", "dust_glint", 1.0)])
         key(dust, "location", 1, (0.0, 0.0, 0.0))
         add_noise(dust, "location", 0.4, 1, ctx.frames, scale=60.0)
     ctx.anchor("aisle", (0.0, 0.0, 1.6))
@@ -352,13 +352,13 @@ def _maintenance(ctx):
         arc = _light(ctx, f"weld{i}", "POINT", (x, y, 1.3), 0.0, (0.75, 0.85, 1.0), 0.05)
         t = 0.0
         while t < ctx.frames / ctx.fps:
-            arc.data.energy = rng.choice((0.0, 0.0, 60.0, 140.0))
+            arc.data.energy = rng.uniform(25.0, 45.0)
             arc.data.keyframe_insert("energy", frame=ctx.frame(t))
-            t += 2.0 / ctx.fps
+            t += 4.0 / ctx.fps
         sparks = [((rng.uniform(-0.4, 0.4), rng.uniform(-0.4, 0.4), rng.uniform(-0.3, 0.3)), (0.025, 0.025, 0.025), 0) for _ in range(40)]
         spray = merged_boxes(ctx, f"sparks{i}", sparks, [ctx.palette.emissive(f"spark {i}", "spark_white", 8.0)], (x, y, 1.3))
         key(spray, "scale", 1, (1.0, 1.0, 1.0))
-        add_noise(spray, "scale", 0.8, 1, ctx.frames, scale=2.0)
+        add_noise(spray, "scale", 0.4, 1, ctx.frames, scale=5.0)
 
 
 def _workers(ctx, spec, kind):
@@ -1042,14 +1042,13 @@ def _press(ctx, spec):
     _people(ctx, "reporter", spots, ROLES[:2], ["idle", "idle", "point"], 0.0, face_at=(0.0, 5.0))
     for i, x in enumerate((-5.5, 5.5)):
         merged_boxes(ctx, f"camera{i}", [((0, 0, 1.55), (0.35, 0.6, 0.35), 0), ((0, 0.4, 1.55), (0.18, 0.2, 0.18), 0), ((0, 0, 0.7), (0.05, 0.05, 1.4), 1)], [ctx.mat("ink_black", roughness=0.4), ctx.mat("steel_dark", roughness=0.5)], (x, -4.5, 0.0))
-    for i in range(5):
-        flash = _light(ctx, f"flash{i}", "POINT", (rng.uniform(-5, 5), rng.uniform(-4.0, -1.0), 1.8), 0.0, (1.0, 1.0, 1.0), 0.05)
-        t = rng.uniform(0.2, 0.8)
-        points = [(0.0, 0.0)]
-        while t < ctx.frames / ctx.fps:
-            points += [(t, 3000.0), (t + 2.0 / ctx.fps, 0.0)]
-            t += rng.uniform(0.7, 1.6)
-        _energy(ctx, flash, points)
+    # camera flashes: small, local pops staggered so the picture never strobes (at most about one
+    # a second across the room, well under the three-a-second photosensitivity limit)
+    t = 0.4
+    for i in range(int(ctx.frames / ctx.fps / 1.1)):
+        flash = _light(ctx, f"flash{i}", "POINT", (rng.uniform(-5, 5), rng.uniform(-4.5, -2.5), 1.7), 0.0, (1.0, 1.0, 1.0), 0.05)
+        _energy(ctx, flash, [(0.0, 0.0), (t, 350.0), (t + 2.0 / ctx.fps, 0.0)])
+        t += rng.uniform(0.9, 1.3)
     return None
 
 

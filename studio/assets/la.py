@@ -451,7 +451,7 @@ def wind_fire(ctx, name, loc, size=5.0, lean=0.7, light=True):
         lamp.location = (x - size * 0.3, y, z + size * 0.6)
         ctx.link(lamp)
         key(data, "energy", 1)
-        add_noise(data, "energy", 300.0 * size, 1, ctx.frames, scale=2.0)
+        add_noise(data, "energy", 120.0 * size, 1, ctx.frames, scale=8.0)  # a slow flicker; faster reads as strobing
         ctx.tag("fire_light", lamp)
 
 

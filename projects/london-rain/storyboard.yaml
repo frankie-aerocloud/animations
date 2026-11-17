@@ -240,7 +240,7 @@ scenes:
     lighting_overrides: *rain_night
     camera: {shot: push_in, from: [-6, -8, 4.6], to: [-4.5, -6, 4.4], look: [8, 10, 1.5], look_to: [8, 10, 1.5], lens: 30, fstop: 6}
     events:
-      - {type: flicker, target: tag:spark, start: 0.8, end: 2.2, rate: 7, strength: 3000}
+      - {type: flicker, target: tag:spark, start: 0.8, end: 2.2, rate: 2.5, strength: 1200}
       - {type: flash, at: 0.9, amount: 1.6}
       - {type: blackout, target: [tag:window_lights], start: 1.6, end: 2.4, shuffle: false}
       - {type: blackout, target: [tag:street_lamps, tag:street_lights], start: 1.8, end: 2.6}

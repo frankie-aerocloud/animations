@@ -173,7 +173,7 @@ scenes:
     lighting_overrides: *dusty
     camera: {shot: push_in, from: [3, -30, 1.6], to: [3, -27, 1.7], look: [6, 10, 6], look_to: [6, 12, 4], lens: 24, fstop: 5}
     events:
-      - {type: flicker, target: tag:arc, start: 1.3, end: 3.7, rate: 6, strength: 4000}
+      - {type: flicker, target: tag:arc, start: 1.3, end: 3.7, rate: 2.5, strength: 1500}
       - {type: flash, at: 1.4, amount: 1.4}
     captions:
       - {kind: chapter, text: "12:00 PM", sub: "Total infrastructure failure", at: 0.1, until: 2.5}
@@ -189,7 +189,7 @@ scenes:
     lighting_overrides: *dusty
     camera: {shot: push_in, from: [-2.5, -14, 2.4], to: [-2.2, -11, 2.3], look: [1.0, 10, 0.2], look_to: [1.0, 12, 0.2], lens: 24, fstop: 4}
     events:
-      - {type: flicker, target: tag:arc, start: 0.2, end: 6.2, rate: 5, strength: 3000}
+      - {type: flicker, target: tag:arc, start: 0.2, end: 6.2, rate: 2.5, strength: 1200}
     hud: {hours: 12.2, sub: "WIND 300 MPH"}
     sfx: [{sound: radio, at: 2.4, gain_db: -8}, {sound: radio, at: 4.6, gain_db: -10}]
     music: {intensity: 0.8, wind: 1.0}
@@ -325,7 +325,7 @@ scenes:
     lighting_overrides: *dark
     camera: {shot: push_in, from: [-3, -15, 1.0], to: [-2.8, -13, 1.0], look: [4, 20, 2], look_to: [4, 22, 2], lens: 24, fstop: 4}
     events:
-      - {type: flicker, target: tag:arc, start: 0.5, end: 5.0, rate: 4, strength: 2500}
+      - {type: flicker, target: tag:arc, start: 0.5, end: 5.0, rate: 2.5, strength: 1000}
     hud: {hours: 26.6, sub: "WIND 300 MPH"}
     sfx: [{sound: radio, at: 2.6, gain_db: -8}]
     music: {intensity: 0.9, wind: 1.0}
