@@ -1,0 +1,645 @@
+# The Day The World Stopped Making Plastic: a hypothetical 24-hour pause in plastic production,
+# from the halt at 06:00 through clean-ups, rethinking and a night for nature, to the restart.
+# Coordinates: metres in each environment (studio/blender/environments_plastic.py). Production
+# lines run along X; shores and rivers lie toward +Y. hud values are hours of the day (project
+# hud_wrap: 24): 26 is 02:00 and 30 is 06:00 the next morning.
+x-dawn: &dawn {sun: 3.6, elevation: 8, azimuth: 120, colour: [1.0, 0.72, 0.48], zenith: [0.22, 0.40, 0.75], horizon: [0.98, 0.74, 0.55], ambient: 0.55, fog: 0.0004, fog_colour: [0.95, 0.82, 0.68], exposure: -0.05}
+x-morning: &morning {sun: 4.8, elevation: 30, azimuth: 150, colour: [1.0, 0.93, 0.82], zenith: [0.18, 0.40, 0.85], horizon: [0.66, 0.76, 0.90], ambient: 0.6, fog: 0.0004, fog_colour: [0.80, 0.86, 0.94], exposure: -0.25}
+x-noon: &noon {sun: 4.5, elevation: 68, azimuth: 160, colour: [1.0, 0.98, 0.94], zenith: [0.16, 0.42, 0.88], horizon: [0.72, 0.82, 0.90], ambient: 0.5, fog: 0.0005, fog_colour: [0.88, 0.90, 0.92], exposure: -0.5}
+x-evening: &evening {sun: 3.8, elevation: 12, azimuth: -150, colour: [1.0, 0.66, 0.40], zenith: [0.20, 0.30, 0.62], horizon: [0.95, 0.64, 0.42], ambient: 0.45, fog: 0.0006, fog_colour: [0.92, 0.76, 0.60], exposure: -0.1}
+x-night: &night {sun: 0.5, elevation: 40, azimuth: 120, colour: [0.62, 0.72, 1.0], zenith: [0.01, 0.016, 0.045], horizon: [0.05, 0.06, 0.11], ambient: 0.3, fog: 0.0004, fog_colour: [0.10, 0.12, 0.18], exposure: 1.4}
+x-sunrise: &sunrise {sun: 3.8, elevation: 6, azimuth: 120, colour: [1.0, 0.68, 0.42], zenith: [0.24, 0.42, 0.78], horizon: [0.98, 0.72, 0.52], ambient: 0.55, fog: 0.0005, fog_colour: [0.96, 0.80, 0.64], exposure: -0.05}
+x-hall: &hall {sun: 0.0, elevation: 40, azimuth: 0, colour: [1.0, 1.0, 1.0], zenith: [0.55, 0.62, 0.70], horizon: [0.60, 0.62, 0.64], ambient: 0.35, fog: 0.004, fog_colour: [0.80, 0.82, 0.84], exposure: -0.15}
+x-room: &room {sun: 0.0, elevation: 40, azimuth: 0, colour: [1.0, 1.0, 1.0], zenith: [0.60, 0.66, 0.74], horizon: [0.70, 0.70, 0.70], ambient: 0.35, fog: 0.0, exposure: -0.4}
+x-under: &under {sun: 3.0, elevation: 72, azimuth: 30, colour: [0.80, 0.95, 1.0], zenith: [0.10, 0.35, 0.50], horizon: [0.05, 0.20, 0.30], ambient: 0.7, fog: 0.0, exposure: 0.1}
+scenes:
+  # ----- 06:00 AM: THE GREAT PAUSE -----------------------------------------------------------------------
+  - id: s01_monday
+    duration: 5.76
+    environment: {type: plastic_plant, district: 3, birds: 0}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: aerial_establish, from: [-260, -340, 120], to: [-210, -280, 100], look: [20, 40, 25], look_to: [20, 40, 22], lens: 30, fstop: 8}
+    captions:
+      - {kind: title, text: "THE DAY THE WORLD STOPPED MAKING PLASTIC", at: 0.2, until: 2.9}
+      - {kind: chapter, text: "06:00 AM", sub: "The great pause", at: 3.0, until: 5.6}
+    hud: {hours: 6.0, show_at: 0.3, sub: "PLASTIC PRODUCTION: RUNNING"}
+    sfx: [{sound: swell, at: 0.1, gain_db: -8}]
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s02_instruction
+    duration: 3.83
+    environment: {type: plastic_factory, kind: control, people: 6, people_action: idle}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-1.6, -5.2, 1.85], to: [-1.2, -4.4, 1.8], look: [0, 5.8, 1.9], look_to: [0, 5.8, 1.9], lens: 24, fstop: 4}
+    captions:
+      - {kind: alert, text: "All plastic manufacturing: stop production.", at: 1.2, until: 3.8}
+    hud: {hours: 6.02, sub: "PLASTIC PRODUCTION: RUNNING"}
+    sfx: [{sound: machinery, at: 0.0, gain_db: -20}, {sound: alert, at: 1.2, gain_db: -4}]
+    music: {intensity: 0.45}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s03_stop
+    duration: 1.64
+    environment: {type: plastic_factory, kind: control, people: 6, people_action: [idle, point, react, idle, react, idle], alert_at: 0.1}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [0.4, -2.6, 1.7], to: [0.3, -2.0, 1.7], look: [0, 5.8, 2.3], look_to: [0, 5.8, 2.3], lens: 24, fstop: 4}
+    hud: {hours: 6.03, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: alarm, at: 0.1, gain_db: -8}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s04_bottles
+    duration: 1.61
+    environment: {type: plastic_factory, kind: bottles, stop_at: 0.35, people: 6}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-9.0, -6.05, 1.3], to: [-9.5, -6.0, 1.3], look: [-16, -5, 1.05], look_to: [-16, -5, 1.05], lens: 26, fstop: 3.5}
+    hud: {hours: 6.04, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: machinery, at: 0.0, gain_db: -10}, {sound: powerdown, at: 0.3, gain_db: -6}]
+    music: {intensity: 0.3}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s05_packaging
+    duration: 1.46
+    environment: {type: plastic_factory, kind: film, stop_at: 0.3, people: 4}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-3.5, -7.5, 1.6], to: [-3.2, -7.0, 1.7], look: [8, 3, 6.5], look_to: [8, 3, 6.5], lens: 24, fstop: 4}
+    hud: {hours: 6.05, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: powerdown, at: 0.25, gain_db: -7}]
+    music: {intensity: 0.28}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s06_bags
+    duration: 1.35
+    environment: {type: plastic_factory, kind: bags, stop_at: 0.3, people: 4}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [4.6, -8.2, 1.6], to: [4.3, -8.0, 1.6], look: [1.5, -6.0, 1.1], look_to: [1.5, -6.0, 1.1], lens: 24, fstop: 3.5}
+    hud: {hours: 6.06, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: powerdown, at: 0.25, gain_db: -7}]
+    music: {intensity: 0.26}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s07_products
+    duration: 1.61
+    environment: {type: plastic_factory, kind: products, stop_at: 0.35, people: 4}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-3.0, -13.0, 2.4], to: [-3.4, -12.6, 2.4], look: [-8.0, -8.0, 1.2], look_to: [-8.0, -8.0, 1.2], lens: 24, fstop: 4}
+    hud: {hours: 6.07, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: powerdown, at: 0.3, gain_db: -7}]
+    music: {intensity: 0.24}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s08_first_time
+    duration: 4.04
+    environment: {type: plastic_plant, district: 5, stop_at: 0.4}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: aerial_establish, from: [-420, -640, 260], to: [-380, -580, 240], look: [0, 60, 20], look_to: [0, 60, 20], lens: 30, fstop: 8}
+    hud: {hours: 6.1, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: swell, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.22}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s09_silent
+    duration: 2.44
+    environment: {type: plastic_factory, kind: bottles, stopped: true, lights_off: [0.2, 1.6], people: 10, people_action: look_around, dust: true}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: static, from: [-29, -1.0, 4.0], look: [10, 0, 2.0], lens: 24, fstop: 5}
+    hud: {hours: 6.2, sub: "PLASTIC PRODUCTION: STOPPED"}
+    sfx: [{sound: thud, at: 0.3, gain_db: -10}, {sound: thud, at: 1.1, gain_db: -12}]
+    music: {intensity: 0.08}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s10_remarkable
+    duration: 2.18
+    environment: {type: plastic_plant, district: 1, stopped: true, birds: 14}
+    lighting: golden_hour
+    lighting_overrides: *dawn
+    camera: {shot: push_in, from: [-70, -104, 5], to: [-62, -98, 6], look: [60, 60, 30], look_to: [60, 60, 34], lens: 26, fstop: 8}
+    hud: {hours: 6.3, hours_end: 6.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: birds, at: 0.2, gain_db: -8}]
+    music: {intensity: 0.3}
+    transition: {type: dissolve, duration: 0.4}
+
+  # ----- 08:00 AM: THE WORLD NOTICES ---------------------------------------------------------------------
+  - id: s11_spreading
+    duration: 3.42
+    environment: {type: clean_up, kind: square, screen: "PLASTIC PRODUCTION PAUSED WORLDWIDE", people: 18}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: push_in, from: [0, -2, 1.7], to: [0, 0, 1.8], look: [0, 26, 9], look_to: [0, 26, 9], lens: 26, fstop: 5}
+    captions:
+      - {kind: chapter, text: "08:00 AM", sub: "The world notices", at: 0.1, until: 2.5}
+    hud: {hours: 8.0, show_at: 2.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.38}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s12_lines
+    duration: 2.44
+    environment: {type: plastic_factory, kind: products, stopped: true, people: 5, people_action: walk}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-21, 0.5, 1.7], to: [-20, 0.3, 1.7], look: [0, -5, 1.2], look_to: [0, -5, 1.2], lens: 26, fstop: 4}
+    hud: {hours: 8.2, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s13_shipping
+    duration: 2.08
+    environment: {type: port}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: aerial_establish, from: [-170, -140, 55], to: [-150, -120, 50], look: [0, -10, 8], look_to: [0, -10, 8], lens: 30, fstop: 8}
+    hud: {hours: 8.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: gulls, at: 0.2, gain_db: -14}]
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s14_supermarket
+    duration: 2.33
+    environment: {type: plastic_interior, kind: supermarket, people: 6}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [6.2, 3.2, 1.75], to: [6.7, 3.8, 1.7], look: [11.5, 8.0, 1.0], look_to: [11.5, 8.0, 1.0], lens: 26, fstop: 3.5}
+    hud: {hours: 9.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s15_hospital
+    duration: 5.66
+    environment: {type: plastic_interior, kind: hospital_store, people: 3}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-3.9, -3.5, 1.8], to: [-3.4, -3.0, 1.75], look: [3.0, 1.5, 1.2], look_to: [3.0, 1.5, 1.2], lens: 24, fstop: 3.5}
+    hud: {hours: 9.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s16_workers
+    duration: 3.56
+    environment: {type: plastic_factory, kind: bottles, stopped: true, people: 14, gathered: [0, 0]}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-6.5, -4.0, 1.9], to: [-5.8, -3.4, 1.85], look: [0, 0.5, 1.3], look_to: [0, 0.5, 1.3], lens: 24, fstop: 4}
+    hud: {hours: 10.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -18}]
+    music: {intensity: 0.42}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s17_maintenance
+    duration: 6.28
+    environment: {type: plastic_factory, kind: recycling, stopped: true, maintenance: true, people: 10, people_action: [crouch, idle, point, crouch]}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-25, -10.5, 2.6], to: [-24, -9.8, 2.5], look: [-10, -3, 1.2], look_to: [-9, -3, 1.2], lens: 24, fstop: 4}
+    hud: {hours: 10.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: drone_buzz, at: 0.3, gain_db: -18}]
+    music: {intensity: 0.45}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s18_hasnt
+    duration: 1.89
+    environment: {type: plastic_factory, kind: store, stopped: true}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-27, 0, 1.7], to: [-25, 0, 1.8], look: [20, 0, 3.0], look_to: [20, 0, 3.0], lens: 26, fstop: 5}
+    hud: {hours: 11.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s19_stopped_adding
+    duration: 2.04
+    environment: {type: plastic_factory, kind: bottles, stop_at: 0.5}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: static, from: [12.6, -6.6, 1.2], look: [15.5, -5.0, 1.0], lens: 30, fstop: 2.8}
+    hud: {hours: 11.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: powerdown, at: 0.45, gain_db: -10}]
+    music: {intensity: 0.3}
+    transition: {type: dissolve, duration: 0.4}
+
+  # ----- 12:00 PM: A DIFFERENT KIND OF MOVEMENT ----------------------------------------------------------
+  - id: s20_midday
+    duration: 3.69
+    environment: {type: clean_up, kind: sand_beach, litter: 450, volunteers: 18, action: walk, area: [-6, -24, 26, 14]}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: push_in, from: [-16, -38, 2.6], to: [-14, -34, 2.6], look: [6, 0, 0.5], look_to: [6, 0, 0.5], lens: 26, fstop: 6}
+    captions:
+      - {kind: chapter, text: "12:00 PM", sub: "A different kind of movement", at: 0.1, until: 2.5}
+    hud: {hours: 12.0, show_at: 2.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: surf, at: 0.0, gain_db: -12}, {sound: gulls, at: 0.5, gain_db: -14}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s21_communities
+    duration: 3.20
+    environment: {type: clean_up, kind: sand_beach, litter: 900, volunteers: 30, piles: 3, birds: 8, area: [0, -12, 60, 12]}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: aerial_establish, from: [-6, -50, 18], to: [6, -48, 17], look: [0, -8, 0], look_to: [4, -8, 0], lens: 26, fstop: 8}
+    hud: {hours: 12.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: surf, at: 0.0, gain_db: -14}, {sound: crowd, at: 0.5, gain_db: -16}]
+    music: {intensity: 0.52}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s22_drive
+    duration: 3.01
+    environment: {type: clean_up, kind: street, volunteers: 14, action: [queue, carry, idle, gather], area: [-6, 2, 14, 4]}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: push_in, from: [-18, -5, 2.2], to: [-16, -4, 2.2], look: [-2, 2, 1.2], look_to: [-2, 2, 1.2], lens: 26, fstop: 5}
+    hud: {hours: 12.8, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -10}]
+    music: {intensity: 0.52}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s23_volunteers
+    duration: 3.84
+    environment: {type: clean_up, kind: sand_beach, litter: 600, volunteers: 10, van: true, crew_at: [-38, -12]}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: push_in, from: [-31, -19, 1.8], to: [-31.5, -18, 1.75], look: [-39, -13, 1.1], look_to: [-39, -13, 1.1], lens: 26, fstop: 3.5}
+    hud: {hours: 13.3, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: surf, at: 0.0, gain_db: -16}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s24_indonesia
+    duration: 3.04
+    environment: {type: waterway, plastic: 7000, boats: 3, volunteers: 6, cleared: [0.5, 3.0, 0.25]}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: push_in, from: [-34, -15.5, 2.4], to: [-31, -14.5, 2.3], look: [5, 3, -0.4], look_to: [5, 3, -0.4], lens: 26, fstop: 6}
+    hud: {hours: 14.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: birds, at: 0.0, gain_db: -14}, {sound: crowd, at: 0.4, gain_db: -18}]
+    music: {intensity: 0.55}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s25_india
+    duration: 3.82
+    environment: {type: drain, volunteers: 14, truck: true, cleared: [0.3, 3.6, 0.3]}
+    lighting: harsh_noon
+    lighting_overrides: *noon
+    camera: {shot: push_in, from: [-5.6, -6, 2.3], to: [-5.4, -4, 2.2], look: [0, 30, -1.8], look_to: [0, 30, -1.8], lens: 26, fstop: 5}
+    hud: {hours: 15.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.55}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s26_uk
+    duration: 3.40
+    environment: {type: clean_up, kind: uk_beach, litter: 900, volunteers: 22, piles: 2, birds: 6, area: [-40, -8, 90, 14]}
+    lighting: overcast
+    lighting_overrides: {sun: 2.8, elevation: 40, azimuth: 150, colour: [0.95, 0.95, 1.0], zenith: [0.40, 0.48, 0.60], horizon: [0.75, 0.78, 0.80], ambient: 0.8, fog: 0.0012, fog_colour: [0.80, 0.83, 0.86], exposure: -0.25}
+    camera: {shot: push_in, from: [-6, -12, 2.4], to: [-8, -11, 2.4], look: [-110, 20, 10], look_to: [-112, 20, 10], lens: 26, fstop: 6}
+    hud: {hours: 16.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -10}, {sound: surf, at: 0.0, gain_db: -14}]
+    music: {intensity: 0.55}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s27_focus
+    duration: 4.85
+    environment: {type: clean_up, kind: river, volunteers: 10, piles: 2, area: [0, 1, 40, 5]}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: push_in, from: [-15, -7, 2.4], to: [-13, -6, 2.4], look: [4, 8, 0], look_to: [4, 8, 0], lens: 26, fstop: 5}
+    hud: {hours: 17.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: birds, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.5}
+    transition: {type: dissolve, duration: 0.4}
+
+  # ----- 06:00 PM: THE INDUSTRY RECONSIDERS --------------------------------------------------------------
+  - id: s28_announce
+    duration: 4.58
+    environment: {type: plastic_interior, kind: press, people: 20}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [2.5, -6.5, 2.0], to: [2.0, -5.5, 1.95], look: [0, 5.0, 1.8], look_to: [0, 5.0, 1.8], lens: 28, fstop: 4}
+    captions:
+      - {kind: chapter, text: "06:00 PM", sub: "The industry reconsiders", at: 0.1, until: 2.5}
+    hud: {hours: 18.0, show_at: 2.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: tick, at: 0.6, gain_db: -6}, {sound: tick, at: 1.5, gain_db: -8}, {sound: tick, at: 2.6, gain_db: -6}, {sound: tick, at: 3.7, gain_db: -8}]
+    music: {intensity: 0.48}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s29_reduce
+    duration: 2.58
+    environment: {type: plastic_interior, kind: supermarket, loose: true, people: 5}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-6.4, 6.0, 1.7], to: [-6.9, 6.4, 1.65], look: [-11, 9, 0.9], look_to: [-11, 9, 0.9], lens: 26, fstop: 3.5}
+    hud: {hours: 18.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s30_invest
+    duration: 5.18
+    environment: {type: plastic_factory, kind: refill, people: 6}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-13.5, -8.4, 1.8], to: [-14.5, -8.8, 1.75], look: [-22, -11.5, 0.8], look_to: [-22, -11.5, 0.8], lens: 24, fstop: 4}
+    hud: {hours: 19.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: machinery, at: 0.0, gain_db: -16}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s31_refill
+    duration: 2.33
+    environment: {type: plastic_interior, kind: refill, people: 5}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [0.6, -3.9, 1.6], to: [0.3, -3.2, 1.6], look: [-1.5, 4.5, 1.6], look_to: [-1.5, 4.5, 1.6], lens: 24, fstop: 3.5}
+    hud: {hours: 19.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s32_restaurants
+    duration: 2.40
+    environment: {type: plastic_interior, kind: restaurant, people: 5}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-3.2, -3.6, 1.7], to: [-2.8, -3.0, 1.65], look: [0, 1.6, 1.15], look_to: [0, 1.6, 1.15], lens: 24, fstop: 3.5}
+    hud: {hours: 20.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s33_scientists
+    duration: 4.35
+    environment: {type: plastic_interior, kind: lab, people: 4}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-5.2, -4.2, 1.9], to: [-4.6, -3.6, 1.85], look: [1.5, 2.5, 1.2], look_to: [1.5, 2.5, 1.2], lens: 24, fstop: 3.5}
+    hud: {hours: 21.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.52}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s34_realisation
+    duration: 1.94
+    environment: {type: plastic_interior, kind: studio, people: 4}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [1.6, -1.8, 1.55], to: [1.3, -1.4, 1.5], look: [0, 0.6, 1.0], look_to: [0, 0.6, 1.0], lens: 30, fstop: 2.8}
+    hud: {hours: 22.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.35}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s35_replace
+    duration: 2.41
+    environment: {type: plastic_interior, kind: hospital_store, people: 2}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-1.2, -3.4, 1.7], to: [-0.6, -3.0, 1.7], look: [4.4, 1.0, 1.3], look_to: [4.4, 1.0, 1.3], lens: 26, fstop: 3.5}
+    hud: {hours: 22.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.42}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s36_unnecessary
+    duration: 3.56
+    environment: {type: plastic_interior, kind: supermarket, people: 3}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-10.4, 5.4, 1.5], to: [-10.8, 6.0, 1.45], look: [-12, 8.6, 0.95], look_to: [-12, 8.6, 0.95], lens: 28, fstop: 3}
+    hud: {hours: 23.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.42}
+    transition: {type: dissolve, duration: 0.4}
+
+  # ----- 02:00 AM: NATURE GETS A CHANCE ------------------------------------------------------------------
+  - id: s37_sleep
+    duration: 4.21
+    environment: {type: plastic_plant, district: 3, night: true, stopped: true}
+    lighting: night_emergency
+    lighting_overrides: *night
+    camera: {shot: aerial_establish, from: [-300, -420, 150], to: [-260, -370, 135], look: [0, 40, 10], look_to: [0, 40, 10], lens: 30, fstop: 8}
+    captions:
+      - {kind: chapter, text: "02:00 AM", sub: "Nature gets a chance", at: 0.1, until: 2.5}
+    hud: {hours: 26.0, show_at: 2.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.22}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s38_pipeline
+    duration: 3.20
+    environment: {type: plastic_factory, kind: bottles, stopped: true, night: true, lamps: 0.3}
+    lighting: interior_day
+    lighting_overrides: {sun: 0.0, elevation: 40, azimuth: 0, colour: [1.0, 1.0, 1.0], zenith: [0.03, 0.04, 0.08], horizon: [0.04, 0.05, 0.08], ambient: 0.2, fog: 0.003, fog_colour: [0.20, 0.24, 0.32], exposure: 0.9}
+    camera: {shot: push_in, from: [-12, -6.7, 1.35], to: [-11, -6.6, 1.35], look: [10, -5, 1.0], look_to: [10, -5, 1.0], lens: 26, fstop: 4}
+    hud: {hours: 26.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.22}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s39_still_there
+    duration: 2.46
+    environment: {type: ocean, night: true, debris: 900}
+    lighting: night_emergency
+    lighting_overrides: {<<: *night, exposure: 1.8}
+    camera: {shot: push_in, from: [0, -12, 2.2], to: [0, -9, 2.0], look: [0, 40, 0], look_to: [0, 40, 0], lens: 26, fstop: 6}
+    hud: {hours: 27.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: surf, at: 0.0, gain_db: -18}]
+    music: {intensity: 0.24}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s40_ocean
+    duration: 2.34
+    environment: {type: ocean, kind: underwater, debris: 50, turtle: false}
+    lighting: soft_daylight
+    lighting_overrides: *under
+    camera: {shot: push_in, from: [0, 0, -4], to: [0, 1.5, -4.2], look: [0, 20, -3], look_to: [0, 20, -3.2], lens: 24, fstop: 5}
+    hud: {hours: 27.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -18}]
+    music: {intensity: 0.26}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s41_rivers
+    duration: 1.59
+    environment: {type: waterway, plastic: 2600, boats: 0, night: true}
+    lighting: night_emergency
+    lighting_overrides: *night
+    camera: {shot: push_in, from: [70, -12, 2.6], to: [69, -10, 2.5], look: [10, 0, -0.5], look_to: [10, 0, -0.5], lens: 26, fstop: 6}
+    hud: {hours: 28.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.26}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s42_wildlife
+    duration: 2.01
+    environment: {type: ocean, kind: underwater, debris: 30}
+    lighting: soft_daylight
+    lighting_overrides: *under
+    camera: {shot: push_in, from: [-4, 7, -5.4], to: [-3.6, 8, -5.3], look: [-6, 15, -5], look_to: [-5, 16, -5], lens: 30, fstop: 4}
+    hud: {hours: 28.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -18}]
+    music: {intensity: 0.28}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s43_conservation
+    duration: 4.41
+    environment: {type: ocean, night: true, debris: 500, boat: true, net_at: 0.8}
+    lighting: night_emergency
+    lighting_overrides: {<<: *night, exposure: 1.7}
+    camera: {shot: push_in, from: [-2, 10, 3.2], to: [0, 12, 3.0], look: [8, 22, 1.5], look_to: [8, 22, 1.5], lens: 26, fstop: 5}
+    hud: {hours: 29.0, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -14}]
+    music: {intensity: 0.3}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s44_question
+    duration: 4.20
+    environment: {type: plastic_interior, kind: kitchen}
+    lighting: night_emergency
+    lighting_overrides: {sun: 0.0, elevation: 40, azimuth: 0, colour: [1.0, 1.0, 1.0], zenith: [0.03, 0.04, 0.08], horizon: [0.04, 0.05, 0.08], ambient: 0.15, fog: 0.0, exposure: 0.4}
+    camera: {shot: push_in, from: [-1.7, -1.7, 1.7], to: [-1.4, -1.3, 1.65], look: [0.2, 1.7, 1.3], look_to: [0.2, 1.7, 1.3], lens: 24, fstop: 3}
+    hud: {hours: 29.5, sub: "PLASTIC PRODUCTION: PAUSED"}
+    music: {intensity: 0.28}
+    transition: {type: dissolve, duration: 0.4}
+
+  # ----- 06:00 AM: 24 HOURS LATER ------------------------------------------------------------------------
+  - id: s45_day
+    duration: 2.29
+    environment: {type: plastic_plant, district: 3, stopped: true, birds: 12}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: aerial_establish, from: [220, -380, 140], to: [190, -330, 120], look: [0, 40, 20], look_to: [0, 40, 20], lens: 30, fstop: 8}
+    captions:
+      - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 2.4}
+    hud: {hours: 30.0, show_at: 2.4, sub: "PLASTIC PRODUCTION: PAUSED"}
+    sfx: [{sound: birds, at: 0.0, gain_db: -10}, {sound: swell, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.4}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s46_restart
+    duration: 2.52
+    environment: {type: plastic_factory, kind: bottles, lights_on: [0.0, 0.9], dark: true, restart_at: 1.0, people: 6}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: static, from: [-29, -1.0, 4.0], look: [10, 0, 2.0], lens: 24, fstop: 5}
+    hud: {hours: 30.02, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: riser, at: 0.0, gain_db: -12}, {sound: machinery, at: 1.0, gain_db: -12}]
+    music: {intensity: 0.45}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s47_changed
+    duration: 1.69
+    environment: {type: plastic_factory, kind: recycling, people: 12}
+    lighting: interior_day
+    lighting_overrides: *hall
+    camera: {shot: push_in, from: [-6.5, -2.2, 1.75], to: [-6.0, -2.0, 1.75], look: [4, 5, 1.0], look_to: [4, 5, 1.0], lens: 24, fstop: 4}
+    hud: {hours: 30.05, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: machinery, at: 0.0, gain_db: -16}]
+    music: {intensity: 0.48}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s48_governments
+    duration: 2.84
+    environment: {type: plastic_interior, kind: council, people: 11}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [0, -6.4, 2.6], to: [0, -5.6, 2.5], look: [0, 4.0, 1.6], look_to: [0, 4.0, 1.6], lens: 24, fstop: 4}
+    hud: {hours: 30.1, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s49_companies
+    duration: 1.90
+    environment: {type: plastic_interior, kind: studio, people: 4}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [-3.6, -3.6, 1.95], to: [-3.1, -3.1, 1.9], look: [0.5, 1.5, 1.1], look_to: [0.5, 1.5, 1.1], lens: 24, fstop: 3.5}
+    hud: {hours: 30.15, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    music: {intensity: 0.52}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s50_communities
+    duration: 2.31
+    environment: {type: clean_up, kind: square, placards: ["LESS PLASTIC", "REFILL NOT LANDFILL", "BETTER ALTERNATIVES", "REUSE IT", "KEEP IT GOING"], crowd: 26}
+    lighting: soft_daylight
+    lighting_overrides: *morning
+    camera: {shot: push_in, from: [0, -8, 1.7], to: [0, -7, 1.7], look: [0, 1, 2.0], look_to: [0, 1, 2.0], lens: 24, fstop: 5}
+    hud: {hours: 30.2, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -6}]
+    music: {intensity: 0.56}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s51_not_saved
+    duration: 2.46
+    environment: {type: ocean, debris: 1500, birds: 6}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: push_in, from: [0, -10, 3.0], to: [0, -8, 2.8], look: [0, 50, 0], look_to: [0, 50, 0], lens: 26, fstop: 6}
+    hud: {hours: 30.25, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: gulls, at: 0.0, gain_db: -12}, {sound: surf, at: 0.0, gain_db: -16}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s52_proved
+    duration: 2.24
+    environment: {type: clean_up, kind: uk_beach, litter: 200, volunteers: 16, piles: 4, area: [-10, -8, 70, 12]}
+    lighting: golden_hour
+    lighting_overrides: {<<: *sunrise, azimuth: -20, sun: 4.4}
+    camera: {shot: push_in, from: [4, -20, 1.8], to: [2, -18, 1.8], look: [-14, -6, 0.8], look_to: [-14, -6, 0.8], lens: 26, fstop: 6}
+    hud: {hours: 30.3, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: surf, at: 0.0, gain_db: -14}, {sound: gulls, at: 0.4, gain_db: -16}]
+    music: {intensity: 0.56}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s53_together
+    duration: 1.25
+    environment: {type: clean_up, kind: river, chain: [-10, -5, 2, 4], piles: 1}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: static, from: [-2.5, -9, 1.8], look: [-3, 0, 1.0], lens: 26, fstop: 4}
+    hud: {hours: 30.35, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s54_change
+    duration: 4.33
+    environment: {type: plastic_interior, kind: refill, people: 5}
+    lighting: interior_day
+    lighting_overrides: *room
+    camera: {shot: push_in, from: [3.2, -3.6, 1.5], to: [2.8, -3.0, 1.5], look: [-2.5, 4.4, 1.5], look_to: [-2.5, 4.4, 1.5], lens: 24, fstop: 3.5}
+    hud: {hours: 30.4, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s55_one_day
+    duration: 3.54
+    environment: {type: plastic_plant, district: 5, restart_at: 0.6, birds: 10}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: aerial_establish, from: [-420, -640, 260], to: [-370, -570, 230], look: [0, 60, 20], look_to: [0, 60, 20], lens: 30, fstop: 8}
+    hud: {hours: 30.45, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: swell, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.65}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s56_cleaner
+    duration: 2.50
+    environment: {type: clean_up, kind: sand_beach, volunteers: 6, action: walk, turtles: 10, nest: [2, -8]}
+    lighting: golden_hour
+    lighting_overrides: {<<: *sunrise, azimuth: -20, sun: 4.4}
+    camera: {shot: push_in, from: [1.0, -11.0, 0.5], to: [1.2, -10.2, 0.45], look: [2.5, -2, 0.1], look_to: [2.5, -2, 0.1], lens: 30, fstop: 3.5}
+    hud: {hours: 30.5, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: surf, at: 0.0, gain_db: -12}, {sound: gulls, at: 0.6, gain_db: -18}]
+    music: {intensity: 0.7}
+    transition: {type: dissolve, duration: 0.4}
+
+  - id: s57_question
+    duration: 6.44
+    environment: {type: ocean, kind: underwater, debris: 0}
+    lighting: soft_daylight
+    lighting_overrides: *under
+    camera: {shot: push_in, from: [-1, 5, -7.5], to: [-1.5, 7, -6.0], look: [-6, 15, -3.5], look_to: [-6, 18, -1.5], lens: 26, fstop: 5}
+    captions:
+      - {kind: title, text: "WHAT IF WE DIDN'T STOP AFTER JUST 24 HOURS?", at: 3.6, until: 6.4}
+    hud: {hours: 30.55, hours_end: 30.6, sub: "PLASTIC PRODUCTION: RESTARTED"}
+    sfx: [{sound: swell, at: 0.2, gain_db: -10}]
+    music: {intensity: 0.7}
+    transition: {type: cut, duration: 0.0}

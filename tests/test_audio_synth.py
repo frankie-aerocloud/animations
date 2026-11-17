@@ -51,6 +51,16 @@ class AudioSynthTests(unittest.TestCase):
         self.assertNotEqual(plain, score({"intensity": 0.5, "wind": 0.8}))
         self.assertEqual(set(score({"intensity": 0.5, "wind": 0.8, "mute": True})), {0})
 
+    def test_hopeful_style_is_its_own_score(self):
+        scenes = [{"duration": 1.5, "music": {"intensity": 0.5}}, {"duration": 1.5, "music": {"intensity": 0.7}}]
+        with tempfile.TemporaryDirectory() as temp:
+            scores = {}
+            for style in ("tense", "hopeful"):
+                with wave.open(str(render_score(scenes, Path(temp) / f"{style}.wav", style=style)), "rb") as handle:
+                    scores[style] = handle.readframes(handle.getnframes())
+        self.assertEqual(len(scores["tense"]), len(scores["hopeful"]))
+        self.assertNotEqual(scores["tense"], scores["hopeful"])
+
     def test_noise_w_zero_gives_a_line_the_same_length_every_time(self):
         voice = narration._voice_path({})
         if not narration.piper_available(voice):
