@@ -83,6 +83,10 @@ class ProjectValidationTests(unittest.TestCase):
         self.project.scenes[0]["music"] = {"intensity": 0.5, "rain": 1.5}
         self.assertProblem("music.rain")
 
+    def test_wind_level_must_be_between_zero_and_one(self):
+        self.project.scenes[0]["music"] = {"intensity": 0.5, "wind": -0.2}
+        self.assertProblem("music.wind")
+
     def test_unknown_sfx(self):
         self.project.scenes[0]["sfx"].append({"sound": "explosion", "at": 1})
         self.assertProblem("sfx sound")

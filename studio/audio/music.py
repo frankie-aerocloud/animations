@@ -17,15 +17,20 @@ ROOTS = (55.0, 87.31, 98.0, 82.41, 73.42, 87.31, 82.41, 65.41, 55.0, 98.0, 82.41
 def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RATE, seed: int = 1, style: str = "tense") -> Path:
     """Write a mono WAV covering the whole timeline. style 'quirky' adds a staccato plucked arpeggio;
     'epic' adds a string ostinato, brass swells at each scene and timpani hits. A scene's
-    `music.rain` (0-1) adds a rain bed that crossfades between scenes; it defaults to 0."""
+    `music.rain` (0-1) adds a rain bed and `music.wind` (0-1) a howling wind bed; both crossfade
+    between scenes and default to 0. `music.mute` silences the whole score for that scene."""
     plan = []
     rain_levels = []
+    wind_levels = []
+    mute_levels = []
     cursor = 0.0
     for index, scene in enumerate(scenes):
         duration = float(scene.get("duration") or 0.0)
         intensity = float((scene.get("music") or {}).get("intensity", 0.4))
         plan.append((cursor, cursor + duration, intensity, ROOTS[index % len(ROOTS)]))
         rain_levels.append(float((scene.get("music") or {}).get("rain", 0.0)))
+        wind_levels.append(float((scene.get("music") or {}).get("wind", 0.0)))
+        mute_levels.append(0.0 if (scene.get("music") or {}).get("mute") else 1.0)
         cursor += duration
     total = cursor
     n = int(total * sample_rate)
@@ -36,7 +41,11 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
     pulse_phase = 0.0
     last_beat = -10.0
     noise_state = 0.0
-    rain_rng = random.Random(seed + 101)  # separate stream: films without rain render exactly as before
+    rain_rng = random.Random(seed + 101)  # separate streams: films without rain or wind render exactly as before
+    wind_rng = random.Random(seed + 303)
+    howl = [0.0, 0.0, 0.0, 0.0]
+    roar = [0.0, 0.0]
+    rattle = 0.0
     hiss = [0.0, 0.0]
     drop = 0.0
     scene_index = 0
@@ -117,7 +126,31 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
                 drop = rain_rng.uniform(0.4, 1.0)
             drop *= 0.93
             rain = ((hiss[0] - hiss[1]) * 0.55 + drop * rain_rng.uniform(-1.0, 1.0) * 0.5) * level * 0.55
-        value = pad + pulse + shimmer + riser + pluck + epic + rain
+        # wind: a low roar under two resonant howls whose pitch and strength gust, plus debris rattle
+        gale = 0.0
+        level = wind_levels[scene_index]
+        if scene_index and t - start < 0.8:
+            level = wind_levels[scene_index - 1] + (level - wind_levels[scene_index - 1]) * (t - start) / 0.8
+        if level > 0.0:
+            white = wind_rng.uniform(-1.0, 1.0)
+            roar[0] += 0.02 * (white - roar[0])
+            roar[1] += 0.02 * (roar[0] - roar[1])
+            gust = 0.65 + 0.35 * math.sin(math.tau * 0.23 * t) * math.sin(math.tau * 0.071 * t + 1.3)
+            for k, (base, swing, damping) in enumerate(((420.0, 180.0, 0.06), (760.0, 260.0, 0.05))):
+                f = base + swing * math.sin(math.tau * (0.11 + 0.07 * k) * t + k)
+                tune = 2.0 * math.sin(math.pi * f / sample_rate)
+                low, band = howl[2 * k], howl[2 * k + 1]
+                low += tune * band
+                band += tune * (white - low - damping * band)
+                howl[2 * k], howl[2 * k + 1] = low, band
+            if wind_rng.random() < 0.002 * level:
+                rattle = wind_rng.uniform(0.3, 0.9)
+            rattle *= 0.97
+            gale = (roar[1] * 9.0 + (howl[1] * 0.10 + howl[3] * 0.07) * gust + rattle * wind_rng.uniform(-1.0, 1.0) * 0.35) * level * 0.5
+        mute = mute_levels[scene_index]
+        if scene_index and t - start < 0.8:
+            mute = mute_levels[scene_index - 1] + (mute - mute_levels[scene_index - 1]) * (t - start) / 0.8
+        value = (pad + pulse + shimmer + riser + pluck + epic + rain + gale) * mute
         fade = min(1.0, t / 1.5, max(0.0, (total - t) / 3.0))
         samples.append(int(max(-1.0, min(1.0, value * fade)) * 32767))
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -3,7 +3,7 @@ import unittest
 import wave
 from pathlib import Path
 
-from studio.audio import sfx
+from studio.audio import narration, sfx
 from studio.audio.music import render_score
 
 
@@ -38,6 +38,31 @@ class AudioSynthTests(unittest.TestCase):
         # films without rain render byte for byte as before; a rain level changes the score
         self.assertEqual(score(None), score(0.0))
         self.assertNotEqual(score(None), score(0.8))
+
+    def test_wind_bed_is_opt_in_and_mute_silences_the_score(self):
+        def score(music):
+            with tempfile.TemporaryDirectory() as temp:
+                path = render_score([{"duration": 0.5, "music": music}], Path(temp) / "score.wav", sample_rate=8000)
+                with wave.open(str(path), "rb") as handle:
+                    return handle.readframes(handle.getnframes())
+
+        plain = score({"intensity": 0.5})
+        self.assertEqual(plain, score({"intensity": 0.5, "wind": 0.0, "mute": False}))
+        self.assertNotEqual(plain, score({"intensity": 0.5, "wind": 0.8}))
+        self.assertEqual(set(score({"intensity": 0.5, "wind": 0.8, "mute": True})), {0})
+
+    def test_noise_w_zero_gives_a_line_the_same_length_every_time(self):
+        voice = narration._voice_path({})
+        if not narration.piper_available(voice):
+            self.skipTest("Piper or its voice is not installed")
+        with tempfile.TemporaryDirectory() as temp:
+            lengths = []
+            for k in range(2):
+                path = Path(temp) / f"{k}.wav"
+                narration._synthesise_piper("And the wind isn't slowing down.", voice, {"noise_w": 0.0}, path)
+                lengths.append(narration.audio_duration(path))
+        self.assertGreater(lengths[0], 1.0)
+        self.assertEqual(lengths[0], lengths[1])
 
 
 if __name__ == "__main__":
