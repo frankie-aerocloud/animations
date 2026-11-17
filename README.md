@@ -163,7 +163,8 @@ A project is three YAML files plus optional audio:
   (and `lighting_overrides`), `camera` (shot behaviour and coordinates), `actors` (single or crowds
   with `count`/`area`), `events` (water levels, visibility, movement, spin, flicker, flash, scale,
   depletion, sun), `captions`, `hud` (elapsed-time clock keys), `sfx` cues, `music` (`intensity`
-  and an optional `rain` level) and the outgoing `transition`.
+  and an optional `rain` level) and the outgoing `transition` (`cut`, the default, joins the
+  shots frame-accurately with no blend; the others blend over their `duration`).
 - `script.yaml`: narration lines anchored to a scene and an offset; subtitles are generated from them
   and timed against the rendered narration.
 

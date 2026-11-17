@@ -28,6 +28,10 @@ def encode_clip(frames_dir: Path, fps: int, frames: int, out: Path, crf: int = 1
     return out
 
 
+def _is_cut(scene: dict[str, Any]) -> bool:
+    return str((scene.get("transition") or {}).get("type", "cut")) == "cut"
+
+
 def assemble(clips: list[Path], scenes: list[dict[str, Any]], overlay_dir: Path | None, audio: Path | None, srt: Path | None, out: Path, fps: int, total: float, encode: dict[str, Any]) -> Path:
     """Stitch clips with per-scene transitions, composite the overlay, mux audio and a soft subtitle track."""
     if len(clips) != len(scenes) or not clips:
@@ -35,16 +39,25 @@ def assemble(clips: list[Path], scenes: list[dict[str, Any]], overlay_dir: Path 
     cmd = [_ffmpeg(), "-y", "-v", "error"]
     for clip in clips:
         cmd += ["-i", str(clip)]
-    filters = [f"[{i}:v]fps={fps},format=yuv420p,setpts=PTS-STARTPTS[v{i}]" for i in range(len(clips))]
+    # Each scene starts on the frame nearest its timeline start, so narration and captions stay in
+    # sync. A hard cut joins clips end to end: the outgoing clip is trimmed to its own length and
+    # its handle frames are dropped (crossfading them made a ghosted double-exposure frame at every
+    # cut). Other transitions blend the handle frames with xfade.
+    starts = [round(float(scene["start"]) * fps) for scene in scenes]
+    filters = []
+    for i, scene in enumerate(scenes):
+        trim = f",trim=end_frame={starts[i + 1] - starts[i]}" if i + 1 < len(scenes) and _is_cut(scene) else ""
+        filters.append(f"[{i}:v]fps={fps},format=yuv420p{trim},setpts=PTS-STARTPTS,settb=1/{fps}[v{i}]")
     previous = "v0"
-    offset = 0.0
     for i in range(1, len(clips)):
         scene = scenes[i - 1]
-        transition = scene.get("transition") or {}
-        kind = catalogue.TRANSITIONS[str(transition.get("type", "cut"))]
-        duration = int(scene["handle_frames"]) / fps
-        offset += float(scene["duration"])
-        filters.append(f"[{previous}][v{i}]xfade=transition={kind}:duration={duration:.4f}:offset={offset:.4f}[x{i}]")
+        if _is_cut(scene):
+            filters.append(f"[{previous}][v{i}]concat=n=2:v=1:a=0,settb=1/{fps}[x{i}]")
+        else:
+            kind = catalogue.TRANSITIONS[str((scene.get("transition") or {}).get("type"))]
+            available = starts[i - 1] + int(scene["frames"]) + int(scene["handle_frames"]) - starts[i]
+            blend = max(1, min(int(scene["handle_frames"]), available))
+            filters.append(f"[{previous}][v{i}]xfade=transition={kind}:duration={blend / fps:.4f}:offset={starts[i] / fps:.4f}[x{i}]")
         previous = f"x{i}"
     index = len(clips)
     if overlay_dir is not None:
