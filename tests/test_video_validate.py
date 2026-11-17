@@ -100,6 +100,18 @@ class DeepCheckTests(unittest.TestCase):
             self.assertEqual(frozen_frames(still, 3.0), [(0.0, 3.0)])  # frozen to the very end: no freeze_end logged
             self.assertEqual(frozen_frames(moving, 3.0), [])
 
+    def test_strobing_is_flagged_but_a_single_flash_is_not(self):
+        from studio.video.validate import flashes
+
+        with tempfile.TemporaryDirectory() as temp:
+            strobe = Path(temp) / "strobe.mp4"  # white for 3 frames, black for 3: five flashes a second
+            subprocess.run([FFMPEG, "-y", "-v", "error", "-f", "lavfi", "-i", "color=c=black:s=108x192:r=30:d=2", "-vf", "geq=lum='if(lt(mod(N,6),3),235,16)':cb=128:cr=128", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(strobe)], check=True)
+            single = Path(temp) / "single.mp4"  # one white burst in two seconds
+            subprocess.run([FFMPEG, "-y", "-v", "error", "-f", "lavfi", "-i", "color=c=black:s=108x192:r=30:d=2", "-vf", "geq=lum='if(between(N,20,22),235,16)':cb=128:cr=128", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(single)], check=True)
+            self.assertGreater(flashes(strobe, 30)[0], 3)
+            self.assertLessEqual(flashes(single, 30)[0], 1)
+            self.assertEqual(flashes(synth(Path(temp) / "moving.mp4", 108, 192, seconds=2.0, audio=False), 30)[0], 0)
+
     def test_loudness_and_silence_parsing(self):
         from studio.video.validate import SILENCE, parse_intervals, parse_loudness
 

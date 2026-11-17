@@ -105,6 +105,33 @@ def unexpected_black(path: Path, allowed: list[tuple[float, float]], min_duratio
     return [(start, end) for start, end in found if not any(start <= b + 0.05 and end >= a - 0.05 for a, b in allowed)]
 
 
+def flashes(path: Path, fps: int, share: float = 0.25, step: int = 25, shift: float = 6.0) -> tuple[int, float]:
+    """The most general flashes in any one-second window, and where that window starts. A
+    transition is a jump between consecutive frames that changes at least `share` of the picture by
+    `step` luma levels and moves its mean brightness by `shift`; a flash is a pair of opposing
+    transitions. More than three a second risks photosensitive seizures (WCAG 2.3.1)."""
+
+    def averages(chain: str) -> list[float]:
+        result = subprocess.run([_ffmpeg(), "-hide_banner", "-i", str(path), "-map", "0:v", "-vf", f"scale=64:114,format=yuv420p,{chain}signalstats,metadata=print:key=lavfi.signalstats.YAVG", "-f", "null", "-"], capture_output=True, text=True)
+        return [float(v) for v in re.findall(r"YAVG=([\d.]+)", result.stderr)]
+
+    mean = averages("")
+    changed = averages("tblend=all_mode=difference,lutyuv=y='if(gte(val,%d),255,0)'," % step)
+    offset = len(mean) - len(changed)  # tblend drops the first frame
+    events = []
+    for k, amount in enumerate(changed):
+        t = k + offset
+        if t > 0 and amount / 255.0 >= share and abs(mean[t] - mean[t - 1]) >= shift:
+            events.append((t, 1 if mean[t] > mean[t - 1] else -1))
+    worst, when = 0, 0.0
+    for i, (t0, _) in enumerate(events):
+        directions = [d for t, d in events[i:] if t < t0 + fps]
+        runs = sum(1 for k, d in enumerate(directions) if k == 0 or d != directions[k - 1])
+        if runs // 2 > worst:
+            worst, when = runs // 2, t0 / fps
+    return worst, when
+
+
 # ----- deep check: everything a viewer or YouTube would trip over --------------------------------
 SILENCE = re.compile(r"silence_start: (?P<start>-?[\d.]+).*?silence_end: (?P<end>[\d.]+)", re.S)
 
@@ -199,6 +226,8 @@ def deep_check(path: Path, width: int, height: int, fps: int, duration: float, a
     frozen = frozen_frames(path, actual)
     long_freezes = [(s, e) for s, e in frozen if e - s >= 4.0]
     rows.append(("frozen picture", not long_freezes, ", ".join(f"{s:.1f}-{e:.1f} s" for s, e in frozen) or "no still stretch of 2 s or more"))
+    strobe, at = flashes(path, fps)
+    rows.append(("flashing", strobe <= 3, f"{strobe} general flashes within one second at {at:.1f} s (limit 3)" if strobe > 3 else f"at most {strobe} general flash(es) in any second (limit 3)"))
     loudness, silences = audio_analysis(path)
     lufs, peak = loudness.get("integrated_lufs"), loudness.get("true_peak_dbfs")
     rows.append(("loudness", lufs is not None and abs(lufs - target_lufs) <= 2.0, f"{lufs} LUFS integrated (target {target_lufs}), range {loudness.get('range_lu')} LU"))

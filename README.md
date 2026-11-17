@@ -86,6 +86,7 @@ python -m studio.cli check projects/water-crisis --profile standard    # re-run 
 
 The final check decodes every video frame and audio sample, as a player does, and verifies
 resolution, frame rate, codecs, duration, matching audio and video lengths, black or frozen picture,
+strobing (more than three general flashes in any second, the photosensitivity limit in WCAG 2.3.1),
 loudness (EBU R128 against `audio.master.target_lufs`) and true peak, audio dropouts, the embedded
 subtitle track, that the file streams before it finishes downloading (`moov` before `mdat`), and
 YouTube Shorts limits (9:16, at most 180 s). `build` runs it and records each result in the manifest.
@@ -164,7 +165,9 @@ A project is three YAML files plus optional audio:
   with `count`/`area`), `events` (water levels, visibility, movement, spin, flicker, flash, scale,
   depletion, sun), `captions`, `hud` (elapsed-time clock keys), `sfx` cues, `music` (`intensity`
   and an optional `rain` level) and the outgoing `transition` (`cut`, the default, joins the
-  shots frame-accurately with no blend; the others blend over their `duration`).
+  shots frame-accurately with no blend; the others blend over their `duration`). Keep `flicker`
+  events to a `rate` of about 2.5 or less with modest `strength`: faster, brighter flicker strobes
+  and fails the check.
 - `script.yaml`: narration lines anchored to a scene and an offset; subtitles are generated from them
   and timed against the rendered narration.
 
