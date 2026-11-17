@@ -12,11 +12,13 @@ from typing import Any
 
 RATE = 24000
 ROOTS = (55.0, 87.31, 98.0, 82.41, 73.42, 87.31, 82.41, 65.41, 55.0, 98.0, 82.41, 55.0)
+HOPEFUL_ROOTS = (65.41, 98.0, 55.0, 87.31)  # C, G, A minor, F: the I-V-vi-IV progression
 
 
 def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RATE, seed: int = 1, style: str = "tense") -> Path:
     """Write a mono WAV covering the whole timeline. style 'quirky' adds a staccato plucked arpeggio;
-    'epic' adds a string ostinato, brass swells at each scene and timpani hits. A scene's
+    'epic' adds a string ostinato, brass swells at each scene and timpani hits; 'hopeful' moves to a
+    major I-V-vi-IV progression with a bright piano arpeggio and a warm chord pad. A scene's
     `music.rain` (0-1) adds a rain bed and `music.wind` (0-1) a howling wind bed; both crossfade
     between scenes and default to 0. `music.mute` silences the whole score for that scene."""
     plan = []
@@ -24,10 +26,11 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
     wind_levels = []
     mute_levels = []
     cursor = 0.0
+    roots = HOPEFUL_ROOTS if style == "hopeful" else ROOTS
     for index, scene in enumerate(scenes):
         duration = float(scene.get("duration") or 0.0)
         intensity = float((scene.get("music") or {}).get("intensity", 0.4))
-        plan.append((cursor, cursor + duration, intensity, ROOTS[index % len(ROOTS)]))
+        plan.append((cursor, cursor + duration, intensity, roots[index % len(roots)]))
         rain_levels.append(float((scene.get("music") or {}).get("rain", 0.0)))
         wind_levels.append(float((scene.get("music") or {}).get("wind", 0.0)))
         mute_levels.append(0.0 if (scene.get("music") or {}).get("mute") else 1.0)
@@ -104,8 +107,22 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
             hit_t = since_start % bar if intensity >= 0.55 else since_start
             if hit_t < 0.9:
                 epic += math.sin(math.tau * (58.0 + 30.0 * math.exp(-hit_t * 12.0)) * hit_t) * math.exp(-hit_t * 5.0) * 0.55 * intensity
-        # tension shimmer
-        shimmer = math.sin(math.tau * 440.0 * t) * (0.5 + 0.5 * math.sin(math.tau * 6.5 * t)) * max(0.0, intensity - 0.55) * 0.07
+        # hopeful: a piano arpeggio climbing the scene's chord on eighth notes, over the chord's third
+        # and fifth, which fade in after each cut and out just before the next
+        keys = 0.0
+        if style == "hopeful":
+            since_start = t - start
+            third = 1.2 if root == 55.0 else 1.25
+            eighth = 30.0 / (84.0 + 28.0 * intensity)
+            note_t = since_start % eighth
+            ratio = (2.0, 2.0 * third, 3.0, 4.0, 3.0, 2.0 * third)[int(since_start / eighth) % 6]
+            phase = math.tau * root * 2.0 * ratio * note_t
+            keys = (math.sin(phase) + 0.35 * math.sin(2 * phase) + 0.12 * math.sin(3 * phase)) * math.exp(-note_t * 4.5) * 0.05 * (0.4 + 0.6 * intensity)
+            edge = min(1.0, since_start / 0.8, max(0.0, end - t) / 0.3)
+            for partial in (2.0 * third, 3.0):
+                keys += math.sin(math.tau * root * partial * t) * 0.025 * edge * (0.45 + 0.55 * intensity)
+        # tension shimmer (not in the hopeful score)
+        shimmer = 0.0 if style == "hopeful" else math.sin(math.tau * 440.0 * t) * (0.5 + 0.5 * math.sin(math.tau * 6.5 * t)) * max(0.0, intensity - 0.55) * 0.07
         # riser into the next scene when the intensity rises
         riser = 0.0
         remaining = end - t
@@ -150,7 +167,7 @@ def render_score(scenes: list[dict[str, Any]], path: Path, sample_rate: int = RA
         mute = mute_levels[scene_index]
         if scene_index and t - start < 0.8:
             mute = mute_levels[scene_index - 1] + (mute - mute_levels[scene_index - 1]) * (t - start) / 0.8
-        value = (pad + pulse + shimmer + riser + pluck + epic + rain + gale) * mute
+        value = (pad + pulse + shimmer + riser + pluck + epic + keys + rain + gale) * mute
         fade = min(1.0, t / 1.5, max(0.0, (total - t) / 3.0))
         samples.append(int(max(-1.0, min(1.0, value * fade)) * 32767))
     path.parent.mkdir(parents=True, exist_ok=True)

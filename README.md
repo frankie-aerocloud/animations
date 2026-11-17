@@ -98,8 +98,8 @@ mains power; on battery the Mac sleeps normally and the render continues when it
 `project.yaml` also accepts `hud_label` (clock caption), `hud_wrap: 24` (a time-of-day clock that
 rolls over at midnight; omit it for an elapsed-time clock), `hud_format: hms` (hours, minutes and
 seconds; `day` shows a day counter, DAY 14, with day numbers as the hud values; the default is
-hours and minutes) and `music_style` (`tense`, `quirky`, or `epic` for a string ostinato, brass
-swells and timpani). A scene's `music.rain` and `music.wind` (0 to 1) add a rain bed or a howling
+hours and minutes) and `music_style` (`tense`, `quirky`, `epic` for a string ostinato, brass
+swells and timpani, or `hopeful` for a major-key piano arpeggio over a warm chord pad). A scene's `music.rain` and `music.wind` (0 to 1) add a rain bed or a howling
 wind bed to the score that crossfade at each cut, `music.mute` silences the score for a scene, and
 `audio.narration.length_scale` speeds the voice up (below 1) or slows it down. Piper varies each
 line's length slightly between runs; `audio.narration.noise_w: 0` fixes it, so a storyboard timed

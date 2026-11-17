@@ -468,3 +468,55 @@ def gust(duration: float = 3.2) -> list[float]:
 
 
 SOUNDS.update({"gust": gust})
+
+
+def powerdown(duration: float = 2.2) -> list[float]:
+    """Machinery winding down: a motor whine falling in pitch and fading, ending in a soft clunk."""
+    n = int(duration * RATE)
+    rng = random.Random(61)
+    out = []
+    phase = 0.0
+    hum = 0.0
+    for i in range(n):
+        t = i / RATE
+        u = t / duration
+        freq = 40.0 + 360.0 * (1.0 - u) ** 2.2
+        phase += math.tau * freq / RATE
+        hum += 0.05 * (rng.uniform(-1.0, 1.0) - hum)
+        whine = (math.sin(phase) + 0.4 * math.sin(2 * phase) + 0.2 * math.sin(3 * phase)) * (1.0 - u) ** 1.4
+        clunk = math.sin(math.tau * 55.0 * (t - duration * 0.82)) * math.exp(-(t - duration * 0.82) * 18.0) if t > duration * 0.82 else 0.0
+        out.append(whine * 0.5 + hum * 2.0 * (1.0 - u) + clunk * 0.8)
+    return out
+
+
+def machinery(duration: float = 4.0) -> list[float]:
+    """A busy production line: a steady motor hum under rhythmic clacks and the hiss of air."""
+    n = int(duration * RATE)
+    rng = random.Random(62)
+    out = []
+    phase = 0.0
+    hiss = 0.0
+    for i in range(n):
+        t = i / RATE
+        phase += math.tau * 98.0 / RATE
+        hum = math.sin(phase) * 0.25 + math.sin(2 * phase) * 0.12
+        beat = t % 0.36
+        clack = rng.uniform(-1.0, 1.0) * math.exp(-beat * 70.0) * (0.8 if int(t / 0.36) % 2 else 0.5)
+        hiss += 0.3 * (rng.uniform(-1.0, 1.0) - hiss)
+        out.append((hum + clack * 0.6 + hiss * 0.08) * min(1.0, t / 0.2, (duration - t) / 0.3))
+    return out
+
+
+def surf(duration: float = 6.0) -> list[float]:
+    """Waves on a beach: slow swells of filtered noise breaking and washing back."""
+    n = int(duration * RATE)
+    noise = _lowpass(_noise(n, 63), lambda t: 0.08)
+    out = []
+    for i, s in enumerate(noise):
+        t = i / RATE
+        swell = 0.25 + 0.75 * max(0.0, math.sin(math.tau * t / 3.0)) ** 2
+        out.append(s * 3.0 * swell * min(1.0, t / 0.5, (duration - t) / 0.8))
+    return out
+
+
+SOUNDS.update({"powerdown": powerdown, "machinery": machinery, "surf": surf})

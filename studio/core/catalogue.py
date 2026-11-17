@@ -97,7 +97,7 @@ ACTIONS = (
     "scatter",
 )
 EVENTS = ("water_level", "hide", "show", "move", "spin", "flicker", "flash", "scale", "deplete", "sun", "blackout")
-SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat", "roar", "alert", "radio", "thunder", "birds", "gust")
+SFX = ("whoosh", "impact", "riser", "drip", "alarm", "siren", "rumble", "tick", "swell", "thud", "crowd", "fire", "horns", "helicopter", "heartbeat", "glass", "gulls", "flapping", "drone_buzz", "loudspeaker", "jets", "splat", "roar", "alert", "radio", "thunder", "birds", "gust", "powerdown", "machinery", "surf")
 PROPS = ("jerrycan", "bottle", "bucket", "box", "pan")
 CARD_KINDS = ("title", "caption", "chapter", "alert")
 ACTOR_KINDS = ("person", "lion")
