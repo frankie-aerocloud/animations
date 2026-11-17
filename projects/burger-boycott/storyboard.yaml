@@ -596,9 +596,9 @@ scenes:
     environment: {type: burger_strip, night: true, queue: {giant: 4, flame: 9, square: 8, taco: 7}, parked: {giant: 3, flame: 10, square: 9, taco: 8}, traffic: 20}
     lighting: night_emergency
     lighting_overrides: *night
-    camera: {shot: push_in, from: [14, 4, 3.0], to: [16, 2, 3.0], look: [34, -30, 3.0], look_to: [34, -30, 3.0], lens: 26, fstop: 5}
+    camera: {shot: push_in, from: [10, 6, 2.2], to: [12, 4, 2.2], look: [36, -30, 1.2], look_to: [36, -30, 1.2], lens: 26, fstop: 5}
     captions:
-      - {kind: title, text: "HEALTHIER? OR JUST A DIFFERENT DRIVE-THROUGH?", at: 4.2, until: 7.6}
+      - {kind: title, text: "HEALTHIER? OR JUST A DIFFERENT DRIVE-THROUGH?", at: 4.2, until: 7.6, y: 0.8}
     hud: {hours: 31, hours_end: 31, sub: "THE EXPERIMENT: OVER"}
     music: {intensity: 0.6}
     transition: {type: cut, duration: 0.0}
