@@ -1,0 +1,61 @@
+# Narration in the brief's wording at length_scale 0.85 with noise_w 0. `at` is seconds after the start of the named scene.
+lines:
+  - {id: p01, scene: s01_monday, at: 1.00, text: "It starts on an ordinary Monday morning."}
+  - {id: p02, scene: s01_monday, at: 3.08, text: "But today, something extraordinary happens."}
+  - {id: p03, scene: s02_instruction, at: 0.15, text: "Every plastic manufacturing facility on Earth receives the same instruction."}
+  - {id: p04, scene: s03_stop, at: 0.15, text: "Stop production."}
+  - {id: p05a, scene: s04_bottles, at: 0.15, text: "No new plastic bottles."}
+  - {id: p05b, scene: s05_packaging, at: 0.15, text: "No plastic packaging."}
+  - {id: p05c, scene: s06_bags, at: 0.15, text: "No shopping bags."}
+  - {id: p05d, scene: s07_products, at: 0.15, text: "No new plastic products."}
+  - {id: p06, scene: s08_first_time, at: 0.15, text: "For the first time in modern history, the world stops making plastic."}
+  - {id: p07, scene: s09_silent, at: 0.15, text: "Factories fall silent."}
+  - {id: p08, scene: s10_remarkable, at: 0.15, text: "And something remarkable begins."}
+  - {id: p09, scene: s11_spreading, at: 0.80, text: "Within two hours, the effects begin spreading."}
+  - {id: p10a, scene: s12_lines, at: 0.15, text: "Manufacturers pause production lines."}
+  - {id: p10b, scene: s13_shipping, at: 0.15, text: "Shipping companies adjust deliveries."}
+  - {id: p10c, scene: s14_supermarket, at: 0.15, text: "Supermarkets review their packaging supplies."}
+  - {id: p11, scene: s15_hospital, at: 0.15, text: "But hospitals, pharmacies and essential services continue operating using existing medical supplies and stock."}
+  - {id: p12, scene: s16_workers, at: 0.15, text: "Meanwhile, millions of workers are given an unexpected opportunity."}
+  - {id: p13, scene: s17_maintenance, at: 0.15, text: "Instead of producing more plastic, some factories begin maintenance, recycling improvements and equipment upgrades."}
+  - {id: p14, scene: s18_hasnt, at: 0.15, text: "The world hasn't run out of plastic."}
+  - {id: p15, scene: s19_stopped_adding, at: 0.15, text: "It's simply stopped adding more."}
+  - {id: p16, scene: s20_midday, at: 0.80, text: "By midday, something unexpected is happening."}
+  - {id: p17, scene: s21_communities, at: 0.15, text: "Across the world, communities organise beach clean-ups, river restoration projects and neighbourhood recycling drives."}
+  - {id: p18, scene: s23_volunteers, at: 0.15, text: "Volunteers arrive with gloves, collection bags and equipment."}
+  - {id: p19, scene: s24_indonesia, at: 0.15, text: "In Indonesia, plastic is collected from waterways."}
+  - {id: p20, scene: s25_india, at: 0.15, text: "In India, communities tackle rubbish blocking local drainage systems."}
+  - {id: p21, scene: s26_uk, at: 0.15, text: "In the United Kingdom, volunteers head to beaches and rivers."}
+  - {id: p22, scene: s27_focus, at: 0.15, text: "For one day, the focus shifts from producing more to dealing with what we've already created."}
+  - {id: p23, scene: s28_announce, at: 0.80, text: "As evening approaches, major manufacturers begin announcing new plans."}
+  - {id: p24, scene: s29_reduce, at: 0.15, text: "Some commit to reducing unnecessary packaging."}
+  - {id: p25, scene: s30_invest, at: 0.15, text: "Others invest in refillable containers, recycled materials and reusable alternatives."}
+  - {id: p26, scene: s31_refill, at: 0.15, text: "Supermarkets explore more refill stations."}
+  - {id: p27, scene: s32_restaurants, at: 0.15, text: "Restaurants reconsider disposable packaging."}
+  - {id: p28, scene: s33_scientists, at: 0.15, text: "Scientists and engineers demonstrate new ways to make products last longer."}
+  - {id: p29, scene: s34_realisation, at: 0.15, text: "The biggest realisation?"}
+  - {id: p30, scene: s35_replace, at: 0.15, text: "We don't need to replace every plastic product."}
+  - {id: p31, scene: s36_unnecessary, at: 0.15, text: "We need to stop using unnecessary plastic in the first place."}
+  - {id: p32, scene: s37_sleep, at: 0.80, text: "While cities sleep, the environmental benefits are beginning to take shape."}
+  - {id: p33, scene: s38_pipeline, at: 0.15, text: "No new plastic is entering the production pipeline during the pause."}
+  - {id: p34, scene: s39_still_there, at: 0.15, text: "But existing plastic pollution is still there."}
+  - {id: p35a, scene: s40_ocean, at: 0.15, text: "Ocean plastic hasn't magically disappeared."}
+  - {id: p35b, scene: s41_rivers, at: 0.15, text: "Rivers still need cleaning."}
+  - {id: p35c, scene: s42_wildlife, at: 0.15, text: "Wildlife still needs protection."}
+  - {id: p36, scene: s43_conservation, at: 0.15, text: "Around the world, conservation teams use the moment to accelerate restoration projects."}
+  - {id: p37, scene: s44_question, at: 0.15, text: "And millions of people are beginning to question how much plastic they actually need."}
+  - {id: p38, scene: s45_day, at: 0.80, text: "One full day has passed."}
+  - {id: p39, scene: s46_restart, at: 0.15, text: "Plastic manufacturing is allowed to restart."}
+  - {id: p40, scene: s47_changed, at: 0.15, text: "But something has changed."}
+  - {id: p41a, scene: s48_governments, at: 0.15, text: "Governments are discussing stronger waste reduction policies."}
+  - {id: p41b, scene: s49_companies, at: 0.15, text: "Companies are reconsidering packaging."}
+  - {id: p41c, scene: s50_communities, at: 0.15, text: "Communities are demanding better alternatives."}
+  - {id: p42, scene: s51_not_saved, at: 0.15, text: "The planet hasn't been saved in 24 hours."}
+  - {id: p43, scene: s52_proved, at: 0.15, text: "But humanity has proved something important."}
+  - {id: p44, scene: s53_together, at: 0.15, text: "We can work together."}
+  - {id: p45, scene: s54_change, at: 0.15, text: "We can change how we manufacture, package and consume everyday products."}
+  - {id: p46, scene: s55_one_day, at: 0.15, text: "One day without producing plastic."}
+  - {id: p47, scene: s55_one_day, at: 2.04, text: "One global wake-up call."}
+  - {id: p48, scene: s56_cleaner, at: 0.15, text: "And possibly the beginning of a cleaner future."}
+  - {id: p49, scene: s57_question, at: 0.15, text: "The question is..."}
+  - {id: p50, scene: s57_question, at: 1.54, text: "What if we didn't stop after just 24 hours?"}

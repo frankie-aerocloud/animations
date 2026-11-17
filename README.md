@@ -6,7 +6,7 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-Five productions ship with the repository:
+Six productions ship with the repository:
 
 - **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
   hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
@@ -32,8 +32,13 @@ Five productions ship with the repository:
   boulevards give way to flying debris, bursting towers, thrown cars, a battered pier, downed power
   lines and wind-driven fires, cut against the people sheltering inside, until the wind stops at
   sunrise on a devastated city.
+- **"The Day The World Stopped Making Plastic"** (`projects/plastic-pause`): every plastics plant on
+  Earth stops for 24 hours, in fifty-seven shots over 175 seconds. Production lines halt and the
+  halls fall silent; volunteers clear beaches, an Indonesian waterway, an Indian storm drain and
+  British rivers; industry and households rethink packaging; the ocean's plastic is still there at
+  night; and production restarts at sunrise, changed.
 
-All five are built from the same pipeline; only the YAML files and the environments they call differ.
+All six are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -200,7 +205,18 @@ terraces, shops, buses, cabs, phone and pillar boxes, the landmarks and the floo
 or hospital; `shatter_at`, `door_open`) and `la_aerial`. `studio/assets/la.py` holds palms that bend
 and uproot, strip malls, houses whose roofs tear away, power lines, freeway pieces, towers, the pier
 and the airport arches; `studio/assets/wind.py` the debris storms, dust streaks, window bursts,
-thrown objects, surf, embers and smoke. Character roles: civilian, shopper, child,
+thrown objects, surf, embers and smoke. The plastic film's set is in
+`studio/blender/environments_plastic.py`: `plastic_plant` (`district`, `night`, `lit`, `stop_at`,
+`stopped`, `restart_at`, `lights_off`, `birds`), `plastic_factory` (`kind` bottles, packaging, film,
+bags, products, recycling, refill, store or control; `stop_at`, `stopped`, `restart_at`,
+`lights_off`, `lights_on`, `lamps`, `people`, `gathered`, `maintenance`, `dust`, `alert_at`),
+`clean_up` (`kind` uk_beach, sand_beach, river, street or square; `litter`, `cleared`,
+`volunteers`, `area`, `piles`, `van`, `crew_at`, `chain`, `turtles`, `placards`, `screen`),
+`waterway`, `drain`, `ocean` (`kind` surface or underwater) and `plastic_interior` (`kind`
+supermarket, refill, restaurant, lab, hospital_store, press, council, studio or kitchen).
+`studio/assets/plastic.py` holds production lines whose belts, rolls and presses run, halt and
+restart, litter on land and water, sacks and bales, beach huts, stilt houses, wooden boats, a river
+boom, a sea turtle and fish. Character roles: civilian, shopper, child,
 nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
 look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
 movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit
