@@ -1,0 +1,39 @@
+# Narration in the brief's wording at length_scale 0.95 with noise_w 0. `at` is seconds after the start of the named scene.
+lines:
+  - {id: n01, scene: s01_dawn, at: 1.00, text: "It begins on a Tuesday morning. Los Angeles wakes up to an emergency weather alert."}
+  - {id: n02, scene: s02_alert, at: 0.25, text: "Meteorologists are tracking an unprecedented wind event approaching Southern California."}
+  - {id: n03, scene: s03_calm, at: 0.60, text: "Then the first gust hits."}
+  - {id: n04, scene: s04_gust, at: 0.20, text: "300 miles per hour."}
+  - {id: n05, scene: s05_downtown, at: 0.20, text: "Within seconds, trees snap, streetlights disappear and windows explode across downtown Los Angeles."}
+  - {id: n06, scene: s06_cover, at: 0.20, text: "Nobody has ever experienced anything like this. And the wind isn't slowing down."}
+  - {id: n07, scene: s07_torn, at: 0.80, text: "One hour later, Los Angeles is unrecognisable."}
+  - {id: n08, scene: s08_palms, at: 0.20, text: "Palm trees are ripped from the ground. Cars are thrown across freeways."}
+  - {id: n09, scene: s10_roofs, at: 0.20, text: "Roofs are torn from houses and entire shopfronts are ripped open."}
+  - {id: n10, scene: s11_hills, at: 0.20, text: "The Hollywood Hills are buried beneath flying debris."}
+  - {id: n11, scene: s12_lax, at: 0.20, text: "At L.A.X., every flight has been grounded. Aircraft, airport equipment and hangars are exposed to catastrophic wind damage."}
+  - {id: n12, scene: s13_shelter, at: 0.20, text: "Millions of people are desperately trying to find shelter."}
+  - {id: n13, scene: s14_grid, at: 0.80, text: "Six hours. The power grid begins collapsing."}
+  - {id: n14, scene: s15_lines, at: 0.20, text: "Thousands of power lines are down. Communications networks fail. Water pumping stations lose electricity."}
+  - {id: n15, scene: s16_towers, at: 0.20, text: "Downtown skyscrapers suffer catastrophic damage to their windows and external structures."}
+  - {id: n16, scene: s17_pier, at: 0.20, text: "On the coast, the Santa Monica Pier is battered by debris and enormous waves."}
+  - {id: n17, scene: s18_rescue, at: 0.20, text: "Emergency services cannot respond. Even rescue helicopters cannot safely operate."}
+  - {id: n18, scene: s19_isolated, at: 0.20, text: "Los Angeles is completely isolated."}
+  - {id: n19, scene: s20_sunset, at: 0.80, text: "Twelve hours. The sun begins setting, but the winds haven't weakened."}
+  - {id: n20, scene: s21_fires, at: 0.20, text: "Gas leaks and damaged electrical equipment trigger fires across several neighbourhoods."}
+  - {id: n21, scene: s22_embers, at: 0.20, text: "Flames are driven by the wind, sending burning debris across rooftops and streets."}
+  - {id: n22, scene: s23_hospital, at: 0.20, text: "Hospitals are running on emergency power. Roads are impassable."}
+  - {id: n23, scene: s24_trapped, at: 0.20, text: "Millions of people remain trapped inside buildings, hoping their walls will hold. There is nowhere to run."}
+  - {id: n24, scene: s25_dark, at: 0.80, text: "Eighteen hours. Los Angeles is almost completely dark."}
+  - {id: n25, scene: s26_collapse, at: 0.20, text: "The sound is deafening. Buildings shake. Metal structures collapse."}
+  - {id: n26, scene: s27_streets, at: 0.20, text: "Debris continues flying through the streets. Emergency communications are severely disrupted."}
+  - {id: n27, scene: s28_families, at: 0.20, text: "Families shelter in interior rooms, basements and reinforced structures."}
+  - {id: n28, scene: s29_waiting, at: 0.20, text: "Nobody knows how much of the city is still standing. And nobody knows when it will end."}
+  - {id: n29, scene: s30_suddenly, at: 0.80, text: "Then, suddenly..."}
+  - {id: n29b, scene: s31_silence, at: 0.60, text: "Silence."}
+  - {id: n30, scene: s32_door, at: 0.20, text: "After 24 hours, the winds finally stop."}
+  - {id: n31, scene: s33_devastation, at: 0.20, text: "The scale of destruction is beyond anything Los Angeles has experienced."}
+  - {id: n32, scene: s34_neighbourhoods, at: 0.20, text: "Entire neighbourhoods are devastated. Critical infrastructure is destroyed. Thousands of buildings are damaged or uninhabitable."}
+  - {id: n33, scene: s35_buried, at: 0.20, text: "The freeways are buried beneath debris. The airport is crippled."}
+  - {id: n34, scene: s36_crews, at: 0.20, text: "And emergency crews are only beginning to understand what happened."}
+  - {id: n35, scene: s37_survived, at: 0.20, text: "Los Angeles survived the wind. But the city that wakes up tomorrow will never be the same."}
+  - {id: n36, scene: s38_final, at: 0.40, text: "300 miles per hour. 24 hours. One city brought to its knees. And the rebuilding hasn't even begun."}

@@ -1,0 +1,93 @@
+id: la-wind
+title: "When The Wind Took Everything"
+language: en-GB
+hud_label: "LOS ANGELES"
+hud_wrap: 24           # time-of-day clock from 06:00 round to 06:00 the next morning
+music_style: tense
+premise: >
+  Hypothetical 24-hour disaster. A 300 mph wind tears through Los Angeles from one sunrise to the next.
+  Outside, the city is ripped apart; inside, families shelter and wait for the walls to hold.
+render: {}
+assets: assets/manifest.yaml
+audio:
+  narration_dir: audio/narration
+  music_file: null
+  sfx_dir: audio/sfx
+  narration: {length_scale: 0.95, noise_w: 0.0}   # fixed line lengths keep the shot timing exact
+  music: {gain_db: -13}             # the wind bed carries this film
+style:
+  palette:                          # production colours (linear RGB); merged over config/style.yaml
+    stucco_cream: [0.80, 0.72, 0.56]
+    stucco_peach: [0.85, 0.55, 0.38]
+    stucco_mint: [0.55, 0.75, 0.62]
+    stucco_pink: [0.85, 0.58, 0.58]
+    stucco_sand: [0.78, 0.66, 0.48]
+    stucco_white: [0.86, 0.85, 0.82]
+    awning_red: [0.60, 0.05, 0.04]
+    awning_green: [0.05, 0.35, 0.15]
+    awning_blue: [0.05, 0.18, 0.55]
+    awning_orange: [0.85, 0.35, 0.05]
+    sign_red: [0.75, 0.05, 0.04]
+    sign_blue: [0.05, 0.20, 0.65]
+    sign_green: [0.0, 0.25, 0.10]
+    roof_flat: [0.45, 0.43, 0.40]
+    roof_tile: [0.55, 0.18, 0.08]
+    void: [0.01, 0.01, 0.012]
+    palm_trunk: [0.30, 0.22, 0.14]
+    palm_leaf: [0.12, 0.28, 0.08]
+    frond_dead: [0.42, 0.32, 0.18]
+    frond: [0.20, 0.30, 0.10]
+    garage_door: [0.80, 0.80, 0.78]
+    lawn: [0.12, 0.30, 0.06]
+    dry_grass: [0.55, 0.45, 0.25]
+    chaparral: [0.32, 0.30, 0.18]
+    urban_ground: [0.30, 0.29, 0.27]
+    lot_tarmac: [0.10, 0.10, 0.10]
+    asphalt_la: [0.06, 0.06, 0.065]
+    line_yellow: [0.85, 0.62, 0.05]
+    freeway_concrete: [0.55, 0.53, 0.50]
+    pole_wood: [0.25, 0.18, 0.12]
+    transformer_grey: [0.45, 0.48, 0.46]
+    plywood: [0.52, 0.36, 0.18]
+    stucco_debris: [0.70, 0.64, 0.52]
+    sheet_metal: [0.55, 0.57, 0.60]
+    paper: [0.85, 0.85, 0.82]
+    plastic_blue: [0.05, 0.25, 0.65]
+    dust: [0.62, 0.52, 0.38]
+    dust_night: [0.20, 0.18, 0.16]
+    glass_shard: [0.60, 0.75, 0.80]
+    glass_dark: [0.03, 0.04, 0.05]
+    sea_storm: [0.06, 0.12, 0.14]
+    sea_wave: [0.14, 0.30, 0.30]
+    sea_calm: [0.03, 0.18, 0.30]
+    foam: [0.85, 0.88, 0.88]
+    ember: [1.0, 0.45, 0.08]
+    smoke: [0.10, 0.09, 0.09]
+    smoke_light: [0.55, 0.52, 0.48]
+    tower_glass: [0.25, 0.40, 0.45]
+    tower_stone: [0.60, 0.55, 0.48]
+    mullion: [0.25, 0.27, 0.30]
+    eye_white: [0.80, 0.82, 0.85]
+    pier_wood: [0.35, 0.25, 0.16]
+    fire_red: [0.65, 0.03, 0.02]
+    silver: [0.55, 0.57, 0.60]
+    interior_wall: [0.80, 0.76, 0.68]
+    floor_tile: [0.60, 0.55, 0.48]
+    floor_wood: [0.40, 0.25, 0.12]
+    ceiling_white: [0.85, 0.85, 0.83]
+    office_wall: [0.75, 0.75, 0.74]
+    carpet_grey: [0.22, 0.23, 0.25]
+    desk_white: [0.85, 0.85, 0.84]
+    door_white: [0.86, 0.86, 0.84]
+    hospital_wall: [0.70, 0.78, 0.76]
+    sofa_beige: [0.55, 0.48, 0.38]
+    kitchen_white: [0.85, 0.85, 0.83]
+    alert_red: [1.0, 0.12, 0.08]
+    blanket_red: [0.50, 0.08, 0.06]
+    blanket_blue: [0.08, 0.15, 0.35]
+    tape_tan: [0.70, 0.58, 0.38]
+    flame_hot: [1.0, 0.42, 0.06]
+    flame_deep: [0.85, 0.14, 0.02]
+    tree_green: [0.06, 0.20, 0.05]
+    tree_olive: [0.14, 0.22, 0.06]
+    roof_tile_dark: [0.38, 0.12, 0.06]

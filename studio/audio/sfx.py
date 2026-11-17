@@ -446,3 +446,25 @@ def birds(duration: float = 5.0) -> list[float]:
 
 
 SOUNDS.update({"thunder": thunder, "birds": birds})
+
+
+def gust(duration: float = 3.2) -> list[float]:
+    """A violent gust: noise through a resonant filter that sweeps up and back, swelling then dying."""
+    n = int(duration * RATE)
+    rng = random.Random(51)
+    low = band = 0.0
+    out = []
+    for i in range(n):
+        t = i / RATE
+        u = t / duration
+        f = 250.0 + 900.0 * math.sin(math.pi * u) ** 1.5
+        tune = 2.0 * math.sin(math.pi * f / RATE)
+        x = rng.uniform(-1.0, 1.0)
+        low += tune * band
+        band += tune * (x - low - 0.12 * band)
+        envelope = min(1.0, t / 0.35) * math.exp(-max(0.0, t - 0.8) * 1.4)
+        out.append((band * 0.6 + low * 0.25) * envelope)
+    return out
+
+
+SOUNDS.update({"gust": gust})

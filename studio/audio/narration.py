@@ -65,7 +65,10 @@ def _synthesise_piper(text: str, voice_path: Path, settings: dict[str, Any], out
     if voice is None:
         voice = PiperVoice.load(str(voice_path))
         _PIPER_CACHE[voice_path] = voice
-    config = SynthesisConfig(length_scale=float(settings.get("length_scale", 1.0)), normalize_audio=True)
+    # noise_w 0 makes Piper's stochastic duration predictor deterministic, so a line's length never
+    # changes between runs and a storyboard timed against it always fits
+    noise_w = settings.get("noise_w")
+    config = SynthesisConfig(length_scale=float(settings.get("length_scale", 1.0)), noise_w_scale=None if noise_w is None else float(noise_w), normalize_audio=True)
     with wave.open(str(out), "wb") as handle:
         voice.synthesize_wav(text, handle, syn_config=config)
 
@@ -90,7 +93,8 @@ def synthesise(project: Project, out_dir: Path, log: Callable[[str], None] = pri
             path = recorded
         elif engine == "piper" and piper_available(voice_path):
             path = out_dir / f"{lid}.wav"
-            digest = hashlib.sha256(f"{voice_path.name}|{settings.get('length_scale', 1.0)}|{text}".encode()).hexdigest()
+            noise_w = settings.get("noise_w")
+            digest = hashlib.sha256(f"{voice_path.name}|{settings.get('length_scale', 1.0)}|{text}{'' if noise_w is None else f'|noise_w={noise_w}'}".encode()).hexdigest()
             stamp = out_dir / f"{lid}.json"
             if not (path.exists() and stamp.exists() and json.loads(stamp.read_text()).get("sha256") == digest):
                 log(f"[narration] piper: {lid}")
