@@ -4,6 +4,7 @@ CORE = "studio.blender.environments"
 NYC = "studio.blender.environments_nyc"
 VEGAS = "studio.blender.environments_vegas"
 LONDON = "studio.blender.environments_london"
+LA = "studio.blender.environments_la"
 # environment type -> module that builds it; the Blender entry point imports only that module,
 # so a scene's recorded code dependencies never include other productions' environments
 ENVIRONMENTS = {
@@ -36,6 +37,14 @@ ENVIRONMENTS = {
     "sports_hall": LONDON,
     "london_works": LONDON,
     "london_hospital": LONDON,
+    "la_street": LA,
+    "la_downtown": LA,
+    "la_freeway": LA,
+    "la_hills": LA,
+    "la_airport": LA,
+    "la_pier": LA,
+    "la_interior": LA,
+    "la_aerial": LA,
 }
 SHOTS = (
     "aerial_establish",

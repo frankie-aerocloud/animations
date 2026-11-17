@@ -6,7 +6,7 @@ FFmpeg assembles the film with transitions, captions, narration, music, effects 
 Everything is free and open-source software and runs on one machine: no cloud rendering, no SaaS,
 no accounts.
 
-Four productions ship with the repository:
+Five productions ship with the repository:
 
 - **"What Happens If The World Runs Out Of Water In 24 Hours?"** (`projects/water-crisis`): a
   hypothetical scenario told hour by hour (1, 2, 4, 8, 12, 15, 20, 24) in eighteen shots over
@@ -27,8 +27,13 @@ Four productions ship with the repository:
   Westminster, the Thames Barrier) slowly becomes unliveable, from flooded underpasses and basements
   to black mould, a sparking substation and evacuation zones, until the clouds break over
   Westminster and the film ends on "Could London ever be the same again?".
+- **"When The Wind Took Everything"** (`projects/la-wind`): a 300 mph wind tears through Los Angeles
+  for 24 hours in thirty-eight shots over 165 seconds, under a time-of-day clock. Sunny palm-lined
+  boulevards give way to flying debris, bursting towers, thrown cars, a battered pier, downed power
+  lines and wind-driven fires, cut against the people sheltering inside, until the wind stops at
+  sunrise on a devastated city.
 
-All four are built from the same pipeline; only the YAML files and the environments they call differ.
+All five are built from the same pipeline; only the YAML files and the environments they call differ.
 
 ## Toolchain
 
@@ -186,7 +191,16 @@ seen from above, `dark_districts`, `cranes`, `flood_pools`), `thames` (`outfall`
 building site, or `kind: substation`) and `london_hospital`. `studio/assets/london.py` holds the
 terraces, shops, buses, cabs, phone and pillar boxes, the landmarks and the flood props;
 `studio/assets/weather.py` the looping rain, puddles, cloud decks, rain shafts and the cyclone; and
-`studio/assets/meshes.py` builds very large merged meshes in linear time. Character roles: civilian, shopper, child,
+`studio/assets/meshes.py` builds very large merged meshes in linear time. The Los Angeles set is in
+`studio/blender/environments_la.py`: `la_street` (`kind` boulevard or residential; `wind`, `gust_at`,
+`wind_at`, `uproot`, `thrown`, `roofs`, `ripped`, `burst_at`, `poles_down`, `lights_torn`,
+`collapse`, `fires`, `night`, `blackout`, `aftermath`, `crews`, `people`), `la_downtown` (`shatter`,
+`broken`), `la_freeway` (`thrown`, `truck_over`, `helicopter`), `la_hills`, `la_airport` (`slew`),
+`la_pier` (`waves`, `wheel_spin`), `la_interior` (`kind` living, office, garage, hallway, apartment
+or hospital; `shatter_at`, `door_open`) and `la_aerial`. `studio/assets/la.py` holds palms that bend
+and uproot, strip malls, houses whose roofs tear away, power lines, freeway pieces, towers, the pier
+and the airport arches; `studio/assets/wind.py` the debris storms, dust streaks, window bursts,
+thrown objects, surf, embers and smoke. Character roles: civilian, shopper, child,
 nurse, doctor, paramedic, worker, farmer, police, soldier, fisherman; actions: idle, walk, run,
 look_around, point, fall, carry, gather, react, queue, crouch, stand, scatter. Events include water levels, visibility,
 movement, spin, flicker, flash, scale, depletion, sun and `blackout` (staggered switch-off of lit

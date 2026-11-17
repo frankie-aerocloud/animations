@@ -1,0 +1,455 @@
+# When The Wind Took Everything: sunny Los Angeles torn apart by a 300 mph wind for 24 hours, while
+# people shelter inside. Coordinates: metres in each environment (studio/blender/environments_la.py).
+# Streets run along Y; US traffic keeps right. The wind blows toward -X. hud values are hours of the
+# day (project hud_wrap: 24): 26 is 02:00 and 30 is 06:00 the next morning.
+x-sunny: &sunny {sun: 5.5, elevation: 18, azimuth: 70, colour: [1.0, 0.90, 0.76], zenith: [0.16, 0.38, 0.86], horizon: [0.72, 0.80, 0.90], ambient: 0.6, fog: 0.0006, fog_colour: [0.88, 0.86, 0.80], exposure: -0.3}
+x-dusty: &dusty {sun: 2.6, elevation: 30, azimuth: 70, colour: [1.0, 0.82, 0.62], zenith: [0.40, 0.38, 0.34], horizon: [0.70, 0.60, 0.45], ambient: 0.65, fog: 0.004, fog_colour: [0.70, 0.58, 0.42], exposure: -0.1}
+x-dusty-air: &dusty_air {sun: 2.6, elevation: 30, azimuth: 70, colour: [1.0, 0.82, 0.62], zenith: [0.40, 0.38, 0.34], horizon: [0.70, 0.60, 0.45], ambient: 0.65, fog: 0.0009, fog_colour: [0.70, 0.58, 0.42], exposure: -0.1}
+x-dusk-fire: &dusk_fire {sun: 2.0, elevation: 4, azimuth: -100, colour: [1.0, 0.45, 0.20], zenith: [0.10, 0.08, 0.14], horizon: [0.80, 0.35, 0.15], ambient: 0.4, fog: 0.004, fog_colour: [0.55, 0.30, 0.18], exposure: 0.15}
+x-dark: &dark {sun: 0.15, elevation: 35, azimuth: 60, colour: [0.55, 0.62, 0.85], zenith: [0.01, 0.012, 0.02], horizon: [0.04, 0.035, 0.035], ambient: 0.2, fog: 0.003, fog_colour: [0.10, 0.08, 0.07], exposure: 0.6}
+x-dark-air: &dark_air {sun: 0.15, elevation: 35, azimuth: 60, colour: [0.55, 0.62, 0.85], zenith: [0.01, 0.012, 0.02], horizon: [0.04, 0.035, 0.035], ambient: 0.2, fog: 0.0006, fog_colour: [0.10, 0.08, 0.07], exposure: 0.6}
+x-sunrise: &sunrise {sun: 4.0, elevation: 6, azimuth: 80, colour: [1.0, 0.68, 0.42], zenith: [0.22, 0.40, 0.75], horizon: [0.98, 0.72, 0.50], ambient: 0.5, fog: 0.0012, fog_colour: [0.95, 0.80, 0.62], exposure: -0.05}
+x-sunrise-air: &sunrise_air {sun: 4.0, elevation: 6, azimuth: 80, colour: [1.0, 0.68, 0.42], zenith: [0.22, 0.40, 0.75], horizon: [0.98, 0.72, 0.50], ambient: 0.5, fog: 0.0004, fog_colour: [0.95, 0.80, 0.62], exposure: -0.05}
+x-indoor: &indoor {sun: 2.5, elevation: 25, azimuth: 160, colour: [1.0, 0.90, 0.75], zenith: [0.30, 0.50, 0.85], horizon: [0.75, 0.80, 0.85], ambient: 0.45, exposure: 0.0}
+scenes:
+  # ----- 06:00 AM: THE WARNING -----------------------------------------------------------------
+  - id: s01_dawn
+    duration: 5.56
+    environment: {type: la_aerial}
+    lighting: soft_daylight
+    lighting_overrides: *sunny
+    camera: {shot: aerial_establish, from: [-1800, -2200, 700], to: [-1700, -2050, 660], look: [0, 1200, 120], look_to: [0, 1150, 110], lens: 28, fstop: 8}
+    captions:
+      - {kind: title, text: "WHEN THE WIND TOOK EVERYTHING", at: 0.2, until: 2.8}
+      - {kind: chapter, text: "06:00 AM", sub: "The warning", at: 2.9, until: 5.4}
+    hud: {hours: 6.0, show_at: 0.3, sub: "WIND CALM"}
+    sfx: [{sound: swell, at: 0.1, gain_db: -8}]
+    music: {intensity: 0.2}
+    transition: {type: dissolve, duration: 0.3}
+
+  - id: s02_alert
+    duration: 5.10
+    environment: {type: la_interior, kind: living, people: 3, wind: 0.0}
+    lighting: interior_day
+    lighting_overrides: *indoor
+    camera: {shot: push_in, from: [-2.7, 0.9, 1.55], to: [-2.3, 1.3, 1.5], look: [1.6, 4.2, 1.2], look_to: [1.6, 4.2, 1.2], lens: 22, fstop: 3.5}
+    captions:
+      - {kind: alert, text: "Extreme wind warning. Shelter indoors now.", at: 0.5, until: 5.2}
+    hud: {hours: 6.03, sub: "WARNING ISSUED"}
+    sfx: [{sound: alert, at: 0.5, gain_db: -4}]
+    music: {intensity: 0.35}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s03_calm
+    duration: 3.28
+    environment: {type: la_street, kind: boulevard, wind: 1.0, gust_at: 2.25, wind_at: [12.4, -38], traffic: 10, people: 8, people_action: walk}
+    lighting: soft_daylight
+    lighting_overrides: *sunny
+    camera: {shot: push_in, from: [12.3, -41, 1.6], to: [12.1, -39, 1.6], look: [0, 20, 8], look_to: [0, 20, 8], lens: 26, fstop: 5}
+    hud: {hours: 6.08, sub: "WIND CALM"}
+    sfx: [{sound: gust, at: 2.0, gain_db: 2}]
+    music: {intensity: 0.3, wind: 0.1}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s04_gust
+    duration: 2.29
+    environment: {type: la_street, kind: boulevard, wind: 1.0, gust_at: 0.0, wind_at: [-3.5, -19], traffic: 8, burst_at: 0.3, lights_torn: 0.2, uproot: [0.7], uproot_y: -8, thrown: [0.9], thrown_y: -6}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-4, -21, 2.0], to: [-3.5, -19.5, 2.2], look: [6, 20, 6], look_to: [6, 20, 6], lens: 24, fstop: 5, shake: {strength: 0.6, start: 0.0, end: 2.5, scale: 3}}
+    captions:
+      - {kind: title, text: "300 MILES PER HOUR", at: 0.2, until: 2.4}
+    hud: {hours: 6.1, sub: "WIND 300 MPH"}
+    sfx: [{sound: impact, at: 0.15, gain_db: 0}, {sound: glass, at: 0.4, gain_db: -4}]
+    music: {intensity: 0.75, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s05_downtown
+    duration: 6.18
+    environment: {type: la_downtown, wind: 1.0, gust_at: 0.0, wind_at: [4, -80], shatter: [0.3, 5.6], bursts: 9, traffic: 8}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [4, -92, 3], to: [4, -76, 6], look: [0, 60, 70], look_to: [0, 60, 80], lens: 22, fstop: 6, shake: {strength: 0.25, start: 0.0, end: 6.1, scale: 4}}
+    hud: {hours: 6.12, sub: "WIND 300 MPH"}
+    sfx: [{sound: glass, at: 0.6, gain_db: -4}, {sound: glass, at: 2.2, gain_db: -6}, {sound: glass, at: 3.9, gain_db: -6}]
+    music: {intensity: 0.75, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s06_cover
+    duration: 4.99
+    environment: {type: la_interior, kind: office, shatter_at: 0.8, people: 9}
+    lighting: interior_day
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [9.5, 1.2, 121.5], to: [8.8, 1.7, 121.4], look: [-3, 13, 121.3], look_to: [-3, 13, 121.3], lens: 22, fstop: 4, shake: {strength: 0.5, start: 0.8, end: 5.2, scale: 3}}
+    hud: {hours: 6.2, hours_end: 6.4, sub: "WIND 300 MPH"}
+    sfx: [{sound: glass, at: 0.8, gain_db: 0}, {sound: impact, at: 0.8, gain_db: -4}]
+    music: {intensity: 0.75, wind: 1.0}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- 07:00 AM: THE CITY IS TORN APART -------------------------------------------------------
+  - id: s07_torn
+    duration: 4.07
+    environment: {type: la_aerial, wind: 1.0, wind_at: [-900, -600], smoke: 3}
+    lighting: soft_daylight
+    lighting_overrides: *dusty_air
+    camera: {shot: aerial_establish, from: [-1600, -1900, 500], to: [-1550, -1800, 480], look: [0, 1100, 80], look_to: [0, 1100, 80], lens: 28, fstop: 8}
+    captions:
+      - {kind: chapter, text: "07:00 AM", sub: "The city is torn apart", at: 0.1, until: 2.5}
+    hud: {hours: 7.0, show_at: 2.4, sub: "WIND 300 MPH"}
+    sfx: [{sound: rumble, at: 0.0, gain_db: -6}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s08_palms
+    duration: 2.30
+    environment: {type: la_street, kind: residential, wind: 1.0, gust_at: 0.0, wind_at: [3.4, -21], uproot: [0.2, 0.5, 0.8, 1.1], uproot_y: -8, traffic: 0, parked: 6}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [3.5, -22, 1.4], to: [3.3, -20, 1.5], look: [-8, -6, 6], look_to: [-8, -6, 6], lens: 24, fstop: 5}
+    hud: {hours: 7.1, sub: "WIND 300 MPH"}
+    sfx: [{sound: whoosh, at: 0.2, gain_db: -4}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s09_freeway
+    duration: 1.56
+    environment: {type: la_freeway, wind: 1.0, gust_at: 0.0, wind_at: [20, 40], thrown: [0.1, 0.4, 0.7], thrown_y: 10, truck_over: 0.3, truck_y: 20, traffic: 40}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [30, 78, 27], to: [28, 72, 26], look: [0, -10, 0], look_to: [0, -12, 0], lens: 24, fstop: 6, shake: {strength: 0.3, start: 0.0, end: 1.7, scale: 3}}
+    hud: {hours: 7.2, sub: "WIND 300 MPH"}
+    sfx: [{sound: impact, at: 0.5, gain_db: -2}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s10_roofs
+    duration: 3.35
+    environment: {type: la_street, kind: residential, wind: 1.0, gust_at: 0.0, wind_at: [2, -38], roofs: [0.2, 0.9, 1.6], traffic: 0, parked: 8}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [2, -40, 2.0], to: [2, -37, 2.4], look: [-16, -10, 5], look_to: [-16, -8, 6], lens: 24, fstop: 5}
+    hud: {hours: 7.3, sub: "WIND 300 MPH"}
+    sfx: [{sound: alarm, at: 0.8, gain_db: -12}, {sound: thud, at: 1.0, gain_db: -6}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s11_hills
+    duration: 2.61
+    environment: {type: la_hills, wind: 1.0, gust_at: 0.0, wind_at: [-40, 160], roofs: [0.1]}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-70, 50, 34], to: [-62, 60, 36], look: [0, 250, 70], look_to: [0, 250, 72], lens: 26, fstop: 6}
+    hud: {hours: 7.4, sub: "WIND 300 MPH"}
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s12_lax
+    duration: 7.15
+    environment: {type: la_airport, wind: 1.0, gust_at: 0.0, wind_at: [-60, 262], slew: 0.4, carts: 16}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-70, 258, 8], to: [-56, 266, 8], look: [30, 318, 6], look_to: [30, 318, 6], lens: 26, fstop: 8}
+    hud: {hours: 7.55, sub: "WIND 300 MPH"}
+    sfx: [{sound: rumble, at: 0.4, gain_db: -6}, {sound: thud, at: 2.5, gain_db: -8}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s13_shelter
+    duration: 3.36
+    environment: {type: la_interior, kind: garage, wind: 1.0, gust_at: 0.0, people: 34}
+    lighting: interior_day
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-17, 9, 1.6], to: [-16, 10, 1.6], look: [0, 16, 0.8], look_to: [0, 16, 0.8], lens: 24, fstop: 4, shake: {strength: 0.15, start: 0.0, end: 3.5, scale: 4}}
+    hud: {hours: 7.8, hours_end: 8.1, sub: "WIND 300 MPH"}
+    sfx: [{sound: crowd, at: 0.0, gain_db: -8}]
+    music: {intensity: 0.8, wind: 0.7}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- 12:00 PM: TOTAL INFRASTRUCTURE FAILURE --------------------------------------------------
+  - id: s14_grid
+    duration: 3.67
+    environment: {type: la_street, kind: residential, wind: 1.0, gust_at: 0.0, wind_at: [3, -28], poles_down: 1.0, traffic: 0, parked: 6}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [3, -30, 1.6], to: [3, -27, 1.7], look: [6, 10, 6], look_to: [6, 12, 4], lens: 24, fstop: 5}
+    events:
+      - {type: flicker, target: tag:arc, start: 1.3, end: 3.7, rate: 6, strength: 4000}
+      - {type: flash, at: 1.4, amount: 1.4}
+    captions:
+      - {kind: chapter, text: "12:00 PM", sub: "Total infrastructure failure", at: 0.1, until: 2.5}
+    hud: {hours: 12.0, show_at: 2.4, sub: "WIND 300 MPH"}
+    sfx: [{sound: impact, at: 1.4, gain_db: -4}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s15_lines
+    duration: 5.97
+    environment: {type: la_street, kind: residential, wind: 1.0, gust_at: 0.0, wind_at: [-2.3, -12.5], poles_down: 0.0, traffic: 0, parked: 4}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-2.5, -14, 2.4], to: [-2.2, -11, 2.3], look: [1.0, 10, 0.2], look_to: [1.0, 12, 0.2], lens: 24, fstop: 4}
+    events:
+      - {type: flicker, target: tag:arc, start: 0.2, end: 6.2, rate: 5, strength: 3000}
+    hud: {hours: 12.2, sub: "WIND 300 MPH"}
+    sfx: [{sound: radio, at: 2.4, gain_db: -8}, {sound: radio, at: 4.6, gain_db: -10}]
+    music: {intensity: 0.8, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s16_towers
+    duration: 4.65
+    environment: {type: la_downtown, wind: 1.0, gust_at: 0.0, wind_at: [-8, -26], broken: 0.45, shatter: [0.2, 4.5], bursts: 6, traffic: 6}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-6, -34, 2], to: [-6, -26, 4], look: [-34, 0, 120], look_to: [-34, 6, 130], lens: 22, fstop: 6}
+    hud: {hours: 12.4, sub: "WIND 300 MPH"}
+    sfx: [{sound: glass, at: 0.5, gain_db: -6}, {sound: rumble, at: 2.0, gain_db: -8}]
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s17_pier
+    duration: 4.32
+    environment: {type: la_pier, wind: 1.0, gust_at: 0.0, wind_at: [-38, 11], waves: 12.0, wheel_spin: 0.4}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [-40, 8, 2.6], to: [-36, 14, 2.6], look: [12, 180, 20], look_to: [12, 180, 22], lens: 26, fstop: 8}
+    hud: {hours: 12.6, sub: "WIND 300 MPH"}
+    sfx: [{sound: rumble, at: 0.3, gain_db: -4}]
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s18_rescue
+    duration: 5.11
+    environment: {type: la_freeway, wind: 1.0, gust_at: 0.0, wind_at: [20, -50], helicopter: true, traffic: 34}
+    lighting: soft_daylight
+    lighting_overrides: *dusty
+    camera: {shot: push_in, from: [32, -62, 10], to: [29, -56, 11], look: [-12, 6, 32], look_to: [-22, 8, 30], lens: 28, fstop: 6}
+    hud: {hours: 12.8, sub: "WIND 300 MPH"}
+    sfx: [{sound: helicopter, at: 0.0, gain_db: -4}, {sound: siren, at: 1.5, gain_db: -12}]
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s19_isolated
+    duration: 3.28
+    environment: {type: la_aerial, wind: 1.0, wind_at: [-1200, -1300], smoke: 5}
+    lighting: soft_daylight
+    lighting_overrides: *dusty_air
+    camera: {shot: aerial_establish, from: [-2200, -2600, 900], to: [-2150, -2500, 880], look: [0, 900, 0], look_to: [0, 900, 0], lens: 28, fstop: 8}
+    hud: {hours: 13.0, hours_end: 13.3, sub: "WIND 300 MPH"}
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- 06:00 PM: THE NIGHTMARE GETS WORSE --------------------------------------------------------
+  - id: s20_sunset
+    duration: 4.86
+    environment: {type: la_street, kind: boulevard, wind: 1.0, gust_at: 0.0, wind_at: [9.5, -46], traffic: 6, ripped: 0.5}
+    lighting: dusk_urgent
+    lighting_overrides: *dusk_fire
+    camera: {shot: push_in, from: [10, -50, 1.2], to: [9.5, -47, 1.3], look: [-10, 40, 14], look_to: [-10, 40, 14], lens: 24, fstop: 5}
+    captions:
+      - {kind: chapter, text: "06:00 PM", sub: "The nightmare gets worse", at: 0.1, until: 2.5}
+    hud: {hours: 18.0, show_at: 2.4, sub: "WIND 300 MPH"}
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s21_fires
+    duration: 4.45
+    environment: {type: la_street, kind: residential, wind: 1.0, gust_at: 0.0, wind_at: [2, -32], fires: 5, traffic: 0, parked: 6}
+    lighting: dusk_urgent
+    lighting_overrides: *dusk_fire
+    camera: {shot: push_in, from: [2, -35, 2.5], to: [2, -32, 2.6], look: [-18, 0, 4], look_to: [-18, 2, 4], lens: 24, fstop: 5}
+    hud: {hours: 18.3, sub: "WIND 300 MPH"}
+    sfx: [{sound: fire, at: 0.0, gain_db: -4}]
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s22_embers
+    duration: 4.66
+    environment: {type: la_street, kind: residential, wind: 1.0, gust_at: 0.0, wind_at: [12.7, -24.5], fires: 6, traffic: 0, parked: 6, debris: 0.5}
+    lighting: dusk_urgent
+    lighting_overrides: *dusk_fire
+    camera: {shot: push_in, from: [13, -26, 11], to: [12.5, -23, 11], look: [-24, 4, 3], look_to: [-24, 6, 3], lens: 24, fstop: 5}
+    hud: {hours: 18.6, sub: "WIND 300 MPH"}
+    sfx: [{sound: fire, at: 0.0, gain_db: -4}]
+    music: {intensity: 0.85, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s23_hospital
+    duration: 3.47
+    environment: {type: la_interior, kind: hospital, people: 6}
+    lighting: night_emergency
+    lighting_overrides: *dark
+    camera: {shot: push_in, from: [0.5, 0.5, 1.7], to: [0.5, 2.2, 1.7], look: [0, 30, 1.4], look_to: [0, 30, 1.4], lens: 24, fstop: 4}
+    hud: {hours: 19.0, sub: "EMERGENCY POWER"}
+    sfx: [{sound: heartbeat, at: 0.0, gain_db: -12}]
+    music: {intensity: 0.8, wind: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s24_trapped
+    duration: 5.88
+    environment: {type: la_interior, kind: apartment, wind: 1.0, gust_at: 0.0, night: true, blackout: true, people: 3}
+    lighting: dusk_urgent
+    lighting_overrides: *dusk_fire
+    camera: {shot: push_in, from: [2.4, 0.6, 1.4], to: [1.9, 1.1, 1.35], look: [-0.3, 5.2, 1.4], look_to: [-0.3, 5.2, 1.4], lens: 22, fstop: 3, shake: {strength: 0.15, start: 0.0, end: 6.2, scale: 4}}
+    hud: {hours: 19.5, hours_end: 20.2, sub: "WIND 300 MPH"}
+    music: {intensity: 0.85, wind: 0.8}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- 02:00 AM: THE LONGEST NIGHT -----------------------------------------------------------------
+  - id: s25_dark
+    duration: 4.18
+    environment: {type: la_aerial, night: true, blackout: 0.9, fires: 8, wind: 0.6, wind_at: [-900, -900]}
+    lighting: night_emergency
+    lighting_overrides: {<<: *dark_air, exposure: 1.4}   # dark, but not a black frame
+    camera: {shot: aerial_establish, from: [-1500, -1800, 600], to: [-1450, -1700, 580], look: [0, 1200, 100], look_to: [0, 1200, 100], lens: 28, fstop: 8}
+    captions:
+      - {kind: chapter, text: "02:00 AM", sub: "The longest night", at: 0.1, until: 2.5}
+    hud: {hours: 26.0, show_at: 2.4, sub: "WIND 300 MPH"}
+    music: {intensity: 0.9, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s26_collapse
+    duration: 3.88
+    environment: {type: la_street, kind: boulevard, night: true, blackout: true, wind: 1.0, gust_at: 0.0, wind_at: [6, -28], collapse: 0.8, collapse_y: 24, fires: 4, traffic: 4, ripped: 0.6}
+    lighting: night_emergency
+    lighting_overrides: {sun: 0.45, elevation: 35, azimuth: 60, colour: [0.55, 0.62, 0.85], zenith: [0.01, 0.012, 0.02], horizon: [0.06, 0.05, 0.05], ambient: 0.3, fog: 0.003, fog_colour: [0.12, 0.09, 0.08], exposure: 0.9}
+    camera: {shot: push_in, from: [6, -30, 2], to: [6, -27, 2.2], look: [-18, 30, 12], look_to: [-18, 30, 8], lens: 24, fstop: 5, shake: {strength: 0.35, start: 0.8, end: 3.0, scale: 3}}
+    hud: {hours: 26.3, sub: "WIND 300 MPH"}
+    sfx: [{sound: rumble, at: 0.8, gain_db: 0}, {sound: impact, at: 2.2, gain_db: -2}]
+    music: {intensity: 0.9, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s27_streets
+    duration: 4.91
+    environment: {type: la_street, kind: residential, night: true, blackout: true, wind: 1.0, gust_at: 0.0, wind_at: [-2.9, -14], fires: 2, poles_down: 0.0, traffic: 0, parked: 6}
+    lighting: night_emergency
+    lighting_overrides: *dark
+    camera: {shot: push_in, from: [-3, -15, 1.0], to: [-2.8, -13, 1.0], look: [4, 20, 2], look_to: [4, 22, 2], lens: 24, fstop: 4}
+    events:
+      - {type: flicker, target: tag:arc, start: 0.5, end: 5.0, rate: 4, strength: 2500}
+    hud: {hours: 26.6, sub: "WIND 300 MPH"}
+    sfx: [{sound: radio, at: 2.6, gain_db: -8}]
+    music: {intensity: 0.9, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s28_families
+    duration: 4.52
+    environment: {type: la_interior, kind: hallway, night: true, blackout: true, people: 4}
+    lighting: night_emergency
+    lighting_overrides: *dark
+    camera: {shot: push_in, from: [0.9, 0.4, 1.9], to: [0.8, 0.7, 1.8], look: [0, 3, 0.4], look_to: [0, 3, 0.4], lens: 22, fstop: 3, shake: {strength: 0.3, start: 0.0, end: 4.4, scale: 3}}
+    hud: {hours: 27.0, sub: "WIND 300 MPH"}
+    music: {intensity: 0.85, wind: 0.75}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s29_waiting
+    duration: 5.45
+    environment: {type: la_interior, kind: hallway, night: true, blackout: true, people: 4}
+    lighting: night_emergency
+    lighting_overrides: *dark
+    camera: {shot: push_in, from: [0.25, 1.5, 0.95], to: [0.2, 1.8, 0.9], look: [0.1, 3.0, 0.55], look_to: [0.1, 3.0, 0.55], lens: 26, fstop: 2.8, shake: {strength: 0.2, start: 0.0, end: 5.5, scale: 3}}
+    hud: {hours: 27.5, hours_end: 28.5, sub: "WIND 300 MPH"}
+    sfx: [{sound: heartbeat, at: 0.3, gain_db: -6}]
+    music: {intensity: 0.85, wind: 0.75}
+    transition: {type: fade_black, duration: 0.4}
+
+  # ----- 06:00 AM: 24 HOURS LATER -------------------------------------------------------------------
+  - id: s30_suddenly
+    duration: 2.74
+    environment: {type: la_interior, kind: hallway, night: true, blackout: true, people: 4}
+    lighting: night_emergency
+    lighting_overrides: *dark
+    camera: {shot: push_in, from: [0.9, 0.4, 1.9], to: [0.85, 0.5, 1.85], look: [0, 3, 0.4], look_to: [0, 3, 0.4], lens: 22, fstop: 3, shake: {strength: 0.35, start: 0.0, end: 2.8, scale: 3}}
+    captions:
+      - {kind: chapter, text: "06:00 AM", sub: "24 hours later", at: 0.1, until: 2.6}
+    hud: {hours: 30.0, show_at: 2.4, sub: "WIND 300 MPH"}
+    music: {intensity: 0.7, wind: 1.0}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s31_silence
+    duration: 2.48
+    environment: {type: la_interior, kind: hallway, night: true, blackout: true, people: 4}
+    lighting: night_emergency
+    lighting_overrides: *dark
+    camera: {shot: static, from: [0.85, 0.5, 1.85], look: [0, 3, 0.4], lens: 22, fstop: 3}
+    hud: {hours: 30.0, hours_end: 30.0, sub: "WIND 0 MPH"}
+    music: {intensity: 0.1, wind: 0.0, mute: true}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s32_door
+    duration: 3.07
+    environment: {type: la_interior, kind: hallway, people: 4, door_open: 0.3}
+    lighting: golden_hour
+    lighting_overrides: {sun: 0.3, elevation: 6, azimuth: 80, colour: [1.0, 0.68, 0.42], zenith: [0.22, 0.40, 0.75], horizon: [0.98, 0.72, 0.50], ambient: 0.08, exposure: 0.5}
+    camera: {shot: push_in, from: [0.3, 0.6, 1.6], to: [0.2, 1.2, 1.6], look: [0, 6, 1.2], look_to: [0, 6, 1.2], lens: 24, fstop: 4}
+    hud: {hours: 30.02, sub: "WIND 0 MPH"}
+    sfx: [{sound: birds, at: 0.3, gain_db: -6}]
+    music: {intensity: 0.15}
+    transition: {type: fade_white, duration: 0.4}
+
+  - id: s33_devastation
+    duration: 4.04
+    environment: {type: la_street, kind: residential, aftermath: true, people: 6, people_action: look_around, traffic: 0, debris_near: [0.5, -10]}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: push_in, from: [0.5, -14, 2.2], to: [0.5, -11, 2.2], look: [-10, 10, 3], look_to: [-10, 12, 3], lens: 24, fstop: 5}
+    hud: {hours: 30.05, sub: "WIND 0 MPH"}
+    sfx: [{sound: birds, at: 0.0, gain_db: -10}]
+    music: {intensity: 0.35}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s34_neighbourhoods
+    duration: 6.69
+    environment: {type: la_aerial, aftermath: true, smoke: 4}
+    lighting: golden_hour
+    lighting_overrides: *sunrise_air
+    camera: {shot: aerial_establish, from: [-1200, -1500, 420], to: [-1100, -1380, 400], look: [0, 600, 0], look_to: [0, 700, 0], lens: 28, fstop: 8}
+    hud: {hours: 30.1, sub: "WIND 0 MPH"}
+    music: {intensity: 0.45}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s35_buried
+    duration: 3.46
+    environment: {type: la_freeway, aftermath: true, traffic: 30}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: push_in, from: [30, 78, 27], to: [28, 72, 26], look: [0, -10, 0], look_to: [0, -14, 0], lens: 24, fstop: 6}
+    hud: {hours: 30.2, sub: "WIND 0 MPH"}
+    music: {intensity: 0.45}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s36_crews
+    duration: 3.64
+    environment: {type: la_street, kind: residential, aftermath: true, crews: true, traffic: 0}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: push_in, from: [-1.5, -26, 3.4], to: [-1.0, -22, 3.2], look: [1.5, 18, 1.5], look_to: [1.5, 18, 1.5], lens: 26, fstop: 5}
+    events:
+      - {type: flicker, target: tag:beacon, start: 0.0, end: 3.8, rate: 3, strength: 20}
+    hud: {hours: 30.3, sub: "WIND 0 MPH"}
+    sfx: [{sound: siren, at: 0.5, gain_db: -14}]
+    music: {intensity: 0.5}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s37_survived
+    duration: 4.47
+    environment: {type: la_downtown, aftermath: true, broken: 0.6, traffic: 4}
+    lighting: golden_hour
+    lighting_overrides: *sunrise
+    camera: {shot: push_in, from: [3, -90, 2], to: [3, -80, 4], look: [0, 60, 80], look_to: [0, 60, 90], lens: 22, fstop: 6}
+    hud: {hours: 30.4, sub: "WIND 0 MPH"}
+    music: {intensity: 0.6}
+    transition: {type: cut, duration: 0.0}
+
+  - id: s38_final
+    duration: 9.10
+    environment: {type: la_aerial, aftermath: true, smoke: 3}
+    lighting: golden_hour
+    lighting_overrides: *sunrise_air
+    camera: {shot: aerial_establish, from: [-900, -1100, 320], to: [-1300, -1700, 520], look: [0, 1000, 60], look_to: [0, 1100, 80], lens: 28, fstop: 8}
+    captions:
+      - {kind: title, text: "ONE CITY BROUGHT TO ITS KNEES", at: 2.8, until: 6.0}
+      - {kind: title, text: "AND THE REBUILDING HASN'T EVEN BEGUN", at: 6.2, until: 9.3}
+    hud: {hours: 30.5, hours_end: 30.6, sub: "A HYPOTHETICAL SCENARIO"}
+    sfx: [{sound: impact, at: 2.8, gain_db: -4}]
+    music: {intensity: 0.7}
+    transition: {type: cut, duration: 0.0}
