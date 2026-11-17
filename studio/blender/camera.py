@@ -118,6 +118,10 @@ def setup(ctx, spec):
         set_interp(cam, "EXPO", "EASE_IN", frames={f_out})
         set_interp(target, "EXPO", "EASE_IN", frames={f_out})
     distance = (cam_keys[0][1] - look_keys[0][1]).length
+    # Depth precision falls with distance squared over the near clip: at 5 cm, roads and yards a few
+    # centimetres above the ground z-fought (flashed in and out) in high, distant shots.
+    height = min(point.z for _, point in cam_keys)
+    data.clip_start = max(0.05, 0.01 * min(height, distance, (cam_keys[-1][1] - look_keys[-1][1]).length))
     _shake(ctx, target, "location", spec, max(0.05, distance / 40.0))
     _lens(ctx, data, spec)
     return cam

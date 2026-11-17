@@ -174,7 +174,10 @@ A project is three YAML files plus optional audio:
 Camera behaviours: `aerial_establish`, `push_in`, `tracking`, `orbit`, `side_follow`,
 `first_person`, `close_up`, `wide`, `reveal`, `static`, with depth of field (`fstop`, `focus`),
 `shake`, `lens_to`, and `whip_in`/`whip_out` for fast location changes that pair with the `whip`
-transition. Environments: `coastal_city` (variants `normal`, `crisis`, `fire`, `night`,
+transition. The near clip grows with the camera's height and its distance from the subject (1% of
+the smaller, at least 5 cm), so roads and yards a few centimetres above the ground do not z-fight
+(flash in and out) in aerial shots.
+Environments: `coastal_city` (variants `normal`, `crisis`, `fire`, `night`,
 `night_fires`, `dawn`, plus flags `dry`, `night`, `emergency`, `fires`, `smoke`, `helicopters`,
 `jam`), `residential_street`, `kitchen_interior`, `supermarket_interior`, `distribution_point`,
 `hospital_exterior` (`crisis`), `farm` (`health`, `dry`), `industrial`, `reservoir`, `port`
