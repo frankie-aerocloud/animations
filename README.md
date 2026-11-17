@@ -271,3 +271,20 @@ ignored by Git.
 
 Final-video validation checks resolution, frame rate, codecs, pixel format, audio presence,
 duration and unexpected black frames; missing scene frames stop the pipeline before assembly.
+
+## Continuous integration and cloud renders
+
+`.github/workflows/ci.yml` runs ruff, mypy, the fast tests and `validate` for every production on each
+push to `main` and on pull requests. `.github/workflows/render.yml` renders in the cloud: run it from
+the Actions tab for one film or all of them, or push a `v*` tag to render every film at standard.
+Each scene renders in its own job (`render-scene --encode-clip`), then one job per film assembles the
+fingerprinted clips (`assemble --from-clips`), checks the MP4 and uploads it, optionally to a release.
+
+- GitHub-hosted runners have no GPU, so Eevee renders in software under Xvfb: expect it to be much
+  slower than on a Mac, and a hosted job stops at 6 hours.
+- One run can start at most 256 scene jobs; the seven films have 243 scenes between them.
+- Blender, FFmpeg and the Piper voice are checked against pinned SHA-256 checksums and the actions
+  are pinned to commit SHAs: change a version and its checksum or SHA together.
+- A new production is validated automatically; add it to the `project` choices in `render.yml` to
+  render it there.
+- GitHub recommends self-hosted runners only for private repositories, and this one is public.
